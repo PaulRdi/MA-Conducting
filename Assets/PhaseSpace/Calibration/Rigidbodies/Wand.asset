@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1143b99b940e40944813488a4cebe82c, type: 3}
+  m_Name: Wand
+  m_EditorClassIdentifier: 
+  trackerName: wand
+  trackerId: 1
+  ids: 0400000005000000060000000700000008000000090000000a0000000b000000
+  names:
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  points:
+  - {x: 0, y: 907, z: -7.615}
+  - {x: -7.615, y: 782, z: 0}
+  - {x: 0, y: 657, z: -7.615}
+  - {x: -7.615, y: 532, z: 0}
+  - {x: 0, y: 407, z: -7.615}
+  - {x: -7.615, y: 282, z: 0}
+  - {x: 0, y: 157, z: -7.615}
+  - {x: -7.615, y: 32, z: 0}
+  options: 
+  other: 
