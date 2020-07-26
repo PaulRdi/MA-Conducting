@@ -43,16 +43,18 @@ public class TestManager : MonoBehaviour
 
     private void UpdateRunning()
     {
-        double dspTime = AudioSettings.dspTime;
+
+        double dspTime = AudioSettings.dspTime - startDSPTime;
+        dspDelta = dspTime - lastDSPTime;
         double dspDiff = song.beats[totalBeats].dspTime - dspTime;
-        timeOnCurrentBeat += dspDelta;
 
         if (dspDiff <= 0)
         {
             NextBeat(dspTime, dspDiff);
         }
-        beatBarController.timeOnCurrentBeat = timeOnCurrentBeat;
 
+        timeOnCurrentBeat += dspDelta;
+        beatBarController.timeOnCurrentBeat = timeOnCurrentBeat;
         lastDSPTime = dspTime;
     }
 
