@@ -155,7 +155,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AORemapMax: 1
-    - _AORemapMin: 0.16639322
+    - _AORemapMin: 0.16214418
     - _ATDistance: 1
     - _AddPrecomputedVelocity: 0
     - _AlbedoAffectEmissive: 0
@@ -174,10 +174,10 @@ Material:
     - _CullModeForward: 2
     - _Cutoff: 0.5
     - _DepthOffsetEnable: 0
-    - _DetailAlbedoScale: 0.495
+    - _DetailAlbedoScale: 0.64
     - _DetailNormalMapScale: 0.19
-    - _DetailNormalScale: 0
-    - _DetailSmoothnessScale: 0.32
+    - _DetailNormalScale: 0.94
+    - _DetailSmoothnessScale: 0.35
     - _DiffusionProfile: 0
     - _DiffusionProfileHash: 0
     - _DisplacementLockObjectScale: 1
@@ -232,10 +232,10 @@ Material:
     - _IridescenceThickness: 1
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
-    - _Metallic: 0.985
+    - _Metallic: 1
     - _Mode: 0
     - _NormalMapSpace: 0
-    - _NormalScale: 0.19
+    - _NormalScale: 4.62
     - _OcclusionStrength: 0.641
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
@@ -249,8 +249,8 @@ Material:
     - _ShiverDirectionality: 0.5
     - _ShiverDrag: 0.2
     - _Smoothness: 0.5
-    - _SmoothnessRemapMax: 0.9109793
-    - _SmoothnessRemapMin: 0.30479535
+    - _SmoothnessRemapMax: 0.9022732
+    - _SmoothnessRemapMin: 0.29608932
     - _SmoothnessTextureChannel: 0
     - _SpecularAAScreenSpaceVariance: 0.1
     - _SpecularAAThreshold: 0.2
