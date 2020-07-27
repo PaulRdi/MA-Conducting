@@ -601,8 +601,8 @@ MonoBehaviour:
     showAlpha: 0
     showEyeDropper: 1
   maxFogDistance:
-    m_OverrideState: 0
-    m_Value: 5000
+    m_OverrideState: 1
+    m_Value: 65
     min: 0
   mipFogMaxMip:
     m_OverrideState: 0
@@ -625,7 +625,7 @@ MonoBehaviour:
     m_Value: 65
   albedo:
     m_OverrideState: 1
-    m_Value: {r: 0.83137256, g: 0.69274604, b: 0.4339765, a: 1}
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
@@ -638,7 +638,7 @@ MonoBehaviour:
     m_Value: 1
   anisotropy:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.174
     min: -1
     max: 1
   globalLightProbeDimmer:
