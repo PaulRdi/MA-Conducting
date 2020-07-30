@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEditor;
 using System;
+using UnityEngine.UI;
 
 public class TestManager : MonoBehaviour
 {
@@ -15,6 +16,10 @@ public class TestManager : MonoBehaviour
     [SerializeField] Song song;
     [SerializeField] AudioSource audioSource;
     [SerializeField] TestConfig config;
+    [SerializeField] Transform phasespace;
+    [SerializeField] Transform rig;
+    [SerializeField] Button calibrationButton;
+    [SerializeField] Transform calibrationPoint;
 
     BeatBarController beatBarController;
     int currBeat;
@@ -25,6 +30,8 @@ public class TestManager : MonoBehaviour
     double lastDSPTime;
     double dspDelta;
     double timeOnCurrentBeat;
+    private bool calibrated;
+
     private void Awake()
     {
         songRunning = false;
@@ -36,6 +43,24 @@ public class TestManager : MonoBehaviour
         currBeat = 0;
         totalBeats = 0;
         TestConfig.current = config;
+        calibrationButton.onClick.AddListener(Calibrate);
+
+    }
+    private void Calibrate()
+    {
+        calibrated = true;
+    }
+
+    IEnumerator TestRoutine()
+    {
+        yield return WaitForCalibration();
+        
+    }
+
+    IEnumerator WaitForCalibration()
+    {
+        calibrated = false;
+        yield return new WaitUntil(() => calibrated);
     }
 
     private void Update()
