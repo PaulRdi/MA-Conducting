@@ -7,8 +7,14 @@ using System;
 
 public class TestManager : MonoBehaviour
 {
+    public static event Action correctBeatDetected;
+    public static event Action falseBeatDetected;
+    public static event Action testStarted;
+
+
     [SerializeField] Song song;
     [SerializeField] AudioSource audioSource;
+    [SerializeField] TestConfig config;
 
     BeatBarController beatBarController;
     int currBeat;
@@ -29,16 +35,19 @@ public class TestManager : MonoBehaviour
         currBeatStartTime = 0;
         currBeat = 0;
         totalBeats = 0;
+        TestConfig.current = config;
     }
-    private void Start()
-    {
-    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
             StartSong();
         if (songRunning)
+        {
             UpdateRunning();
+            if (Input.GetKeyDown(KeyCode.Space))
+                BeatDetected();
+        }
     }
 
     private void UpdateRunning()
@@ -78,5 +87,23 @@ public class TestManager : MonoBehaviour
         currBeat = 0;
         totalBeats = 0;
         songRunning = true;
+
+        testStarted?.Invoke();
+    }
+    //check if detected beat was in timeframe
+    void BeatDetected()
+    {
+        double dsp = AudioSettings.dspTime - startDSPTime;
+
+        if (Math.Abs(song.beats[totalBeats].dspTime - dsp) <= TestConfig.current.beatBuffer ||
+            Math.Abs(song.beats[totalBeats+1].dspTime - dsp) <= TestConfig.current.beatBuffer)
+        {
+            correctBeatDetected?.Invoke();
+        }
+        else
+        {
+            falseBeatDetected?.Invoke();
+        }
+
     }
 }

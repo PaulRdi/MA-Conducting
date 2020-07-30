@@ -1,0 +1,256 @@
+fileFormatVersion: 2
+guid: 41c9e441d7b5b804481a5b08f0d1f398
+ModelImporter:
+  serializedVersion: 19300
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BandMat
+    second: {fileID: 2100000, guid: f30b3ddc03f4d2e4eac612f485527a59, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BodyMat
+    second: {fileID: 2100000, guid: 231b2b9679e97554eb6948cfa36d451b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bow_BowHairMat
+    second: {fileID: 2100000, guid: 42659bab2ee0cff4d86663875215a5c0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bow_Frog1Mat
+    second: {fileID: 2100000, guid: dd74043d643458f42b476c23991a0096, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bow_FrogMat
+    second: {fileID: 2100000, guid: 635c52e6f7b03c64e91b9139b5e00323, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bow_Wrapping_polySurface13Mat
+    second: {fileID: 2100000, guid: 14b7bf696cde607428c336862424761e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bow_polySurface14_WrappingMat
+    second: {fileID: 2100000, guid: e3790febb0fe65f4fa6e362f8d05973b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ChinrestMat
+    second: {fileID: 2100000, guid: fb7409c1deed5874da61fc0077a6b56a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Corda_LaMat
+    second: {fileID: 2100000, guid: 15e3d7ce7e60bde4b9dc8a361e2d9128, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Corda_MiMat
+    second: {fileID: 2100000, guid: 2d6c18bcfa1cf584dadb93e1cab7c1c3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Corda_ReMat
+    second: {fileID: 2100000, guid: c955c55791baf71438c6c05beb98c4f0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Corda_SolMat
+    second: {fileID: 2100000, guid: 1c77a0fc1918e6c4e99c82ecfc6c5eda, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EndButtonMat
+    second: {fileID: 2100000, guid: f6a675310d4fb33458e6d96cd0bd9b91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FineTurner_01Mat
+    second: {fileID: 2100000, guid: 6aa6cfd98512d5d448e569404d32a0ec, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FineTurner_01_polySurface5Mat
+    second: {fileID: 2100000, guid: e277223ada8e86541bbec2499bfd708f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FineTurner_01_polySurface6Mat
+    second: {fileID: 2100000, guid: 60635835446bfeb468b834407a2752f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FingerBoardMat
+    second: {fileID: 2100000, guid: 2eee46d93a4de464c9bcbac3d147a385, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kanagu_kanagu_poll_01Mat
+    second: {fileID: 2100000, guid: c51639959161e334c99265ba20287cc5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kanagu_kanagu_under_01Mat
+    second: {fileID: 2100000, guid: 04f38f4e9b8e07049b719b236712f18e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kanagu_kanagu_under_02Mat
+    second: {fileID: 2100000, guid: fa74a0002b70ab84f8b892a3d93a577e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NeckMat
+    second: {fileID: 2100000, guid: 34d69127255bd86418de991b3048763a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PartsMat
+    second: {fileID: 2100000, guid: f50925ca9a6f5a741b7b2e31fe802901, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Peg_AllMat
+    second: {fileID: 2100000, guid: a3c2ec02ba3b3924582986dcff2e1e47, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Peg_All_polySurface10Mat
+    second: {fileID: 2100000, guid: d86ef1603fb97f54da1660b7305d5606, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Peg_All_polySurface12Mat
+    second: {fileID: 2100000, guid: 0e53bdb4ca766da44b1af52cba7d5739, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ScrollMat
+    second: {fileID: 2100000, guid: fca1b39639ac10044b33b178bcf2b87d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stick_BowMat
+    second: {fileID: 2100000, guid: 85b99cb403372194a9722f8de453e6b9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TailPieceMat
+    second: {fileID: 2100000, guid: c64cec734537b9a44aae1ae1dd5ff833, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: bridgeMat
+    second: {fileID: 2100000, guid: cd039e02bc02e6d42b3c93637676faf4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: kanagu_poll_02_KanaguMat
+    second: {fileID: 2100000, guid: 9204d3d8adc3ba0479109ef329537f8b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: polySurface11_Peg_AllMat
+    second: {fileID: 2100000, guid: a1322bf0934ee9b40aa7316a74dfcfcc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: polySurface9_FineTurner_01Mat
+    second: {fileID: 2100000, guid: 06e9c3d94d8df024c90975cd5a35f410, type: 2}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 0.1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
