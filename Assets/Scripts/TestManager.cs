@@ -20,7 +20,7 @@ public class TestManager : MonoBehaviour
     [SerializeField] Transform rig;
     [SerializeField] Button calibrationButton;
     [SerializeField] Transform calibrationPoint;
-
+    [SerializeField] Transform closeScaleTransform, farScaleTransform;
     BeatBarController beatBarController;
     int currBeat;
     int totalBeats;
@@ -48,6 +48,8 @@ public class TestManager : MonoBehaviour
     }
     private void Calibrate()
     {
+        Vector3 dir = farScaleTransform.position - closeScaleTransform.position;
+
         calibrated = true;
     }
 
