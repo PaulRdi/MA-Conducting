@@ -22,7 +22,7 @@ public class AudioEditor : EditorWindow
     float timePerTexture = 10.0f;
     private void Update()
     {
-        Repaint();
+        //Repaint();
         
     }
 
@@ -147,10 +147,12 @@ public class AudioEditor : EditorWindow
         {
             dspStart = AudioSettings.dspTime;
             if (audioSource == null)
+            {
                 audioSource = new GameObject().AddComponent<AudioSource>();
+                audioSource.gameObject.hideFlags = HideFlags.HideAndDontSave;
+            }
             audioSource.Stop();
             audioSource.PlayOneShot(song.audioClip);
-            audioSource.gameObject.hideFlags = HideFlags.HideAndDontSave;
             currBeatIndex = 0;
             currBeat = 0;
             playing = true;

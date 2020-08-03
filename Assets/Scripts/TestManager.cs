@@ -5,6 +5,7 @@ using TMPro;
 using UnityEditor;
 using System;
 using UnityEngine.UI;
+using PhaseSpace.Unity;
 
 public class TestManager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class TestManager : MonoBehaviour
     public static event Action falseBeatDetected;
     public static event Action testStarted;
 
-
+    [SerializeField] bool useRigid = true;
     [SerializeField] Song song;
     [SerializeField] AudioSource audioSource;
     [SerializeField] TestConfig config;
@@ -21,6 +22,10 @@ public class TestManager : MonoBehaviour
     [SerializeField] Button calibrationButton;
     [SerializeField] Transform calibrationPoint;
     [SerializeField] Transform closeScaleTransform, farScaleTransform;
+    [SerializeField] OWLMarker rightHandMarker, leftHandMarker;
+    [SerializeField] OWLRigidbody rightHandRigid;
+    [SerializeField] Transform rightHandIKRef;
+    Vector3 rightHandInitialdelta;
     BeatBarController beatBarController;
     int currBeat;
     int totalBeats;
@@ -49,7 +54,10 @@ public class TestManager : MonoBehaviour
     private void Calibrate()
     {
         Vector3 dir = farScaleTransform.position - closeScaleTransform.position;
-
+        if (!useRigid)
+            rightHandInitialdelta = rightHandIKRef.position - rightHandMarker.transform.position;
+        else
+            rightHandInitialdelta = rightHandIKRef.position - rightHandRigid.transform.position;
         calibrated = true;
     }
 
@@ -67,14 +75,27 @@ public class TestManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (rightHandInitialdelta != default)
+        {
+            UpdateIKRefs();
+        }
+         
+        if (UnityEngine.Input.GetKeyDown(KeyCode.F))
             StartSong();
         if (songRunning)
         {
             UpdateRunning();
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
                 BeatDetected();
         }
+    }
+
+    private void UpdateIKRefs()
+    {
+        if (!useRigid)
+            rightHandIKRef.transform.position = rightHandMarker.transform.position + rightHandInitialdelta;
+        else
+            rightHandIKRef.transform.position = rightHandRigid.transform.position + rightHandInitialdelta;
     }
 
     private void UpdateRunning()
@@ -82,7 +103,7 @@ public class TestManager : MonoBehaviour
 
         double dspTime = AudioSettings.dspTime - startDSPTime;
         dspDelta = dspTime - lastDSPTime;
-        double dspDiff = song.beats[totalBeats].dspTime - dspTime;
+        double dspDiff = song.beats[totalBeats + 1].dspTime - dspTime;
 
         if (dspDiff <= 0)
         {
