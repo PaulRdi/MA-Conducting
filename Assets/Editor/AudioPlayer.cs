@@ -5,13 +5,18 @@ using UnityEditor.Audio;
 using UnityEditor;
 using System;
 using System.Linq;
+public enum AudioEditMode
+{
+    Idle,
+    Playing,
+    Recording,
+    Editing
+}
 
 public class AudioEditor : EditorWindow
 {
     Song song;
     AudioSource audioSource;
-    bool playing;
-    bool recording;
     double dspStart;
     int currBeat;
     int currBeatIndex;
@@ -20,6 +25,7 @@ public class AudioEditor : EditorWindow
     int height = 200;
     float[] samplesToVisualize;
     float timePerTexture = 10.0f;
+    AudioEditMode state;
     private void Update()
     {
         //Repaint();
@@ -32,6 +38,7 @@ public class AudioEditor : EditorWindow
         AudioEditor audioEditor = EditorWindow.GetWindow<AudioEditor>();
         audioEditor.Show();
         audioEditor.audioSource = FindObjectOfType<AudioSource>();
+        audioEditor.state = AudioEditMode.Idle;
     }
     private void OnGUI()
     {
@@ -51,19 +58,27 @@ public class AudioEditor : EditorWindow
         {
             TryStartRecord();
         }
+        if (GUILayout.Button("Edit"))
+        {
+            TryStartEdit();
+        }
 
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
         Rect rect = new Rect();
         rect.Set(10, 40, 50, 50);
 
-        if (recording)
+        if (state == AudioEditMode.Recording)
         {
             EditorGUI.DrawRect(rect, Color.red);
         }
-        else if (playing)
+        else if (state == AudioEditMode.Playing)
         {
             EditorGUI.DrawRect(rect, Color.green);
+        }
+        else if (state == AudioEditMode.Editing)
+        {
+            EditorGUI.DrawRect(rect, Color.yellow);
         }
         else
         {
@@ -72,7 +87,7 @@ public class AudioEditor : EditorWindow
         }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
-        if (playing && !recording)
+        if (state == AudioEditMode.Playing)
         {
 
             double currDSP = AudioSettings.dspTime - dspStart;
@@ -86,21 +101,42 @@ public class AudioEditor : EditorWindow
                 GUILayout.Label(song.beats[currBeat].beat.ToString());
             }
             GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            EditorGUI.DrawPreviewTexture(new Rect(0, 110, width, height),
-                PaintWaveformSpectrum(width, height, Color.grey, currDSP));
-            GUILayout.EndHorizontal();
+            DrawWaveformTextureAtDSPTime(currDSP);
         }
-        else if (playing && recording)
+        else if (state == AudioEditMode.Playing ||
+                 state == AudioEditMode.Recording)
         {
             GUILayout.Label(currBeat.ToString());
             GUILayout.EndHorizontal();
+        }
+        else if (state == AudioEditMode.Editing)
+        {
+            GUILayout.EndHorizontal();
+            DrawWaveformTextureAtDSPTime(10.0);
+        }
+    }
+
+    private void DrawWaveformTextureAtDSPTime(double dspTime)
+    {
+        GUILayout.BeginHorizontal();
+        EditorGUI.DrawPreviewTexture(new Rect(0, 110, width, height),
+            PaintWaveformSpectrum(width, height, Color.grey, dspTime));
+        GUILayout.EndHorizontal();
+    }
+
+    private void TryStartEdit()
+    {
+        TryStopSong();
+        if (song != null)
+        {
+            state = AudioEditMode.Editing;
+            CreateSamplesAndTexture();
         }
     }
 
     private void HandleInput()
     {
-        if (recording &&
+        if (state == AudioEditMode.Recording &&
                     Event.current != null &&
                     Event.current.type == EventType.KeyDown &&
                     Event.current.keyCode == KeyCode.G)
@@ -118,9 +154,7 @@ public class AudioEditor : EditorWindow
         currBeat = 0;
         TryPlaySong();
         song.beats = new List<Beat>();
-        recording = true;
-
-
+        state = AudioEditMode.Recording;
     }
 
     public void TryStopSong()
@@ -129,7 +163,7 @@ public class AudioEditor : EditorWindow
         {
             audioSource.Stop();
         }
-        if (recording)
+        if (state == AudioEditMode.Recording)
         {
             Undo.RecordObject(song, "Added beats to song");
             EditorUtility.SetDirty(song);
@@ -138,11 +172,11 @@ public class AudioEditor : EditorWindow
         }
         if (tex != null)
             DestroyImmediate(tex);
-        recording = false;
-        playing = false;
+        state = AudioEditMode.Idle;
     }
     private void TryPlaySong()
     {
+        TryStopSong();
         if (song != null)
         {
             dspStart = AudioSettings.dspTime;
@@ -155,11 +189,16 @@ public class AudioEditor : EditorWindow
             audioSource.PlayOneShot(song.audioClip);
             currBeatIndex = 0;
             currBeat = 0;
-            playing = true;
-            samplesToVisualize = GetTextureSamples(this.timePerTexture, song.audioClip, 1000);
-            tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            state = AudioEditMode.Playing;
+            CreateSamplesAndTexture();
 
         }
+    }
+
+    private void CreateSamplesAndTexture()
+    {
+        samplesToVisualize = GetTextureSamples(this.timePerTexture, song.audioClip, 1000);
+        tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
     }
 
     //gets a float array that samples the waveform so a excerpt of res seconds is shown
@@ -225,8 +264,7 @@ public class AudioEditor : EditorWindow
             {
                 for (int y = 0; y < height; y++)
                 {
-                    tex.SetPixel(x, y, Color.green);
-                    tex.SetPixel(x, y, Color.green);
+                    tex.SetPixel(x, y, currBeatIndex % 2 == 0 ? Color.green : Color.yellow);
                 }
             }
             else

@@ -30,11 +30,12 @@ public class TestManager : MonoBehaviour
     int currBeat;
     int totalBeats;
     bool songRunning;
+    bool beatsRunning;
     double startDSPTime;
     double currBeatStartTime;
     double lastDSPTime;
     double dspDelta;
-    double timeOnCurrentBeat;
+    double relativeBeatLength;
     private bool calibrated;
 
     private void Awake()
@@ -80,11 +81,12 @@ public class TestManager : MonoBehaviour
             UpdateIKRefs();
         }
          
-        if (UnityEngine.Input.GetKeyDown(KeyCode.F))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.F) &&
+            !songRunning)
             StartSong();
-        if (songRunning)
+        if (beatsRunning)
         {
-            UpdateRunning();
+            UpdateBeats();
             if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
                 BeatDetected();
         }
@@ -98,20 +100,18 @@ public class TestManager : MonoBehaviour
             rightHandIKRef.transform.position = rightHandRigid.transform.position + rightHandInitialdelta;
     }
 
-    private void UpdateRunning()
+    private void UpdateBeats()
     {
 
         double dspTime = AudioSettings.dspTime - startDSPTime;
         dspDelta = dspTime - lastDSPTime;
-        double dspDiff = song.beats[totalBeats + 1].dspTime - dspTime;
-
-        if (dspDiff <= 0)
+        double dspDiff = song.beats[totalBeats].dspTime - dspTime;
+        
+        if (dspDiff < 0)
         {
             NextBeat(dspTime, dspDiff);
-        }
-
-        timeOnCurrentBeat += dspDelta;
-        beatBarController.timeOnCurrentBeat = timeOnCurrentBeat;
+        }        
+        beatBarController.timeOnCurrentBeat = relativeBeatLength - dspDiff;
         lastDSPTime = dspTime;
     }
 
@@ -119,14 +119,23 @@ public class TestManager : MonoBehaviour
     {
         totalBeats = Math.Min(totalBeats + 1, song.beats.Count - 1);
         currBeat = totalBeats % 4; // because song is in 4/4
-        currBeatStartTime = dspTime;
-        double relativeBeatLength = song.beats[currBeat + 1].dspTime - song.beats[currBeat].dspTime;
-        beatBarController.timeToNextBeat = relativeBeatLength;
-        beatBarController.currBeat = currBeat;
-        timeOnCurrentBeat = 0;
+        UpdateCurrentBeatValues(dspTime);
 
     }
 
+    private void UpdateCurrentBeatValues(double dspTime)
+    {
+        currBeatStartTime = dspTime;
+        relativeBeatLength = song.beats[totalBeats + 1].dspTime - song.beats[totalBeats].dspTime;
+        beatBarController.timeToNextBeat = relativeBeatLength;
+        beatBarController.currBeat = currBeat;
+        Debug.Log(currBeat);
+    }
+    void StopSong()
+    {
+        beatsRunning = false;
+        songRunning = false;
+    }
     void StartSong()
     {
         audioSource.clip = song.audioClip;
@@ -135,22 +144,39 @@ public class TestManager : MonoBehaviour
         currBeat = 0;
         totalBeats = 0;
         songRunning = true;
-
-        testStarted?.Invoke();
+        beatsRunning = false;
+        beatBarController.startDspTime = startDSPTime;
+        beatBarController.timeToNextBeat = song.beats[0].dspTime;
+        StartCoroutine(WaitForBeatsStart());
+        testStarted?.Invoke();  
+    }
+    IEnumerator WaitForBeatsStart()
+    {
+        double currDsp = AudioSettings.dspTime - startDSPTime;
+        while (song.beats[0].dspTime - currDsp > 0)
+        {
+            currDsp = AudioSettings.dspTime - startDSPTime;
+            yield return null;
+        }
+        UpdateCurrentBeatValues(currDsp);
+        beatsRunning = true;
     }
     //check if detected beat was in timeframe
     void BeatDetected()
     {
         double dsp = AudioSettings.dspTime - startDSPTime;
 
-        if (Math.Abs(song.beats[totalBeats].dspTime - dsp) <= TestConfig.current.beatBuffer ||
-            Math.Abs(song.beats[totalBeats+1].dspTime - dsp) <= TestConfig.current.beatBuffer)
+        if (Math.Abs(song.beats[totalBeats].dspTime - dsp) <= TestConfig.current.beatBuffer / 2 ||
+            Math.Abs(song.beats[totalBeats+1].dspTime - dsp) <= TestConfig.current.beatBuffer / 2)
         {
             correctBeatDetected?.Invoke();
+            Debug.Log("correct");
         }
         else
         {
             falseBeatDetected?.Invoke();
+            Debug.Log("false");
+
         }
 
     }
