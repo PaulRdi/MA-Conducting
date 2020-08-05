@@ -12,6 +12,7 @@ public class TestManager : MonoBehaviour
     public static event Action correctBeatDetected;
     public static event Action falseBeatDetected;
     public static event Action testStarted;
+    public static event Action onCalibrate;
 
     [SerializeField] bool useRigid = true;
     [SerializeField] Song song;
@@ -52,14 +53,28 @@ public class TestManager : MonoBehaviour
         calibrationButton.onClick.AddListener(Calibrate);
 
     }
-    private void Calibrate()
+
+    void Calibrate()
     {
+        //CalibrateGlove();
+        CalibrateSuit();
+        calibrated = true;
+        onCalibrate?.Invoke();
+    }
+
+    private void CalibrateSuit()
+    {
+
+    }
+
+    private void CalibrateGlove()
+    {
+        //Glove Test
         Vector3 dir = farScaleTransform.position - closeScaleTransform.position;
         if (!useRigid)
             rightHandInitialdelta = rightHandIKRef.position - rightHandMarker.transform.position;
         else
             rightHandInitialdelta = rightHandIKRef.position - rightHandRigid.transform.position;
-        calibrated = true;
     }
 
     IEnumerator TestRoutine()
