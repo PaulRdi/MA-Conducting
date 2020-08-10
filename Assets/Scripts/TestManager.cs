@@ -12,9 +12,8 @@ public class TestManager : MonoBehaviour
     public static event Action correctBeatDetected;
     public static event Action falseBeatDetected;
     public static event Action testStarted;
-    public static event Action onCalibrate;
+    public static event Action<Transform> onCalibrate; //pushes hip transform
 
-    [SerializeField] bool useRigid = true;
     [SerializeField] Song song;
     [SerializeField] AudioSource audioSource;
     [SerializeField] TestConfig config;
@@ -23,10 +22,12 @@ public class TestManager : MonoBehaviour
     [SerializeField] Button calibrationButton;
     [SerializeField] Transform calibrationPoint;
     [SerializeField] Transform closeScaleTransform, farScaleTransform;
-    [SerializeField] OWLMarker rightHandMarker, leftHandMarker;
-    [SerializeField] OWLRigidbody rightHandRigid;
     [SerializeField] Transform rightHandIKRef;
-    Vector3 rightHandInitialdelta;
+    [SerializeField] Transform leftHandIKRef;
+    [SerializeField] Transform rightHandTransform, leftHandTransform;
+    [SerializeField] Transform hip;
+    Vector3 rightHandInitialDelta;
+    Vector3 leftHandInitialDelta;
     BeatBarController beatBarController;
     int currBeat;
     int totalBeats;
@@ -56,25 +57,18 @@ public class TestManager : MonoBehaviour
 
     void Calibrate()
     {
-        //CalibrateGlove();
-        CalibrateSuit();
+        CalibrateIK();
         calibrated = true;
-        onCalibrate?.Invoke();
+        onCalibrate?.Invoke(hip);
     }
 
-    private void CalibrateSuit()
+    private void CalibrateIK()
     {
+        Vector3 distanceRigIK = rightHandIKRef.transform.position - leftHandIKRef.transform.position;
+        Vector3 distanceSuitIK = rightHandTransform.position - leftHandTransform.position;
 
-    }
-
-    private void CalibrateGlove()
-    {
-        //Glove Test
-        Vector3 dir = farScaleTransform.position - closeScaleTransform.position;
-        if (!useRigid)
-            rightHandInitialdelta = rightHandIKRef.position - rightHandMarker.transform.position;
-        else
-            rightHandInitialdelta = rightHandIKRef.position - rightHandRigid.transform.position;
+        float scale = distanceSuitIK.magnitude / distanceRigIK.magnitude;
+        rig.transform.localScale *= scale;
     }
 
     IEnumerator TestRoutine()
@@ -90,12 +84,7 @@ public class TestManager : MonoBehaviour
     }
 
     private void Update()
-    {
-        if (rightHandInitialdelta != default)
-        {
-            UpdateIKRefs();
-        }
-         
+    {         
         if (UnityEngine.Input.GetKeyDown(KeyCode.F) &&
             !songRunning)
             StartSong();
@@ -105,14 +94,6 @@ public class TestManager : MonoBehaviour
             if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
                 BeatDetected();
         }
-    }
-
-    private void UpdateIKRefs()
-    {
-        if (!useRigid)
-            rightHandIKRef.transform.position = rightHandMarker.transform.position + rightHandInitialdelta;
-        else
-            rightHandIKRef.transform.position = rightHandRigid.transform.position + rightHandInitialdelta;
     }
 
     private void UpdateBeats()

@@ -19,7 +19,7 @@ public class IKTracker : MonoBehaviour
         TestManager.onCalibrate -= TestManager_onCalibrate;
     }
 
-    private void TestManager_onCalibrate()
+    private void TestManager_onCalibrate(Transform hip)
     {
         calibratedOffset = transform.position - referencedMarkerGroup.lastAveragePosition;
         calibrated = true;
