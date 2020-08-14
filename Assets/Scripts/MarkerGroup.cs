@@ -5,6 +5,7 @@ using PhaseSpace.OWL;
 using PhaseSpace.Unity;
 using Unity.Mathematics;
 using System;
+using UnityEngine.Rendering.PostProcessing;
 
 //Dont use rigidbody because e.g. hands are not rigid.
 //Average positions of marker to control transform.
@@ -23,6 +24,7 @@ public class MarkerGroup : MonoBehaviour
     bool[] active;
     float alpha = 0.95f;
     float epsilon = 0.01f;
+    private float maxExtrapolationDistance = .08f;
 
     // Start is called before the first frame update
     void Start()
@@ -55,6 +57,7 @@ public class MarkerGroup : MonoBehaviour
     private void UpdateMarkerPositions()
     {
         activeMarkerCount = 0;
+        Vector3 lastAveragePositionCache = lastAveragePosition;
         lastAveragePosition = Vector3.zero;
         for (int i = 0; i < markers.Length; i++)
         {
@@ -67,7 +70,7 @@ public class MarkerGroup : MonoBehaviour
                 owl.Markers[id].Condition == TrackingCondition.Undefined)
             {
                 alphaSum[i] *= alpha;
-                positions[i] += headings[i] * alphaSum[i];
+                positions[i] += Vector3.ClampMagnitude(headings[i] * alphaSum[i], maxExtrapolationDistance);
                 active[i] = alphaSum[i] > epsilon ? true : false;
             }
             else
@@ -86,6 +89,8 @@ public class MarkerGroup : MonoBehaviour
         }
         if (activeMarkerCount > 0)
             lastAveragePosition /= (float)activeMarkerCount;
+        else
+            lastAveragePosition = lastAveragePositionCache;
         
     }
 }

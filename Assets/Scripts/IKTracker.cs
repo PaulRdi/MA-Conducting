@@ -6,6 +6,8 @@ using UnityEngine;
 public class IKTracker : MonoBehaviour
 {
     [SerializeField] MarkerGroup referencedMarkerGroup;
+    [SerializeField] bool useOffsetToHip = true;
+    Transform markerHip, rigHip;
     bool calibrated;
     Vector3 calibratedOffset;
     // Start is called before the first frame update
@@ -19,9 +21,11 @@ public class IKTracker : MonoBehaviour
         TestManager.onCalibrate -= TestManager_onCalibrate;
     }
 
-    private void TestManager_onCalibrate(Transform hip)
+    private void TestManager_onCalibrate(Transform markerHip, Transform rigHip)
     {
         calibratedOffset = transform.position - referencedMarkerGroup.lastAveragePosition;
+        this.markerHip = markerHip;
+        this.rigHip = rigHip;
         calibrated = true;
     }
 
@@ -34,6 +38,14 @@ public class IKTracker : MonoBehaviour
 
     private void UpdatePosition()
     {
-        transform.position = referencedMarkerGroup.lastAveragePosition + calibratedOffset;
+        if (useOffsetToHip)
+        {
+            Vector3 markerGroupOffsetFromHip = referencedMarkerGroup.lastAveragePosition - markerHip.position;
+            transform.position = rigHip.position + markerGroupOffsetFromHip;
+        }
+        else
+        {
+            transform.position = referencedMarkerGroup.lastAveragePosition + calibratedOffset;
+        }
     }
 }

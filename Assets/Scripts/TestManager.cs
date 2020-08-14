@@ -12,7 +12,7 @@ public class TestManager : MonoBehaviour
     public static event Action correctBeatDetected;
     public static event Action falseBeatDetected;
     public static event Action testStarted;
-    public static event Action<Transform> onCalibrate; //pushes hip transform
+    public static event Action<Transform, Transform> onCalibrate; //pushes hip transforms (marker hip, then rig hip)
 
     [SerializeField] Song song;
     [SerializeField] AudioSource audioSource;
@@ -25,7 +25,8 @@ public class TestManager : MonoBehaviour
     [SerializeField] Transform rightHandIKRef;
     [SerializeField] Transform leftHandIKRef;
     [SerializeField] Transform rightHandTransform, leftHandTransform;
-    [SerializeField] Transform hip;
+    [SerializeField] Transform markerHip, rigHip;
+    [SerializeField] Animator rigAnimator;
     Vector3 rightHandInitialDelta;
     Vector3 leftHandInitialDelta;
     BeatBarController beatBarController;
@@ -59,16 +60,21 @@ public class TestManager : MonoBehaviour
     {
         CalibrateIK();
         calibrated = true;
-        onCalibrate?.Invoke(hip);
+        onCalibrate?.Invoke(markerHip, rigHip);
     }
 
     private void CalibrateIK()
     {
-        Vector3 distanceRigIK = rightHandIKRef.transform.position - leftHandIKRef.transform.position;
-        Vector3 distanceSuitIK = rightHandTransform.position - leftHandTransform.position;
+        Vector3 rigTposeVector = rightHandIKRef.transform.position - leftHandIKRef.transform.position;
+        Vector3 suitTposeVector = rightHandTransform.position - leftHandTransform.position;
 
-        float scale = distanceSuitIK.magnitude / distanceRigIK.magnitude;
+        Quaternion tposeRotation = Quaternion.FromToRotation(rigTposeVector, suitTposeVector);
+
+        float scale = suitTposeVector.magnitude / rigTposeVector.magnitude;
+        
         rig.transform.localScale *= scale;
+        rig.transform.Rotate(Vector3.up, tposeRotation.eulerAngles.y);
+        
     }
 
     IEnumerator TestRoutine()
