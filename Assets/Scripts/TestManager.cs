@@ -14,6 +14,8 @@ public class TestManager : MonoBehaviour
     public static event Action testStarted;
     public static event Action<Transform, Transform> onCalibrate; //pushes hip transforms (marker hip, then rig hip)
 
+    public static TestManager instance;
+
     [SerializeField] Song song;
     [SerializeField] AudioSource audioSource;
     [SerializeField] TestConfig config;
@@ -32,7 +34,7 @@ public class TestManager : MonoBehaviour
     BeatBarController beatBarController;
     int currBeat;
     int totalBeats;
-    bool songRunning;
+    public bool songRunning;
     bool beatsRunning;
     double startDSPTime;
     double currBeatStartTime;
@@ -44,6 +46,7 @@ public class TestManager : MonoBehaviour
     private void Awake()
     {
         songRunning = false;
+        instance = this;
         beatBarController = FindObjectOfType<BeatBarController>();
         dspDelta = 0;
         lastDSPTime = 0;

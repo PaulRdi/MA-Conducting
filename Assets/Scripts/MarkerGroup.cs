@@ -6,7 +6,11 @@ using PhaseSpace.Unity;
 using Unity.Mathematics;
 using System;
 using UnityEngine.Rendering.PostProcessing;
-
+using System.Linq;
+using MathNet.Numerics;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Generic;
+using UnityEngine.Animations.Rigging;
 //Dont use rigidbody because e.g. hands are not rigid.
 //Average positions of marker to control transform.
 //Use HMM to estimate marker position
@@ -16,16 +20,18 @@ public class MarkerGroup : MonoBehaviour
     [SerializeField] Transform controllingTransform;
     OWLMarker[] markers;
     OWLClient owl;
-    public Vector3 lastAveragePosition;
+    public UnityEngine.Vector3 lastAveragePosition;
     public int activeMarkerCount;
-    Vector3[] headings;
-    Vector3[] positions;
+    UnityEngine.Vector3[] headings;
+    UnityEngine.Vector3[] positions;
     float[] alphaSum;
     bool[] active;
-    float alpha = 0.95f;
+    [SerializeField] [Range(0f, 1f)] float debugSphereSize = 0.2f;
+    [SerializeField] [Range(0f, 1f)] float alpha = 0.95f;
     float epsilon = 0.01f;
-    private float maxExtrapolationDistance = .08f;
-
+    UnityEngine.Vector3 avgHeading;
+    //speed the hmm extrapolates with when marker data is lost.
+    [SerializeField] float extrapolationSpeed = 1.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,8 +42,8 @@ public class MarkerGroup : MonoBehaviour
         else
         {
             owl = markers[0].owl;
-            headings = new Vector3[markers.Length];
-            positions = new Vector3[markers.Length];
+            headings = new UnityEngine.Vector3[markers.Length];
+            positions = new UnityEngine.Vector3[markers.Length];
             alphaSum = new float[markers.Length];
             active = new bool[markers.Length];
         }
@@ -50,15 +56,15 @@ public class MarkerGroup : MonoBehaviour
             !owl.Ready)
             return;
 
-        UpdateMarkerPositions();
+        UpdateMarkerPositionsMarkov();
         controllingTransform.position = lastAveragePosition;
     }
 
-    private void UpdateMarkerPositions()
+    private void UpdateMarkerPositionsMarkov()
     {
         activeMarkerCount = 0;
-        Vector3 lastAveragePositionCache = lastAveragePosition;
-        lastAveragePosition = Vector3.zero;
+        UnityEngine.Vector3 lastAveragePositionCache = lastAveragePosition;
+        lastAveragePosition = UnityEngine.Vector3.zero;
         for (int i = 0; i < markers.Length; i++)
         {
             //movement model
@@ -70,8 +76,10 @@ public class MarkerGroup : MonoBehaviour
                 owl.Markers[id].Condition == TrackingCondition.Undefined)
             {
                 alphaSum[i] *= alpha;
-                positions[i] += Vector3.ClampMagnitude(headings[i] * alphaSum[i], maxExtrapolationDistance);
+                positions[i] += headings[i] * Time.deltaTime;
+                //positions[i] += headings[i].normalized * alphaSum[i] * extrapolationSpeed * Time.deltaTime;
                 active[i] = alphaSum[i] > epsilon ? true : false;
+                headings[i] = UnityEngine.Vector3.Lerp(headings[i], avgHeading, 0.1f);
             }
             else
             {
@@ -84,13 +92,27 @@ public class MarkerGroup : MonoBehaviour
             if (active[i])
             {
                 activeMarkerCount++;
-                lastAveragePosition += positions[i];
+                UnityEngine.Vector3 avgPositionCache = lastAveragePosition;
+                lastAveragePosition += positions[i] * alphaSum[i];              
+                avgHeading += headings[i];
             }
         }
         if (activeMarkerCount > 0)
-            lastAveragePosition /= (float)activeMarkerCount;
+            lastAveragePosition /= alphaSum.Sum();
         else
             lastAveragePosition = lastAveragePositionCache;
+
+        avgHeading = avgHeading.normalized;
+    }
+
+    private void UpdateMarkerPositionsKalman()
+    {
         
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(controllingTransform.position, debugSphereSize);
     }
 }
