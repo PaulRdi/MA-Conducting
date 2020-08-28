@@ -7,7 +7,7 @@ public class TestConfig : ScriptableObject
 {
 
     /// <summary>
-    /// The time a beat is valid in milliseconds
+    /// The time a beat is valid in seconds
     /// </summary>
     public double beatBuffer => _beatBuffer;
     [SerializeField] double _beatBuffer = 50;

@@ -29,6 +29,8 @@ public class TestManager : MonoBehaviour
     [SerializeField] Transform rightHandTransform, leftHandTransform;
     [SerializeField] Transform markerHip, rigHip;
     [SerializeField] Animator rigAnimator;
+    [SerializeField] RawImage waveformPreviewImage;
+    Texture2D waveformPreviewTexture;
     Vector3 rightHandInitialDelta;
     Vector3 leftHandInitialDelta;
     BeatBarController beatBarController;
@@ -42,6 +44,7 @@ public class TestManager : MonoBehaviour
     double dspDelta;
     double relativeBeatLength;
     private bool calibrated;
+
 
     private void Awake()
     {
@@ -102,12 +105,29 @@ public class TestManager : MonoBehaviour
             UpdateBeats();
             if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
                 BeatDetected();
+            DrawSongPreview();
         }
+    }
+
+    private void DrawSongPreview()
+    {
+       float[] samples = Util.GetTextureSamples(1.0, song.audioClip, (int)waveformPreviewImage.rectTransform.rect.width);
+        Util.PaintWaveformSpectrum(
+            samples,
+            1.0f,
+            waveformPreviewTexture,
+            song,
+            (int)waveformPreviewImage.rectTransform.rect.width,
+            (int)waveformPreviewImage.rectTransform.rect.height,
+            Color.grey,
+            AudioSettings.dspTime - startDSPTime,
+            TestConfig.current.beatBuffer);
     }
 
     private void UpdateBeats()
     {
-
+        if (totalBeats >= song.beats.Count)
+            return;
         double dspTime = AudioSettings.dspTime - startDSPTime;
         dspDelta = dspTime - lastDSPTime;
         double dspDiff = song.beats[totalBeats].dspTime - dspTime;
@@ -134,7 +154,6 @@ public class TestManager : MonoBehaviour
         relativeBeatLength = song.beats[totalBeats + 1].dspTime - song.beats[totalBeats].dspTime;
         beatBarController.timeToNextBeat = relativeBeatLength;
         beatBarController.currBeat = currBeat;
-        Debug.Log(currBeat);
     }
     void StopSong()
     {
@@ -143,6 +162,11 @@ public class TestManager : MonoBehaviour
     }
     void StartSong()
     {
+        if (waveformPreviewTexture != null)
+            DestroyImmediate(waveformPreviewTexture);
+
+        waveformPreviewTexture = new Texture2D((int)waveformPreviewImage.rectTransform.rect.width, (int)waveformPreviewImage.rectTransform.rect.height);
+        waveformPreviewImage.texture = waveformPreviewTexture;
         audioSource.clip = song.audioClip;
         audioSource.Play();
         startDSPTime = AudioSettings.dspTime;
@@ -170,9 +194,10 @@ public class TestManager : MonoBehaviour
     void BeatDetected()
     {
         double dsp = AudioSettings.dspTime - startDSPTime;
-
-        if (Math.Abs(song.beats[totalBeats].dspTime - dsp) <= TestConfig.current.beatBuffer / 2 ||
-            Math.Abs(song.beats[totalBeats+1].dspTime - dsp) <= TestConfig.current.beatBuffer / 2)
+        if ((totalBeats < song.beats.Count &&
+            Util.DSPTimeInBeat(song, TestConfig.current.beatBuffer, totalBeats, dsp)) ||
+            (totalBeats+1 < song.beats.Count &&
+            Util.DSPTimeInBeat(song, TestConfig.current.beatBuffer, totalBeats+1, dsp)))
         {
             correctBeatDetected?.Invoke();
             Debug.Log("correct");
@@ -181,8 +206,6 @@ public class TestManager : MonoBehaviour
         {
             falseBeatDetected?.Invoke();
             Debug.Log("false");
-
         }
-
     }
 }

@@ -15,62 +15,398 @@ MonoBehaviour:
   audioClip: {fileID: 8300000, guid: f0f8b16a76c7633438999a460e03229b, type: 3}
   beats:
   - beat: 0
-    dspTime: 3.413333333333327
+    dspTime: 5.610666666665566
   - beat: 1
-    dspTime: 3.775999999999982
+    dspTime: 6.2506666666668025
   - beat: 2
-    dspTime: 4.117333333333335
+    dspTime: 6.954666666666526
   - beat: 3
-    dspTime: 4.522666666666652
+    dspTime: 7.701333333332514
   - beat: 0
-    dspTime: 4.864000000000004
+    dspTime: 8.426666666666279
   - beat: 1
-    dspTime: 5.269333333333321
+    dspTime: 9.152000000000044
   - beat: 2
-    dspTime: 5.653333333333336
+    dspTime: 9.962666666666337
   - beat: 3
-    dspTime: 5.99466666666666
+    dspTime: 10.688000000000102
   - beat: 0
-    dspTime: 6.314666666666653
+    dspTime: 11.456000000000131
   - beat: 1
-    dspTime: 6.6346666666666465
+    dspTime: 12.202666666666119
   - beat: 2
-    dspTime: 6.99733333333333
+    dspTime: 12.970666666666148
   - beat: 3
-    dspTime: 7.359999999999985
+    dspTime: 13.674666666665871
   - beat: 0
-    dspTime: 7.722666666666669
+    dspTime: 14.399999999999636
   - beat: 1
-    dspTime: 8.106666666666655
+    dspTime: 15.189333333331888
   - beat: 2
-    dspTime: 8.447999999999979
+    dspTime: 15.914666666665653
   - beat: 3
-    dspTime: 8.810666666666663
+    dspTime: 16.639999999999418
   - beat: 0
-    dspTime: 9.152000000000015
+    dspTime: 17.386666666665406
   - beat: 1
-    dspTime: 9.557333333333332
+    dspTime: 18.175999999999476
   - beat: 2
-    dspTime: 9.941333333333347
+    dspTime: 18.90133333333324
   - beat: 3
-    dspTime: 10.325333333333305
+    dspTime: 19.626666666665187
   - beat: 0
-    dspTime: 10.70933333333332
+    dspTime: 20.373333333332994
   - beat: 1
-    dspTime: 11.093333333333334
+    dspTime: 21.034666666666453
   - beat: 2
-    dspTime: 11.49866666666665
+    dspTime: 21.78133333333244
   - beat: 3
-    dspTime: 11.903999999999968
+    dspTime: 22.54933333333247
   - beat: 0
-    dspTime: 12.26666666666668
+    dspTime: 23.253333333332193
   - beat: 1
-    dspTime: 12.629333333333335
+    dspTime: 24
   - beat: 2
-    dspTime: 12.99199999999999
+    dspTime: 24.746666666665988
   - beat: 3
-    dspTime: 13.354666666666645
+    dspTime: 25.493333333331975
   - beat: 0
-    dspTime: 13.7173333333333
+    dspTime: 26.21866666666574
   - beat: 1
-    dspTime: 14.101333333333315
+    dspTime: 26.943999999999505
+  - beat: 2
+    dspTime: 27.64799999999923
+  - beat: 3
+    dspTime: 28.373333333332994
+  - beat: 0
+    dspTime: 29.141333333333023
+  - beat: 1
+    dspTime: 29.845333333332746
+  - beat: 2
+    dspTime: 30.54933333333247
+  - beat: 3
+    dspTime: 31.23199999999997
+  - beat: 0
+    dspTime: 31.97866666666596
+  - beat: 1
+    dspTime: 32.68266666666568
+  - beat: 2
+    dspTime: 33.386666666665406
+  - beat: 3
+    dspTime: 34.09066666666695
+  - beat: 0
+    dspTime: 34.837333333332936
+  - beat: 1
+    dspTime: 35.58399999999892
+  - beat: 2
+    dspTime: 36.28799999999865
+  - beat: 3
+    dspTime: 36.949333333332106
+  - beat: 0
+    dspTime: 37.717333333332135
+  - beat: 1
+    dspTime: 38.42133333333186
+  - beat: 2
+    dspTime: 39.146666666665624
+  - beat: 3
+    dspTime: 39.87199999999939
+  - beat: 0
+    dspTime: 40.597333333333154
+  - beat: 1
+    dspTime: 41.30133333333288
+  - beat: 2
+    dspTime: 42.02666666666664
+  - beat: 3
+    dspTime: 42.730666666666366
+  - beat: 0
+    dspTime: 43.498666666666395
+  - beat: 1
+    dspTime: 44.22400000000016
+  - beat: 2
+    dspTime: 44.99200000000019
+  - beat: 3
+    dspTime: 45.69599999999991
+  - beat: 0
+    dspTime: 46.4426666666659
+  - beat: 1
+    dspTime: 47.146666666665624
+  - beat: 2
+    dspTime: 47.89333333333343
+  - beat: 3
+    dspTime: 48.55466666666689
+  - beat: 0
+    dspTime: 49.30133333333288
+  - beat: 1
+    dspTime: 49.98399999999856
+  - beat: 2
+    dspTime: 50.730666666666366
+  - beat: 3
+    dspTime: 51.45600000000013
+  - beat: 0
+    dspTime: 52.18133333333208
+  - beat: 1
+    dspTime: 52.949333333332106
+  - beat: 2
+    dspTime: 53.610666666665566
+  - beat: 3
+    dspTime: 54.31466666666529
+  - beat: 0
+    dspTime: 55.039999999999054
+  - beat: 1
+    dspTime: 55.76533333333282
+  - beat: 2
+    dspTime: 56.46933333333254
+  - beat: 3
+    dspTime: 57.19466666666631
+  - beat: 0
+    dspTime: 57.96266666666634
+  - beat: 1
+    dspTime: 58.66666666666606
+  - beat: 2
+    dspTime: 59.370666666665784
+  - beat: 3
+    dspTime: 60.053333333333285
+  - beat: 0
+    dspTime: 60.79999999999927
+  - beat: 1
+    dspTime: 61.48266666666677
+  - beat: 2
+    dspTime: 62.22933333333276
+  - beat: 3
+    dspTime: 62.933333333332484
+  - beat: 0
+    dspTime: 63.65866666666625
+  - beat: 1
+    dspTime: 64.36266666666597
+  - beat: 2
+    dspTime: 65.08799999999974
+  - beat: 3
+    dspTime: 65.8133333333335
+  - beat: 0
+    dspTime: 66.55999999999949
+  - beat: 1
+    dspTime: 67.26399999999921
+  - beat: 2
+    dspTime: 68.05333333333328
+  - beat: 3
+    dspTime: 68.73599999999897
+  - beat: 0
+    dspTime: 69.46133333333273
+  - beat: 1
+    dspTime: 70.20799999999872
+  - beat: 2
+    dspTime: 70.91200000000026
+  - beat: 3
+    dspTime: 71.68000000000029
+  - beat: 0
+    dspTime: 72.53333333333285
+  - beat: 1
+    dspTime: 73.27999999999884
+  - beat: 2
+    dspTime: 74.0053333333326
+  - beat: 3
+    dspTime: 74.70933333333232
+  - beat: 0
+    dspTime: 75.43466666666609
+  - beat: 1
+    dspTime: 76.15999999999985
+  - beat: 2
+    dspTime: 76.86399999999958
+  - beat: 3
+    dspTime: 77.61066666666557
+  - beat: 0
+    dspTime: 78.29333333333307
+  - beat: 1
+    dspTime: 79.01866666666683
+  - beat: 2
+    dspTime: 79.78666666666686
+  - beat: 3
+    dspTime: 80.49066666666658
+  - beat: 0
+    dspTime: 81.21599999999853
+  - beat: 1
+    dspTime: 81.96266666666634
+  - beat: 2
+    dspTime: 82.75199999999859
+  - beat: 3
+    dspTime: 83.51999999999862
+  - beat: 0
+    dspTime: 84.39466666666522
+  - beat: 1
+    dspTime: 85.18399999999929
+  - beat: 2
+    dspTime: 86.05866666666589
+  - beat: 3
+    dspTime: 86.91200000000026
+  - beat: 0
+    dspTime: 87.76533333333282
+  - beat: 1
+    dspTime: 88.70399999999972
+  - beat: 2
+    dspTime: 89.57866666666632
+  - beat: 3
+    dspTime: 90.45333333333292
+  - beat: 0
+    dspTime: 91.37066666666578
+  - beat: 1
+    dspTime: 92.18133333333208
+  - beat: 2
+    dspTime: 93.01333333333241
+  - beat: 3
+    dspTime: 93.88799999999901
+  - beat: 0
+    dspTime: 94.74133333333339
+  - beat: 1
+    dspTime: 95.68000000000029
+  - beat: 2
+    dspTime: 96.59733333333315
+  - beat: 3
+    dspTime: 97.62133333333259
+  - beat: 0
+    dspTime: 98.6239999999998
+  - beat: 1
+    dspTime: 99.51999999999862
+  - beat: 2
+    dspTime: 100.4373333333333
+  - beat: 3
+    dspTime: 101.3119999999999
+  - beat: 0
+    dspTime: 102.22933333333276
+  - beat: 1
+    dspTime: 103.0613333333331
+  - beat: 2
+    dspTime: 104.02133333333222
+  - beat: 3
+    dspTime: 104.95999999999913
+  - beat: 0
+    dspTime: 105.92000000000007
+  - beat: 1
+    dspTime: 106.73066666666637
+  - beat: 2
+    dspTime: 107.58399999999892
+  - beat: 3
+    dspTime: 107.64799999999923
+  - beat: 0
+    dspTime: 108.41599999999926
+  - beat: 1
+    dspTime: 109.3760000000002
+  - beat: 2
+    dspTime: 110.29333333333307
+  - beat: 3
+    dspTime: 111.27466666666623
+  - beat: 0
+    dspTime: 112.29866666666567
+  - beat: 1
+    dspTime: 113.15200000000004
+  - beat: 2
+    dspTime: 114.0053333333326
+  - beat: 3
+    dspTime: 114.85866666666698
+  - beat: 0
+    dspTime: 114.8799999999992
+  - beat: 1
+    dspTime: 115.77599999999984
+  - beat: 2
+    dspTime: 116.71466666666674
+  - beat: 3
+    dspTime: 117.69599999999991
+  - beat: 0
+    dspTime: 118.63466666666682
+  - beat: 1
+    dspTime: 119.48799999999937
+  - beat: 2
+    dspTime: 120.36266666666597
+  - beat: 3
+    dspTime: 121.21599999999853
+  - beat: 0
+    dspTime: 122.0693333333329
+  - beat: 1
+    dspTime: 123.00799999999981
+  - beat: 2
+    dspTime: 123.88266666666641
+  - beat: 3
+    dspTime: 124.86399999999958
+  - beat: 0
+    dspTime: 125.8239999999987
+  - beat: 1
+    dspTime: 126.71999999999935
+  - beat: 2
+    dspTime: 127.59466666666594
+  - beat: 3
+    dspTime: 128.5119999999988
+  - beat: 0
+    dspTime: 129.4293333333335
+  - beat: 1
+    dspTime: 130.41066666666666
+  - beat: 2
+    dspTime: 131.37066666666578
+  - beat: 3
+    dspTime: 132.28799999999865
+  - beat: 0
+    dspTime: 133.14133333333302
+  - beat: 1
+    dspTime: 134.03733333333184
+  - beat: 2
+    dspTime: 134.9973333333328
+  - beat: 3
+    dspTime: 135.01866666666683
+  - beat: 0
+    dspTime: 135.85066666666535
+  - beat: 1
+    dspTime: 136.78933333333225
+  - beat: 2
+    dspTime: 137.83466666666573
+  - beat: 3
+    dspTime: 138.8159999999989
+  - beat: 0
+    dspTime: 139.6906666666655
+  - beat: 1
+    dspTime: 140.5653333333321
+  - beat: 2
+    dspTime: 141.54666666666526
+  - beat: 3
+    dspTime: 142.67733333333308
+  - beat: 0
+    dspTime: 143.3813333333328
+  - beat: 1
+    dspTime: 144.1279999999988
+  - beat: 2
+    dspTime: 144.89599999999882
+  - beat: 3
+    dspTime: 145.6213333333326
+  - beat: 0
+    dspTime: 146.38933333333262
+  - beat: 1
+    dspTime: 147.07200000000012
+  - beat: 2
+    dspTime: 147.79733333333206
+  - beat: 3
+    dspTime: 148.5013333333336
+  - beat: 0
+    dspTime: 149.20533333333333
+  - beat: 1
+    dspTime: 149.95199999999932
+  - beat: 2
+    dspTime: 150.67733333333308
+  - beat: 3
+    dspTime: 151.03999999999905
+  - beat: 0
+    dspTime: 151.08266666666532
+  - beat: 1
+    dspTime: 151.4453333333331
+  - beat: 2
+    dspTime: 152.21333333333314
+  - beat: 3
+    dspTime: 153.02399999999943
+  - beat: 0
+    dspTime: 153.04533333333347
+  - beat: 1
+    dspTime: 153.70666666666693
+  - beat: 2
+    dspTime: 154.0693333333329
+  - beat: 3
+    dspTime: 154.41066666666666
+  - beat: 0
+    dspTime: 155.11466666666638
+  - beat: 1
+    dspTime: 155.90399999999863

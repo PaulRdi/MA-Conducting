@@ -28,7 +28,7 @@ public class AudioEditor : EditorWindow
     AudioEditMode state;
     private void Update()
     {
-        //Repaint();
+        Repaint();
         
     }
 
@@ -120,7 +120,16 @@ public class AudioEditor : EditorWindow
     {
         GUILayout.BeginHorizontal();
         EditorGUI.DrawPreviewTexture(new Rect(0, 110, width, height),
-            PaintWaveformSpectrum(width, height, Color.grey, dspTime));
+            Util.PaintWaveformSpectrum(
+                samplesToVisualize,
+                timePerTexture,
+                tex,
+                song,
+                width, 
+                height, 
+                Color.grey, 
+                dspTime,
+                .015));
         GUILayout.EndHorizontal();
     }
 
@@ -197,88 +206,11 @@ public class AudioEditor : EditorWindow
 
     private void CreateSamplesAndTexture()
     {
-        samplesToVisualize = GetTextureSamples(this.timePerTexture, song.audioClip, 1000);
+        samplesToVisualize = Util.GetTextureSamples(this.timePerTexture, song.audioClip, 1000);
         tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
     }
 
-    //gets a float array that samples the waveform so a excerpt of res seconds is shown
-    public float[] GetTextureSamples(double timePerTexture, AudioClip audio, int texWidth)
-    {
-        //res / audio frame rate
+    
 
-        double visualSampleRate = timePerTexture / (double)texWidth;
-        double audioSampleRate = 1.0 / ((double)audio.frequency * audio.channels);
-
-        int stride = Math.Max(1, (int)Math.Floor(visualSampleRate / audioSampleRate));
-
-        float[] output = new float[audio.samples / stride];
-        float[] audioData = new float[audio.samples];
-
-        audio.GetData(audioData, 0);
-        for (int i = 0; i < output.Length; i++)
-        {
-            output[i] = audioData[i * stride];
-        }
-        return output;
-
-    }
-    //https://answers.unity.com/questions/189886/displaying-an-audio-waveform-in-the-editor.html
-    //modified to paint part of song
-    //https://docs.unity3d.com/ScriptReference/AudioSettings-dspTime.html
-
-    public Texture2D PaintWaveformSpectrum(
-        int width, 
-        int height, 
-        Color col, 
-        double startDSPTime)
-    {
-        double visualSampleRate = timePerTexture / (double)width;
-        int startSample = (int)Math.Floor(startDSPTime / visualSampleRate);
-        float[] waveform = new float[width];
-
-        for (int i = startSample; i < samplesToVisualize.Length && i-startSample < width; i++)
-        {
-            waveform[i - startSample] = samplesToVisualize[i];
-        }
-
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                tex.SetPixel(x, y, Color.black);
-            }
-        }
-
-        Beat startBeat = song.beats.OrderBy(b => Math.Abs(b.dspTime - startDSPTime)).First();
-        int startBeatIndex = song.beats.IndexOf(startBeat);
-        int currBeatIndex = startBeatIndex;
-        for (int x = 0; x < waveform.Length; x++)
-        {
-            int currSample = startSample + x;
-            double currSampleDSPTime = currSample * visualSampleRate;
-            if (currBeatIndex + 1 < song.beats.Count &&
-                currSampleDSPTime >= song.beats[currBeatIndex].dspTime)
-                currBeatIndex++;
-            if (currBeatIndex < song.beats.Count &&
-                Math.Abs(currSampleDSPTime - song.beats[currBeatIndex].dspTime) < .015)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    tex.SetPixel(x, y, currBeatIndex % 2 == 0 ? Color.green : Color.yellow);
-                }
-            }
-            else
-            {
-                for (int y = 0; y <= waveform[x] * ((float)height * .75f); y++)
-                {
-                    tex.SetPixel(x, (height / 2 + y), col);
-                    tex.SetPixel(x, (height / 2 - y), col);
-                }
-            }
-
-        }
-        tex.Apply();
-
-        return tex;
-    }
+   
 }
