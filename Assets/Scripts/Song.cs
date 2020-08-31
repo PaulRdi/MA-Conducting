@@ -10,6 +10,8 @@ public class Song : ScriptableObject
     public AudioClip audioClip;
     public List<Beat> beats;
     public double firstBeatTime => beats[0].dspTime;
+
+    public MoCapData moCapData;
     
 }
 [Serializable]

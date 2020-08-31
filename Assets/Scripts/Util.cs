@@ -95,5 +95,23 @@ public class Util
     {
         return  Math.Abs(song.beats[currBeatIndex].dspTime - currentDSPTime)/2.0 < beatMarkerDspTimeWidth;
     }
+
+    public static void CalibrateIK(
+        Transform rightHandIKRef,
+        Transform leftHandIKRef,
+        Transform rightHandSuitTransform,
+        Transform leftHandSuitTransform,
+        Transform rig)
+    {
+        Vector3 rigTposeVector = rightHandIKRef.transform.position - leftHandIKRef.transform.position;
+        Vector3 suitTposeVector = rightHandSuitTransform.position - leftHandSuitTransform.position;
+
+        Quaternion tposeRotation = Quaternion.FromToRotation(rigTposeVector, suitTposeVector);
+
+        float scale = suitTposeVector.magnitude / rigTposeVector.magnitude;
+
+        rig.transform.localScale *= scale;
+        rig.transform.Rotate(Vector3.up, tposeRotation.eulerAngles.y);
+    }
 }
 

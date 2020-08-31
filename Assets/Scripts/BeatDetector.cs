@@ -41,7 +41,8 @@ public class BeatDetector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!TestManager.instance.songRunning)
+        if (TestManager.instance == null ||
+            !TestManager.instance.songRunning)
             return;
         vel = transform.position - lastPos;
         deltaVel = vel - lastVel;

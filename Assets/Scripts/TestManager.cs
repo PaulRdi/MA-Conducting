@@ -12,7 +12,7 @@ public class TestManager : MonoBehaviour
     public static event Action correctBeatDetected;
     public static event Action falseBeatDetected;
     public static event Action testStarted;
-    public static event Action<Transform, Transform> onCalibrate; //pushes hip transforms (marker hip, then rig hip)
+    public static event Action<MarkerGroup, Transform> onCalibrate; //pushes hip transforms (marker hip, then rig hip)
 
     public static TestManager instance;
 
@@ -27,7 +27,8 @@ public class TestManager : MonoBehaviour
     [SerializeField] Transform rightHandIKRef;
     [SerializeField] Transform leftHandIKRef;
     [SerializeField] Transform rightHandTransform, leftHandTransform;
-    [SerializeField] Transform markerHip, rigHip;
+    [SerializeField] Transform rigHip;
+    [SerializeField] MarkerGroup markerHip;
     [SerializeField] Animator rigAnimator;
     [SerializeField] RawImage waveformPreviewImage;
     Texture2D waveformPreviewTexture;
@@ -71,16 +72,12 @@ public class TestManager : MonoBehaviour
 
     private void CalibrateIK()
     {
-        Vector3 rigTposeVector = rightHandIKRef.transform.position - leftHandIKRef.transform.position;
-        Vector3 suitTposeVector = rightHandTransform.position - leftHandTransform.position;
-
-        Quaternion tposeRotation = Quaternion.FromToRotation(rigTposeVector, suitTposeVector);
-
-        float scale = suitTposeVector.magnitude / rigTposeVector.magnitude;
-        
-        rig.transform.localScale *= scale;
-        rig.transform.Rotate(Vector3.up, tposeRotation.eulerAngles.y);
-        
+        Util.CalibrateIK(
+            rightHandIKRef,
+            leftHandIKRef,
+            rightHandTransform,
+            leftHandTransform,
+            rig);        
     }
 
     IEnumerator TestRoutine()
