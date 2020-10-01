@@ -52,7 +52,7 @@ public class JointKalman
     {
         return stateTransition.Multiply(state) + transitionControlMatrix.Multiply(control) /*+ noise*/;
     }
-
+    //TODO: find process covariance!!
     public JointKalman(int numMarkers, int dimPositions, float deltaT)
     {
         //setup state vector size. Saves last and current position as well as alpha for each marker.

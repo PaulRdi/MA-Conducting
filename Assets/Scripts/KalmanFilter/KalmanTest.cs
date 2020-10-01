@@ -13,7 +13,7 @@ public class KalmanTest : MonoBehaviour
         int statevecSize = numMarkers * dim * 2 + numMarkers;
         kl = new JointKalman(numMarkers, dim, Time.deltaTime);
         Debug.Log(kl.Predict(Vector<float>.Build.Dense(statevecSize, 1.0f),
-            Vector<float>.Build.Dense(numMarkers, 1.0f)));
+            Vector<float>.Build.Dense(numMarkers, -1.0f)));
 
     }
 
