@@ -9,7 +9,6 @@ using UnityEngine.Rendering.PostProcessing;
 using System.Linq;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Generic;
 using UnityEngine.Animations.Rigging;
 //Dont use rigidbody because e.g. hands are not rigid.
 //Average positions of marker to control transform.
