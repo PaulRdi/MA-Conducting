@@ -35,22 +35,28 @@ public class JointKalman
     Matrix<float> stateTransition;
     Matrix<float> transitionControlMatrix;
     Matrix<float> observationMatrix;
-    Matrix<float> processNoiseCovariance;
-    Matrix<float> measurementNoiseCovariance;
+    Matrix<float> processCovarianceNoise;
+    Matrix<float> measurementCovarianceNoise;
     Matrix<float> forecastErrorCovariance;
-    Matrix<float> lastForecastCovariance;
+    Matrix<float> processCovariance;
     int stateVectorRows;
-    int controlVecSize;
+    int numMarkers;
+    int dim;
 
     //TODO: find process covariance!!
     public JointKalman(int numMarkers, int dimPositions, float deltaT, float roomSize, UnityEngine.Vector3 origin)
     {
+        this.dim = dimPositions;
+        this.numMarkers = numMarkers;
         //setup state vector size. Saves last and current position as well as alpha for each marker.
-        stateVectorRows = numMarkers * dimPositions * 2 + numMarkers;
-        controlVecSize = numMarkers;
-
+        this.stateVectorRows = numMarkers * dimPositions * 2 + numMarkers;
+        this.processCovarianceNoise = Matrix<float>.Build.Dense(stateVectorRows, stateVectorRows, 0.0f);
+        this.measurementCovarianceNoise = Matrix<float>.Build.Dense(dimPositions * numMarkers, dimPositions * numMarkers, 0.0f);
         //generate the initial state according to normal distribution.
         Vector<float> initialState = Vector<float>.Build.Dense(stateVectorRows);
+        Vector<float> idealState = Vector<float>.Build.Dense(stateVectorRows);
+
+        
 
         double[] rndvec = new double[numMarkers * dimPositions * 2];
         Normal gauss = new Normal(0.0d, roomSize); //initial standard deviation means positions can be distributed across entire room
@@ -70,11 +76,17 @@ public class JointKalman
                     originComponent = origin.z;
                     break;
             }
-            initialState[i] = originComponent+(float)rndvec[i]; //transform initial positions to origin
+            initialState[i] = originComponent + (float)rndvec[i]; //transform initial positions to origin
+            idealState[i] = originComponent;
         }
         for (int i = 2 * dimPositions * numMarkers; i < stateVectorRows; i++)
+        {
             initialState[i] = 1.0f;
+            idealState[i] = 1.0f;
+        }
         currentState = initialState;
+        Matrix<float> rowMatrix = (currentState - idealState).ToColumnMatrix();
+        processCovariance = rowMatrix.Multiply(rowMatrix.Transpose());
 
         BuildStateTransitionMatrix(numMarkers, dimPositions, deltaT);
         BuildTransitionControlMatrix(numMarkers, dimPositions, deltaT);
@@ -82,28 +94,60 @@ public class JointKalman
     }
 
     /// <summary>
+    /// Represents one step in the discrete kalman filter 
+    /// </summary>
+    /// <param name="observation"></param>
+    /// <returns></returns>
+    public Vector<float> Step(Vector<float> observation, float deltaTime)
+    {
+        BuildStateTransitionMatrix(numMarkers, dim, deltaTime);
+        BuildTransitionControlMatrix(numMarkers, dim, deltaTime);
+
+        Vector<float> predictedState = Predict(
+            currentState, 
+            Vector<float>.Build.Dense(numMarkers, 0f), 
+            Vector<float>.Build.Dense(stateVectorRows, 0f));
+
+        Matrix<float> forecastCovariance = GetForecastErrorCovariance();
+
+        Matrix<float> d = observationMatrix.Multiply(forecastCovariance);
+        d = d.Multiply(observationMatrix.Transpose()) + measurementCovarianceNoise;
+        
+        //Todo: figure out proper matrix formatting.
+        Matrix<float> kalmanGain = (forecastCovariance.Multiply(observationMatrix)).Multiply(d.Inverse());
+        Vector<float> observedState = MakeObservation(observation);
+
+        Vector<float> resultingState = predictedState + kalmanGain.Multiply(observedState - observationMatrix.Multiply(predictedState));
+
+
+        //compute P_k
+        Matrix<float> finalCovariance = (Matrix<float>.Build.DenseIdentity(stateVectorRows) - kalmanGain.Multiply(observationMatrix)).Multiply(forecastCovariance);
+
+        processCovariance = finalCovariance;
+        currentState = resultingState;
+
+        return resultingState;
+    }
+
+    /// <summary>
     /// Makes an observation and returns the resulting state vector.
+    /// 
     /// </summary>
     /// <returns></returns>
-    public Matrix<float> MakeObservation(Vector<float> observation)
+    public Vector<float> MakeObservation(Vector<float> observation)
     {
-        this.currentObservation = observation;
-        return observation.ToColumnMatrix();
+        return observationMatrix.Multiply(observation) + measurementNoise;
     }
     //A*x + B*u + w
-    public Vector<float> Predict(Vector<float> state, Vector<float> control/*, Vector<float> noise*/)
+    public Vector<float> Predict(Vector<float> state, Vector<float> control, Vector<float> noise)
     {
-        return stateTransition.Multiply(state) + transitionControlMatrix.Multiply(control) /*+ noise*/;
+        return stateTransition.Multiply(state) + transitionControlMatrix.Multiply(control) + noise;
     }
 
-    public Vector<float> GetForecastError(Vector<float> lastState, Vector<float> predictedState)
+    public Matrix<float> GetForecastErrorCovariance()
     {
-        return lastState - predictedState;
-    }
-
-    public Matrix<float> GetForecastCovariance()
-    {
-        return stateTransition.Multiply(lastForecastCovariance).Multiply(stateTransition.Transpose()) + processNoiseCovariance;
+        Matrix<float> tmp = stateTransition.Multiply(processCovariance);
+        return tmp.Multiply(stateTransition.Transpose()) + processCovarianceNoise;
     }
 
     
@@ -121,17 +165,17 @@ public class JointKalman
             matrixRows.Add(v);
         }
         observationMatrix = Matrix<float>.Build.DenseOfRowVectors(matrixRows);
-        if (debug) UnityEngine.Debug.Log(observationMatrix.ToString());
+        if (debug) UnityEngine.Debug.Log("Observation matrix: " + "\n" + observationMatrix.ToString());
     }
 
     private void BuildTransitionControlMatrix(int numMarkers, int dimPositions, float deltaT)
     {
         //control vector sets the alpha value
-        transitionControlMatrix = Matrix<float>.Build.Dense(stateVectorRows, controlVecSize);
+        transitionControlMatrix = Matrix<float>.Build.Dense(stateVectorRows, numMarkers);
 
-        for (int i = 0; i < controlVecSize; i++)
+        for (int i = 0; i < numMarkers; i++)
         {
-            transitionControlMatrix[stateVectorRows-controlVecSize+i, i] = alpha - 1.0f;
+            transitionControlMatrix[stateVectorRows- numMarkers + i, i] = alpha - 1.0f;
             /*
              * Updates alpha values according to control input.
              * Control input:
@@ -151,7 +195,7 @@ public class JointKalman
              * --> mby better to set instantly
              * */
         }
-        UnityEngine.Debug.Log(transitionControlMatrix);
+        if (debug) UnityEngine.Debug.Log("Transition control matrix: \n" + transitionControlMatrix.ToString());
 
     }
 
@@ -193,7 +237,7 @@ public class JointKalman
             stateMatrixRows.Add(v);
         }
         stateTransition = Matrix<float>.Build.DenseOfRowVectors(stateMatrixRows);
-        if (debug) UnityEngine.Debug.Log(stateTransition.ToString());
+        if (debug) UnityEngine.Debug.Log("State Transitioin Matrix: \n " + stateTransition.ToString());
     }
 
 }
