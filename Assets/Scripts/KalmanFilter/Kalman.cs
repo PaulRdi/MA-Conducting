@@ -5,6 +5,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.LinearAlgebra.Storage;
+using MathNet.Numerics.Distributions;
 using System;
 
 /// <summary>
@@ -36,8 +37,50 @@ public class JointKalman
     Matrix<float> observationMatrix;
     Matrix<float> processNoiseCovariance;
     Matrix<float> measurementNoiseCovariance;
+    Matrix<float> forecastErrorCovariance;
+    Matrix<float> lastForecastCovariance;
     int stateVectorRows;
     int controlVecSize;
+
+    //TODO: find process covariance!!
+    public JointKalman(int numMarkers, int dimPositions, float deltaT, float roomSize, UnityEngine.Vector3 origin)
+    {
+        //setup state vector size. Saves last and current position as well as alpha for each marker.
+        stateVectorRows = numMarkers * dimPositions * 2 + numMarkers;
+        controlVecSize = numMarkers;
+
+        //generate the initial state according to normal distribution.
+        Vector<float> initialState = Vector<float>.Build.Dense(stateVectorRows);
+
+        double[] rndvec = new double[numMarkers * dimPositions * 2];
+        Normal gauss = new Normal(0.0d, roomSize); //initial standard deviation means positions can be distributed across entire room
+        gauss.Samples(rndvec);
+        for (int i = 0; i < rndvec.Length; i++)
+        {
+            float originComponent = 0.0f;
+            switch (i % 3)
+            {
+                case 0:
+                    originComponent = origin.x;
+                    break;
+                case 1:
+                    originComponent = origin.y;
+                    break;
+                case 2:
+                    originComponent = origin.z;
+                    break;
+            }
+            initialState[i] = originComponent+(float)rndvec[i]; //transform initial positions to origin
+        }
+        for (int i = 2 * dimPositions * numMarkers; i < stateVectorRows; i++)
+            initialState[i] = 1.0f;
+        currentState = initialState;
+
+        BuildStateTransitionMatrix(numMarkers, dimPositions, deltaT);
+        BuildTransitionControlMatrix(numMarkers, dimPositions, deltaT);
+        BuildObservationMatrix(numMarkers, dimPositions, deltaT);
+    }
+
     /// <summary>
     /// Makes an observation and returns the resulting state vector.
     /// </summary>
@@ -52,16 +95,18 @@ public class JointKalman
     {
         return stateTransition.Multiply(state) + transitionControlMatrix.Multiply(control) /*+ noise*/;
     }
-    //TODO: find process covariance!!
-    public JointKalman(int numMarkers, int dimPositions, float deltaT)
+
+    public Vector<float> GetForecastError(Vector<float> lastState, Vector<float> predictedState)
     {
-        //setup state vector size. Saves last and current position as well as alpha for each marker.
-        stateVectorRows = numMarkers * dimPositions * 2 + numMarkers;
-        controlVecSize = numMarkers;
-        BuildStateTransitionMatrix(numMarkers, dimPositions, deltaT);
-        BuildTransitionControlMatrix(numMarkers, dimPositions, deltaT);
-        BuildObservationMatrix(numMarkers, dimPositions, deltaT);
+        return lastState - predictedState;
     }
+
+    public Matrix<float> GetForecastCovariance()
+    {
+        return stateTransition.Multiply(lastForecastCovariance).Multiply(stateTransition.Transpose()) + processNoiseCovariance;
+    }
+
+    
 
     private void BuildObservationMatrix(int numMarkers, int dimPositions, float deltaT)
     {
