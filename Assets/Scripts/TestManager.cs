@@ -99,10 +99,10 @@ public class TestManager : MonoBehaviour
             StartSong();
         if (beatsRunning)
         {
-            UpdateBeats();
             if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
                 BeatDetected();
-            DrawSongPreview();
+            UpdateBeats();            
+            //DrawSongPreview();
         }
     }
 
@@ -191,10 +191,13 @@ public class TestManager : MonoBehaviour
     void BeatDetected()
     {
         double dsp = AudioSettings.dspTime - startDSPTime;
+        double offset1 = 0.0f;
+        double offset2 = 0.0f;
         if ((totalBeats < song.beats.Count &&
-            Util.DSPTimeInBeat(song, TestConfig.current.beatBuffer, totalBeats, dsp)) ||
-            (totalBeats+1 < song.beats.Count &&
-            Util.DSPTimeInBeat(song, TestConfig.current.beatBuffer, totalBeats+1, dsp)))
+            Util.DSPTimeInBeat(song, TestConfig.current.beatBuffer, totalBeats, dsp, out offset1)) ||
+
+            (totalBeats-1 > 0f &&
+            Util.DSPTimeInBeat(song, TestConfig.current.beatBuffer, totalBeats-1, dsp, out offset2)))
         {
             correctBeatDetected?.Invoke();
             Debug.Log("correct");
@@ -203,6 +206,8 @@ public class TestManager : MonoBehaviour
         {
             falseBeatDetected?.Invoke();
             Debug.Log("false");
+            Debug.Log("[current beat] off by: " + offset1 + "\n" +
+                      "[next beat] off by: " + offset2);
         }
     }
 }

@@ -28,7 +28,7 @@ public class JointKalman
     public const bool debug = true;
     public const float alpha = .99f;    //The amount with which alpha decays each frame.
 
-    Vector<float> currentState;
+    public Vector<float> currentState;
     Vector<float> processNoise;
     Vector<float> measurementNoise;
     Vector<float> currentObservation;
@@ -40,6 +40,7 @@ public class JointKalman
     Matrix<float> forecastErrorCovariance;
     Matrix<float> processCovariance;
     int stateVectorRows;
+    int observationVectorRows;
     int numMarkers;
     int dim;
 
@@ -85,12 +86,13 @@ public class JointKalman
             idealState[i] = 1.0f;
         }
         currentState = initialState;
-        Matrix<float> rowMatrix = (currentState - idealState).ToColumnMatrix();
-        processCovariance = rowMatrix.Multiply(rowMatrix.Transpose());
-
+        Matrix<float> columnMatrix = (currentState - idealState).ToColumnMatrix();
+        processCovariance = columnMatrix.Multiply(columnMatrix.Transpose());
         BuildStateTransitionMatrix(numMarkers, dimPositions, deltaT);
         BuildTransitionControlMatrix(numMarkers, dimPositions, deltaT);
         BuildObservationMatrix(numMarkers, dimPositions, deltaT);
+
+        measurementNoise = Vector<float>.Build.Dense(observationMatrix.RowCount, 0f);
     }
 
     /// <summary>
@@ -103,25 +105,29 @@ public class JointKalman
         BuildStateTransitionMatrix(numMarkers, dim, deltaTime);
         BuildTransitionControlMatrix(numMarkers, dim, deltaTime);
 
+        //predict only according to state transition matrix.
+        //add control later.
         Vector<float> predictedState = Predict(
             currentState, 
             Vector<float>.Build.Dense(numMarkers, 0f), 
             Vector<float>.Build.Dense(stateVectorRows, 0f));
 
-        Matrix<float> forecastCovariance = GetForecastErrorCovariance();
-
-        Matrix<float> d = observationMatrix.Multiply(forecastCovariance);
-        d = d.Multiply(observationMatrix.Transpose()) + measurementCovarianceNoise;
-        
-        //Todo: figure out proper matrix formatting.
-        Matrix<float> kalmanGain = (forecastCovariance.Multiply(observationMatrix)).Multiply(d.Inverse());
+        Matrix<float> forecastErrorCovariance = GetForecastErrorCovariance(predictedState);
+       
         Vector<float> observedState = MakeObservation(observation);
 
-        Vector<float> resultingState = predictedState + kalmanGain.Multiply(observedState - observationMatrix.Multiply(predictedState));
+        Matrix<float> d = observationMatrix.Multiply(forecastErrorCovariance.Multiply(observationMatrix.Transpose()))
+                                           + measurementCovarianceNoise;
 
+        Matrix<float> kalmanGain = (forecastErrorCovariance.Multiply(observationMatrix.Transpose())).Multiply(d.Inverse());
+
+
+        Vector<float> resultingState = predictedState + kalmanGain.Multiply((observedState - observationMatrix.Multiply(predictedState)));
 
         //compute P_k
-        Matrix<float> finalCovariance = (Matrix<float>.Build.DenseIdentity(stateVectorRows) - kalmanGain.Multiply(observationMatrix)).Multiply(forecastCovariance);
+        Matrix<float> finalCovariance = 
+            (Matrix<float>.Build.DenseIdentity(kalmanGain.RowCount, kalmanGain.ColumnCount) - kalmanGain.Multiply(observationMatrix))
+                .Multiply(forecastErrorCovariance);
 
         processCovariance = finalCovariance;
         currentState = resultingState;
@@ -144,13 +150,10 @@ public class JointKalman
         return stateTransition.Multiply(state) + transitionControlMatrix.Multiply(control) + noise;
     }
 
-    public Matrix<float> GetForecastErrorCovariance()
+    public Matrix<float> GetForecastErrorCovariance(Vector<float> predictedState)
     {
-        Matrix<float> tmp = stateTransition.Multiply(processCovariance);
-        return tmp.Multiply(stateTransition.Transpose()) + processCovarianceNoise;
-    }
-
-    
+        return stateTransition.Multiply(processCovariance.Multiply(stateTransition.Transpose())) + processCovarianceNoise;
+    }    
 
     private void BuildObservationMatrix(int numMarkers, int dimPositions, float deltaT)
     {

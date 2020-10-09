@@ -18,6 +18,7 @@ public class KalmanTest : MonoBehaviour
         for (int i = 0; i < 100; i++)
         {
             kl.Step(Vector<float>.Build.Dense(statevecSize, 1.0f), 0.02f);
+            Debug.Log("State: \n" + new Vector3(kl.currentState[0], kl.currentState[1], kl.currentState[2]).ToString());
         }
     }
 

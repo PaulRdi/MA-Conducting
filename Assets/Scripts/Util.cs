@@ -69,13 +69,17 @@ public class Util
             if (currBeatIndex + 1 < song.beats.Count &&
                 currSampleDSPTime >= song.beats[currBeatIndex].dspTime)
                 currBeatIndex++;
+
+            double offset = 0.0f;
             if (currBeatIndex < song.beats.Count &&
-                DSPTimeInBeat(song, beatMarkerDspTimeWidth, currBeatIndex, currSampleDSPTime))
+                DSPTimeInBeat(song, beatMarkerDspTimeWidth, currBeatIndex, currSampleDSPTime, out offset))
             {
                 for (int y = 0; y < height; y++)
                 {
                     tex.SetPixel(x, y, currBeatIndex % 2 == 0 ? Color.green : Color.yellow);
                 }
+                Debug.Log("Dsp offset: " + offset);
+
             }
             else
             {
@@ -84,16 +88,18 @@ public class Util
                     tex.SetPixel(x, (height / 2 + y), col);
                     tex.SetPixel(x, (height / 2 - y), col);
                 }
-            }
+                Debug.Log("Dsp offset: " + offset);
 
+            }
         }
         tex.Apply();
         return tex;
     }
 
-    public static bool DSPTimeInBeat(Song song, double beatMarkerDspTimeWidth, int currBeatIndex, double currentDSPTime)
+    public static bool DSPTimeInBeat(Song song, double beatMarkerDspTimeWidth, int currBeatIndex, double currentDSPTime, out double offset)
     {
-        return  Math.Abs(song.beats[currBeatIndex].dspTime - currentDSPTime)/2.0 < beatMarkerDspTimeWidth;
+        offset = currentDSPTime - song.beats[currBeatIndex].dspTime;
+        return  Math.Abs(offset) < beatMarkerDspTimeWidth;
     }
 
     public static void CalibrateIK(
