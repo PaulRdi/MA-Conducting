@@ -124,7 +124,8 @@ public class JointKalman
 
         Vector<float> resultingState = predictedState + kalmanGain.Multiply((observedState - observationMatrix.Multiply(predictedState)));
 
-        //compute P_k
+        
+      //compute P_k
         Matrix<float> finalCovariance = 
             (Matrix<float>.Build.DenseIdentity(kalmanGain.RowCount, kalmanGain.ColumnCount) - kalmanGain.Multiply(observationMatrix))
                 .Multiply(forecastErrorCovariance);
