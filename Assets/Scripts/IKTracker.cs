@@ -9,6 +9,7 @@ public class IKTracker : MonoBehaviour
     [SerializeField] MarkerGroup referencedMarkerGroup;
     [SerializeField] bool useOffsetToHip = true;
     [SerializeField] MarkerGroup markerHip;
+
     Transform rigHip;
     bool calibrated;
     Vector3 calibratedOffset;
