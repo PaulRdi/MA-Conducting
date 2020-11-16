@@ -47,7 +47,7 @@ MonoBehaviour:
   AutoScan: 0
   AutoOpen: 1
   AutoInitialize: 1
-  ServerAddress: 192.168.1.230
+  ServerAddress: 132.180.197.65
   OpenTimeout: 5
   StreamingMode: 1
   Frequency: 90

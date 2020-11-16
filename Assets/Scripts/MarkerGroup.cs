@@ -11,15 +11,25 @@ using UnityEngine.Animations.Rigging;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+
+public enum MarkerPredictionMode
+{
+    None,
+    HMM,
+    Kalman,
+    KalmanGlobal
+}
+
 //Dont use rigidbody because e.g. hands are not rigid.
 //Average positions of marker to control transform.
-//Use HMM to estimate marker position
-
+//Use HMM or KF to estimate marker position
 public class MarkerGroup : MonoBehaviour
 {
     [SerializeField] Transform controllingTransform;
+    [SerializeField] MarkerPredictionMode predictionMode = MarkerPredictionMode.Kalman;
     OWLMarker[] markers;
     KalmanFilter[] kalmans;
+    KalmanFilter globalKalman;
     OWLClient owl;
     public UnityEngine.Vector3 lastAveragePosition;
     public int activeMarkerCount;
@@ -29,16 +39,32 @@ public class MarkerGroup : MonoBehaviour
     bool[] active;
     [SerializeField] [Range(0f, 1f)] float debugSphereSize = 0.2f;
     [SerializeField] [Range(0f, 1f)] float alpha = 0.95f;
-
+    [SerializeField] int numSavedFrames = 50;
+    [SerializeField] float lineWidth = .03f;
     float epsilon = 0.01f;
     UnityEngine.Vector3 avgHeading;
     //speed the hmm extrapolates with when marker data is lost.
     [SerializeField] float extrapolationSpeed = 1.0f;
     // Start is called before the first frame update
+    int statevecSize = 6;
+    int dim = 3;
+    LineRenderer lr;
+    Queue<Vector3> lastPositions;
+
     void Start()
     {
         markers = GetComponentsInChildren<OWLMarker>();
-       
+        if (TryGetComponent<LineRenderer>(out LineRenderer lineRenderer))
+        {
+            lr = lineRenderer;
+        }
+        else
+        {
+            lr = gameObject.AddComponent<LineRenderer>();
+            lr.widthMultiplier = lineWidth;
+            lr.positionCount = numSavedFrames;
+        }
+        lastPositions = new Queue<Vector3>();
         if (markers.Length <= 0)
             Debug.LogWarning("No markers detected for " + this.gameObject.name, this);
         else
@@ -50,60 +76,122 @@ public class MarkerGroup : MonoBehaviour
             active = new bool[markers.Length];
             kalmans = new KalmanFilter[markers.Length];
 
-            int statevecSize = 3;
-            for (int i = 0; i < kalmans.Length; i++)
-            {
-                kalmans[i] = new KalmanFilter(3, 3, 0, Emgu.CV.CvEnum.DepthType.Cv32F);
-                Matrix<float> transitionMatrix = new Matrix<float>(statevecSize, statevecSize);
-                InitTransitionMatrix(statevecSize, 1, 3, transitionMatrix);
-
-                Matrix<float> measurementMatrix = new Matrix<float>(3, statevecSize);
-                measurementMatrix.SetIdentity();
-
-                Matrix<float> processNoise = new Matrix<float>(statevecSize, statevecSize);
-                for (int j = 0; j < statevecSize; j++)
-                {
-                    processNoise[j, j] = 1e-4f;
-
-                }
-
-                Matrix<float> measurementNoise = new Matrix<float>(3, 3);
-                for (int j = 0; j < 3; j++)
-                {
-                    measurementNoise[j, j] = 1e-4f;
-                }
-
-                Matrix<float> state = new Matrix<float>(statevecSize, 1);
-                state.SetRandNormal(new MCvScalar(0.0f), new MCvScalar(5.0f));
-
-                transitionMatrix.Mat.CopyTo(kalmans[i].TransitionMatrix);
-                measurementMatrix.Mat.CopyTo(kalmans[i].MeasurementMatrix);
-                measurementNoise.Mat.CopyTo(kalmans[i].MeasurementNoiseCov);
-                state.Mat.CopyTo(kalmans[i].StatePre);
-                processNoise.Mat.CopyTo(kalmans[i].ErrorCovPre);
-
-            }
+            CreateLocalKalman();
+            CreateGlobalKalman();
         }
     }
-    private void InitTransitionMatrix(int statevecSize, int numMarkers, int dim, Matrix<float> transitionMatrix)
+
+    private void CreateGlobalKalman()
+    {
+        globalKalman = new KalmanFilter(statevecSize, dim, 0, Emgu.CV.CvEnum.DepthType.Cv32F);
+        //transitionMatrix.Mat.CopyTo(globalKalman.TransitionMatrix);
+        Matrix<float> measurementMatrix = new Matrix<float>(dim, statevecSize);
+        measurementMatrix.SetIdentity();
+        Debug.Log("Measurement Matrix \n" + StringifyMatrix(measurementMatrix));
+
+        Matrix<float> processNoise = new Matrix<float>(statevecSize, statevecSize);
+        for (int j = 0; j < statevecSize; j++)
+        {
+            processNoise[j, j] = 1.0e-4f;
+        }
+
+        Matrix<float> measurementNoise = new Matrix<float>(dim, dim);
+        for (int j = 0; j < dim; j++)
+        {
+            measurementNoise[j, j] = 1.0e-3f;
+        }
+
+        Matrix<float> state = new Matrix<float>(statevecSize, 1);
+        state.SetRandNormal(new MCvScalar(0.0f), new MCvScalar(5.0f));
+
+        Matrix<float> errorCov = new Matrix<float>(statevecSize, statevecSize);
+        errorCov.SetIdentity();
+
+        measurementMatrix.Mat.CopyTo(globalKalman.MeasurementMatrix);
+        measurementNoise.Mat.CopyTo(globalKalman.MeasurementNoiseCov);
+        state.Mat.CopyTo(globalKalman.StatePre);
+        processNoise.Mat.CopyTo(globalKalman.ProcessNoiseCov);
+        errorCov.Mat.CopyTo(globalKalman.ErrorCovPost);
+    }
+
+    private void CreateLocalKalman()
+    {
+        for (int i = 0; i < kalmans.Length; i++)
+        {
+            kalmans[i] = new KalmanFilter(statevecSize, dim, 0, Emgu.CV.CvEnum.DepthType.Cv32F);
+            Matrix<float> transitionMatrix = new Matrix<float>(statevecSize, statevecSize);
+            InitTransitionMatrix(1, ref transitionMatrix);
+
+            Matrix<float> measurementMatrix = new Matrix<float>(dim, statevecSize);
+            measurementMatrix.SetIdentity();
+
+            Matrix<float> processNoise = new Matrix<float>(statevecSize, statevecSize);
+            for (int j = 0; j < statevecSize; j++)
+            {
+                processNoise[j, j] = 1e-2f;
+
+            }
+
+            Matrix<float> measurementNoise = new Matrix<float>(dim, dim);
+            for (int j = 0; j < dim; j++)
+            {
+                measurementNoise[j, j] = 1e-4f;
+            }
+
+            Matrix<float> state = new Matrix<float>(statevecSize, 1);
+            state.SetRandNormal(new MCvScalar(0.0f), new MCvScalar(5.0f));
+
+            Matrix<float> errorCov = new Matrix<float>(statevecSize, statevecSize);
+            errorCov.SetIdentity();
+
+            transitionMatrix.Mat.CopyTo(kalmans[i].TransitionMatrix);
+            measurementMatrix.Mat.CopyTo(kalmans[i].MeasurementMatrix);
+            measurementNoise.Mat.CopyTo(kalmans[i].MeasurementNoiseCov);
+            state.Mat.CopyTo(kalmans[i].StatePre);
+            processNoise.Mat.CopyTo(kalmans[i].ProcessNoiseCov);
+            errorCov.Mat.CopyTo(kalmans[i].ErrorCovPost);
+        }
+    }
+
+    private void InitTransitionMatrix(int numMarkers, ref Matrix<float> transitionMatrix)
     {
         for (int i = 0; i < statevecSize; i++)
         {
-            int tmpIndex = i / (numMarkers * dim);
-
-            switch (tmpIndex)
+            for (int j = 0; j < statevecSize; j++)
             {
-                case 0:
-                    transitionMatrix[i, i] = 1 + .1f;
-                    break;
-                case 1:
-                    transitionMatrix[i, i] = -.1f;
-                    break;
-                default:
-                    transitionMatrix[i, i] = 0f;
-                    break;
+                if ((int)(i / (dim * numMarkers)) == 0)
+                {
+                    //init top half of statevec
+                    int offset = i - j;
+                    switch (offset)
+                    {
+                        case 0:
+                            transitionMatrix[i, j] = 1 + Time.deltaTime;
+                            break;
+                        case -3:
+                            transitionMatrix[i, j] = -Time.deltaTime;
+                            break;
+                        default:
+                            transitionMatrix[i, j] = 0.0f;
+                            break;
+                    }
+                }
+                else
+                {
+                    int offset = i - j;
+                    switch (offset)
+                    {
+                        case 3: 
+                            transitionMatrix[i, j] = 1.0f;
+                            break;
+                        default:
+                            transitionMatrix[i, j] = 0.0f;
+                            break;
+                    }
+                }
             }
         }
+        Debug.Log(StringifyMatrix(transitionMatrix));
     }
     // Update is called once per frame
     void Update()
@@ -112,8 +200,58 @@ public class MarkerGroup : MonoBehaviour
             !owl.Ready)
             return;
 
-        UpdateMarkerPositionsKalman();
+        switch (predictionMode)
+        {
+            case MarkerPredictionMode.HMM:
+                UpdateMarkerPositionsMarkov();
+                break;
+            case MarkerPredictionMode.Kalman:
+                UpdateMarkerPositionsKalman();
+                break;
+            case MarkerPredictionMode.KalmanGlobal:
+                UpdateMarkerPositionsGlobalKalman();
+                break;
+            case MarkerPredictionMode.None:
+                UpdateMarkerPositionsAverage();
+                break;
+
+        }
         controllingTransform.position = lastAveragePosition;
+        UpdateVisualization();
+    }
+
+    private void UpdateMarkerPositionsAverage()
+    {
+        int count = 0;
+        Vector3 avgPosition = Vector3.zero;
+        for (int i = 0; i < markers.Length; i++)
+        {
+            int id = markers[i].id;
+            if ((int)owl.Markers[id].cond < 3)
+                continue;
+            avgPosition += markers[i].transform.position;
+            count++;
+        }
+        if (count == 0)
+            return;
+        avgPosition /= (float)count;
+
+        lastAveragePosition = avgPosition;
+    }
+
+    private void UpdateVisualization()
+    {
+        if (lastPositions.Count < numSavedFrames)
+        {
+            lastPositions.Enqueue(lastAveragePosition);
+        }
+        else
+        {
+            lastPositions.Dequeue();
+            lastPositions.Enqueue(lastAveragePosition);
+        }
+
+        lr.SetPositions(lastPositions.ToArray());
     }
 
     private void UpdateMarkerPositionsMarkov()
@@ -165,18 +303,42 @@ public class MarkerGroup : MonoBehaviour
     {
         for (int i = 0; i < markers.Length; i++)
         {
+            Matrix<float> transitionMatrix = new Matrix<float>(statevecSize, statevecSize);
+            InitTransitionMatrix(1, ref transitionMatrix);
+            transitionMatrix.Mat.CopyTo(kalmans[i].TransitionMatrix);
+
             kalmans[i].Predict();
+
+            Matrix<float> measurementNoise = new Matrix<float>(dim, dim);
+            if ((int)owl.Markers[markers[i].id].cond < 3)
+            {
+                for (int j = 0; j < dim; j++)
+                {
+                    measurementNoise[j, j] = 1e-1f;
+                }
+            }
+            else
+            {
+                for (int j = 0; j < dim; j++)
+                {
+                    measurementNoise[j, j] = 1e-4f;
+                }
+            }
+            
+
             kalmans[i].Correct(
                 new Matrix<float>(new float[]{
                     markers[i].transform.position.x,
                     markers[i].transform.position.y,
                     markers[i].transform.position.z }).Mat);
         }
-        Matrix<float> sum = new Matrix<float>(3, 1);
+        Matrix<float> sum = new Matrix<float>(statevecSize, 1);
         int count = 0;
-        foreach (var matrix in kalmans.Select(k => k.StatePost))
+        for (int i = 0; i < markers.Length; i++)
         {
-            Matrix<float> vals = new Matrix<float>(3,1);
+            int id = markers[i].id;
+            var matrix = kalmans[i].StatePost;
+            Matrix<float> vals = new Matrix<float>(statevecSize, 1);
             matrix.ConvertTo(vals, Emgu.CV.CvEnum.DepthType.Cv32F);
             sum += vals;
             count++;
@@ -186,9 +348,53 @@ public class MarkerGroup : MonoBehaviour
         lastAveragePosition = new Vector3(sum[0, 0], sum[1, 0], sum[2, 0]);
     }
 
+    private void UpdateMarkerPositionsGlobalKalman()
+    {
+        int count = 0;
+        Vector3 avgPosition = Vector3.zero;
+        for (int i = 0; i < markers.Length; i++)
+        {
+            int id = markers[i].id;
+            if ((int)owl.Markers[id].cond < 3)
+                continue;
+            avgPosition += markers[i].transform.position;
+            count++;
+        }
+        if (count == 0)
+            return;
+        avgPosition /= (float)count;
+
+        Matrix<float> transitionMatrix = new Matrix<float>(statevecSize, statevecSize);
+        InitTransitionMatrix(1, ref transitionMatrix);
+        transitionMatrix.Mat.CopyTo(globalKalman.TransitionMatrix);
+
+        globalKalman.Predict();
+        globalKalman.Correct(new Matrix<float>(new float[] { avgPosition.x, avgPosition.y, avgPosition.z }).Mat);
+
+        Matrix<float> statePost = new Matrix<float>(statevecSize, 1);
+        globalKalman.StatePost.ConvertTo(statePost, Emgu.CV.CvEnum.DepthType.Cv32F);
+
+
+        lastAveragePosition = new Vector3(statePost[0, 0], statePost[1, 0], statePost[2, 0]);
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(controllingTransform.position, debugSphereSize);
+    }
+
+    public string StringifyMatrix(Matrix<float> matrix)
+    {
+        string output = "Matrix: \n";
+        for (int i = 0; i < matrix.Rows; i++)
+        {
+            for (int j = 0; j < matrix.Cols; j++)
+            {
+                output += matrix[i, j].ToString("0.00") + "\t";
+            }
+            output += "\n";
+        }
+        return output;
     }
 }
