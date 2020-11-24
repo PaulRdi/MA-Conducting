@@ -31,6 +31,7 @@ public class TestManager : MonoBehaviour
     [SerializeField] MarkerGroup markerHip;
     [SerializeField] Animator rigAnimator;
     [SerializeField] RawImage waveformPreviewImage;
+    [SerializeField] Transform[] motionSyncTestTransforms;
     Texture2D waveformPreviewTexture;
     Vector3 rightHandInitialDelta;
     Vector3 leftHandInitialDelta;
@@ -45,6 +46,20 @@ public class TestManager : MonoBehaviour
     double dspDelta;
     double relativeBeatLength;
     private bool calibrated;
+    private bool testRunning;
+    Coroutine testRoutine;
+    MocapDataStreamer dataStreamer;
+
+
+    [Header("Test UI")]
+
+    [SerializeField]
+    Button calibrateSuitButton;
+    [SerializeField]
+    Button startTestButton;
+    [SerializeField] 
+    GameObject testUI;
+
 
 
     private void Awake()
@@ -60,7 +75,8 @@ public class TestManager : MonoBehaviour
         totalBeats = 0;
         TestConfig.current = config;
         calibrationButton.onClick.AddListener(Calibrate);
-
+        testUI.gameObject.SetActive(false);
+        dataStreamer = GetComponent<MocapDataStreamer>();
     }
 
     void Calibrate()
@@ -82,18 +98,61 @@ public class TestManager : MonoBehaviour
 
     IEnumerator TestRoutine()
     {
-        yield return WaitForCalibration();
-        
-    }
+        testUI.SetActive(true);
 
-    IEnumerator WaitForCalibration()
-    {
-        calibrated = false;
+        // calibrate suit step
+        calibrateSuitButton.gameObject.SetActive(true);
+        calibrateSuitButton.onClick.AddListener(Calibrate);
+        dataStreamer.LoadStreamAndInit();
         yield return new WaitUntil(() => calibrated);
+        yield return new WaitUntil(() => dataStreamer.initialized);
+        calibrateSuitButton.onClick.RemoveListener(Calibrate);
+        calibrateSuitButton.gameObject.SetActive(false);
+
+        //wait for test start
+        startTestButton.onClick.AddListener(StartTest);
+        yield return new WaitUntil(() => testRunning);
+        yield return new WaitUntil(() => songRunning);
+        StartCoroutine(WaitForMotionStartRoutine());
+        yield return new WaitWhile(() => songRunning);
+        testRoutine = null;
     }
 
+    IEnumerator WaitForMotionStartRoutine()
+    {
+        double dspTime = AudioSettings.dspTime - startDSPTime + TestConfig.current.startOffset;
+
+        while (song.beats[0].dspTime - dspTime > 0)
+        {
+            dspTime = AudioSettings.dspTime - startDSPTime + TestConfig.current.startOffset;
+            yield return null;
+        }
+        dataStreamer.Play(motionSyncTestTransforms);
+    }
+    void StartTest()
+    {
+        testRunning = true;
+        StartSong();
+        testStarted?.Invoke();
+    }
     private void Update()
     {         
+
+        if (UnityEngine.Input.GetKeyDown(KeyCode.F8))
+        {
+            if (testRoutine == null)
+                testRoutine = StartCoroutine(TestRoutine());
+        }
+        else if (UnityEngine.Input.GetKeyDown(KeyCode.F12))
+        {
+            if (testRoutine != null)
+            {
+                StopSong();
+                StopCoroutine(testRoutine);
+                calibrated = false;
+            }
+        }
+
         if (UnityEngine.Input.GetKeyDown(KeyCode.F) &&
             !songRunning)
             StartSong();
@@ -174,7 +233,6 @@ public class TestManager : MonoBehaviour
         beatBarController.startDspTime = startDSPTime;
         beatBarController.timeToNextBeat = song.beats[0].dspTime;
         StartCoroutine(WaitForBeatsStart());
-        testStarted?.Invoke();  
     }
     IEnumerator WaitForBeatsStart()
     {

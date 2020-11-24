@@ -32,7 +32,7 @@ public class MoCapData
     public int numMarkerGroups { get; private set; }
     int currentRecordFrameIndex;
     [JsonProperty]
-    double firstBeatRelativeDSPTime;
+    public double firstBeatRelativeDSPTime;
     public void SetFirstBeatRelativeDSPTime(double time)
     {
         this.firstBeatRelativeDSPTime = time;
@@ -71,7 +71,7 @@ public class MoCapData
         MoCapFrame frame = new MoCapFrame(markerGroups.Length, relativeDspTime);
         for (int i=0; i < markerGroups.Length; i++)
         {
-            frame[i] = markerGroups[i].lastAveragePosition;
+            frame[i] = markerGroups[i].lastAveragePosition - rootPosition;
         }
         dspTimeToMoCapFrame.Add(currentRecordFrameIndex, frame);
         currentRecordFrameIndex++;

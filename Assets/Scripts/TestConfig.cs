@@ -17,5 +17,21 @@ public class TestConfig : ScriptableObject
     [SerializeField]
     float _motionAccuracy = 1.0f;
 
-    public static TestConfig current;
+    public double startOffset => _startOffet;
+    [SerializeField] double _startOffet = 1.0;
+
+    public static TestConfig current
+    {
+        get
+        {
+            if (_current == null)
+                _current = Resources.Load<TestConfig>("fallbackTestConfig");
+            return _current;
+        }
+        set
+        {
+            _current = value;
+        }
+    }
+    static TestConfig _current;
 }

@@ -6,36 +6,52 @@ using System.IO;
 using UnityEngine.UI;
 using System;
 using System.Runtime.Remoting.Messaging;
-
+using TMPro;
 public class MocapDataStreamer : MonoBehaviour
 {
     [SerializeField] string fileName = "lohengrin_test.json";
     [SerializeField] Button testLoadButton, testPlayButton;
+    [SerializeField] TextMeshProUGUI dspText;
+
     [SerializeField]
     [Range(0f, 1f)]
     float debugGizmoSize = .03f;
     Transform[] debugTransforms;
     string folderPath;
-    MocapDataStream dataStream;
+    public MocapDataStream dataStream { get; private set; }
     Coroutine streamingRoutine;
+    internal bool initialized;
+
     void Start()
     {
         folderPath = Application.streamingAssetsPath;
     }
+
+    private void Update()
+    {
+        if (dspText != null && dataStream != null)
+            dspText.text = dataStream.currDSP.ToString("0.00");
+    }
+
     private void OnEnable()
     {
-        testLoadButton.onClick.AddListener(TestLoadButtonClicked);
-        testPlayButton.onClick.AddListener(TestPlay);
+        testLoadButton?.onClick.AddListener(TestLoadButtonClicked);
+        testPlayButton?.onClick.AddListener(TestPlay);
     }
 
    
 
     private void OnDisable()
     {
-        testLoadButton.onClick.RemoveListener(TestLoadButtonClicked);
-        testPlayButton.onClick.RemoveListener(TestPlay);
+        testLoadButton?.onClick.RemoveListener(TestLoadButtonClicked);
+        testPlayButton?.onClick.RemoveListener(TestPlay);
 
 
+    }
+
+    public void Play(Transform[] controllingTransforms)
+    {
+        StartCoroutine(dataStream.Play(controllingTransforms));
     }
     private void TestPlay()
     {
@@ -54,29 +70,32 @@ public class MocapDataStreamer : MonoBehaviour
         {
             debugTransforms[i] = new GameObject("data stream obj_" + i.ToString()).transform;
         }
-        streamingRoutine = StartCoroutine(dataStream.Play(this, debugTransforms));   
+        streamingRoutine = StartCoroutine(dataStream.Play(debugTransforms));   
     }
 
     
 
     private void TestLoadButtonClicked()
     {
-        StartAndLoadStream();
+        LoadStreamAndInit();
     }
 
-    public void StartAndLoadStream()
+    public void LoadStreamAndInit()
     {
+        initialized = false;
         Task.Run(LoadStream)
-            .ContinueWith(StartStream, TaskScheduler.FromCurrentSynchronizationContext());
+            .ContinueWith(InitStreamData, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     public async Task<string> LoadStream()
     {
+        initialized = false;
         return await Task.Run<string>(() => File.ReadAllText(folderPath + "/" + fileName));
     }
-    public object StartStream(Task<string> data)
+    public object InitStreamData(Task<string> data)
     {
         this.dataStream = new MocapDataStream(data.Result);
+        initialized = true;
         return data;
     }
 

@@ -34,8 +34,8 @@ public class IngameRecorder : MonoBehaviour
 
     private void RecordBeat()
     {
-        currBeat = (currBeat + 1)%4;
         song.beats.Add(new Beat(currBeat, AudioSettings.dspTime - startDSP));
+        currBeat = (currBeat + 1)%4;
     }
 
     private void StopRecording()

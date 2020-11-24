@@ -1,0 +1,185 @@
+﻿#pragma kernel FilterParticles
+#define PI 3.1415926535897932384626433832795
+
+struct Particle {
+	float3 position;
+	float weight;
+	int resampleFlag;
+};
+struct Bone {
+	float3 position;
+};
+
+float random(float2 uv);
+float rndX(float lastRandom);
+float rndY(float lastRandom);
+float3 Resample(float3 lastPos, float3 closestDir, float3 bone);
+float3 SampleSphereCoord(float2 seed);
+void GravityBased(uint id);
+void BoneIndexBased(uint id);
+
+RWStructuredBuffer<Particle> particles;
+//StructuredBuffer<Bone> bones;
+//StructuredBuffer<Bone> targetBones;
+int numTrackingBones;
+float4 trackingBones[128];
+float4 trackingBonesOrigin;
+
+int numRecordedBones;
+float4 recordedBones[128];
+float4 recordedBonesOrigin;
+
+float deltaTime;
+float speed;
+float gravity;
+float minDist;
+float maxDist;
+float2 seed;
+
+[numthreads(1024, 1, 1)]
+void FilterParticles(uint id : SV_DispatchThreadID)
+{
+	//Problem! Converges to center of gravity
+	//Problem! With buffers, sometimes resamples at 0,0,0 (seems there is an additional bone at 0,0,0)
+	GravityBased(id);
+
+	//BoneIndexBased(id);
+}
+
+//Requires same bone layout in tracking rig and tracked rig.
+void BoneIndexBased(uint id) {
+	float3 distanceSum = float3(0, 0, 0);
+	float3 moveDir = float3(0, 0, 0);
+	float3 closestDir = float3(9999, 9999, 9999);
+
+	uint boneID = id % numTrackingBones;
+
+	float3 tBonePos = recordedBones[boneID].xyz - recordedBonesOrigin.xyz;
+	float3 dirToRecordedBone = tBonePos - (particles[id].position - trackingBonesOrigin.xyz);
+	float lengthOfDirToRecordedBone = length(dirToRecordedBone);
+	distanceSum += dirToRecordedBone;
+	moveDir += dirToRecordedBone * gravity * (1 / (lengthOfDirToRecordedBone * lengthOfDirToRecordedBone));
+
+	closestDir = dirToRecordedBone;
+
+	float distanceToClosest = length(closestDir);
+	particles[id].position += normalize(closestDir) * speed * deltaTime;
+
+	float3 bonePos = trackingBones[boneID].xyz - trackingBonesOrigin.xyz;
+	float3 dirToTrackedBone = bonePos - (particles[id].position - trackingBonesOrigin.xyz);
+	float lengthOfDirToTrackedBone = length(dirToTrackedBone);
+
+
+	float3 closestDirToTrackedBone = dirToTrackedBone;
+	
+
+	float distanceToClosestTrackedBone = length(closestDirToTrackedBone);
+	//reweight
+	float weight = 1 - min((distanceToClosestTrackedBone - minDist) / (maxDist - minDist), 1.0);
+	//weight now is between 0.0 and 1.0 between minDist and maxDist
+	//if weight is high -> particle was close to nearest joint.
+	//With this -> resample particle if it died
+
+
+	//float a = (1 / (2*PI)) * exp(-(distanceToClosest*distanceToClosest) / 2);
+
+	//closestBoneIndex = min(closestBoneIndex, numBones);
+	if (weight < random(seed))
+	{
+		//particles[id].position = Resample(particles[id].position, closestDir, bones[closestBoneIndex].position);
+		particles[id].position = Resample(
+			particles[id].position - trackingBonesOrigin.xyz, 
+			dirToTrackedBone,
+			trackingBones[boneID].xyz - trackingBonesOrigin.xyz);
+		particles[id].position += trackingBonesOrigin.xyz;
+		particles[id].resampleFlag = 1;
+	}
+}
+
+void GravityBased(uint id) {
+	float3 distanceSum = float3(0, 0, 0);
+	float3 dir = float3(0, 0, 0);
+	float3 closestDir = float3(9999, 9999, 9999);
+
+	uint closestBoneIndex = -1;
+	seed = float2((float)id, deltaTime);
+	//movement model
+	//move particles according to the recorded data.
+	int maxi = min(numRecordedBones, 128);
+	
+	for (int i = 0; i < maxi; i++)
+	{
+		//float3 d = targetBones[i].position - particles[id].position;
+		
+		float3 tBonePos = recordedBones[i].xyz - recordedBonesOrigin.xyz;
+		float3 d = tBonePos - (particles[id].position - trackingBonesOrigin.xyz);
+		float l = length(d);
+		distanceSum += d;
+		dir += d * gravity * (1 / (l*l));
+
+		if (l < length(closestDir))
+		{
+			closestDir = d;
+		}
+	}
+	float distanceToClosest = length(closestDir);
+	//move
+	//float adjSpeed = speed * (min(minDist, distanceToClosest) / distanceToClosest);
+	//particles[id].position += normalize(closestDir) * adjSpeed * deltaTime;
+	particles[id].position += normalize(closestDir) * speed * deltaTime;
+	//particles[id].position += normalize(dir) * speed * deltaTime;
+	// measure after moving	according to realtime data
+	int maxj = min(numTrackingBones, 128);
+	for (int j = 0; j < maxj; j++)
+	{
+		//float3 d = bones[j].position - particles[id].position;
+		float3 bonePos = trackingBones[j].xyz - trackingBonesOrigin.xyz;
+		float3 d = bonePos - (particles[id].position - trackingBonesOrigin.xyz);
+		float l = length(d);
+
+		if (l < length(closestDir))
+		{
+			closestDir = d;
+			closestBoneIndex = j;
+		}
+	}
+	distanceToClosest = length(closestDir);
+	//reweight
+	float weight = 1 - min((distanceToClosest - minDist) / (maxDist - minDist), 1.0);
+	//weight now is between 0.0 and 1.0 between minDist and maxDist
+	//if weight is high -> particle was close to nearest joint.
+	//With this -> resample particle if it died
+
+
+	//float a = (1 / (2*PI)) * exp(-(distanceToClosest*distanceToClosest) / 2);
+
+	//closestBoneIndex = min(closestBoneIndex, numBones);
+	if (weight < random(seed))
+	{
+		//particles[id].position = Resample(particles[id].position, closestDir, bones[closestBoneIndex].position);
+		particles[id].position = Resample(particles[id].position - trackingBonesOrigin.xyz, closestDir, trackingBones[closestBoneIndex].xyz - trackingBonesOrigin.xyz);
+		particles[id].position += trackingBonesOrigin.xyz;
+		particles[id].resampleFlag = 1;
+	}
+}
+
+//https://forum.unity.com/threads/generate-random-float-between-0-and-1-in-shader.610810/
+float random(float2 uv)
+{
+	return frac(sin(dot(uv, float2(12.9898, 78.233)))*43758.5453123);
+}
+float3 Resample(float3 lastPos, float3 closestDir, float3 bone) {
+	return bone + SampleSphereCoord(closestDir.yz) * random(closestDir.xy) * minDist;
+
+	//return bones[closestBoneIndex] - closestDir * random(closestDir.xy);
+}
+//http://corysimon.github.io/articles/uniformdistn-on-sphere/
+float3 SampleSphereCoord(float2 seed) {
+	float theta = 2 * PI*random(seed);
+	float phi = acos(1 - 2 * random(float2(theta, seed.x)));
+
+	float x = sin(phi) * cos(theta);
+	float y = sin(phi) * sin(theta);
+	float z = cos(phi);
+	return float3(x, y, z);
+}

@@ -81,12 +81,12 @@ public class MotionTrackingDataCapturer : MonoBehaviour
             return;
         capturing = false;
 
-        string baseFileName = "lohengrin_test.json";
+        string baseFileName = "lohengrin_test";
         string fileName = baseFileName;
         int counter = 0;
-        while (File.Exists(Application.streamingAssetsPath +"/" + baseFileName))
+        while (File.Exists(Application.streamingAssetsPath +"/" + fileName + ".json"))
         {
-            fileName = baseFileName + "_" + counter.ToString();
+            fileName = baseFileName + "_" + counter.ToString()+".json";
             counter++;
         }
         song.moCapData.Save(fileName);
