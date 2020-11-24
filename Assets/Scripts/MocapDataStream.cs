@@ -28,7 +28,8 @@ public class MocapDataStream
                            - TestConfig.current.startOffset;
 
             int n = 0;
-            while (data.dspTimeToMoCapFrame[currentFrame].relativeDspTime < currDSP)
+            while (currentFrame-1 < data.dspTimeToMoCapFrame.Keys.Count &&
+                data.dspTimeToMoCapFrame[currentFrame].relativeDspTime < currDSP)
             {
                 currentFrame++; //catch up if frame rate of player is slower than recorded frame rate.
                 n++;
