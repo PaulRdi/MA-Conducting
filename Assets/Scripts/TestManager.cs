@@ -12,7 +12,7 @@ public class TestManager : MonoBehaviour
     public static event Action correctBeatDetected;
     public static event Action falseBeatDetected;
     public static event Action testStarted;
-    public static event Action<MarkerGroup, Transform> onCalibrate; //pushes hip transforms (marker hip, then rig hip)
+    public static event Action<Transform, Transform> onCalibrate; //pushes hip transforms (marker hip, then rig hip)
 
     public static TestManager instance;
 
@@ -32,6 +32,7 @@ public class TestManager : MonoBehaviour
     [SerializeField] Animator rigAnimator;
     [SerializeField] RawImage waveformPreviewImage;
     [SerializeField] Transform[] motionSyncTestTransforms;
+    [SerializeField] ParticleSystem correctBeatParticles;
     Texture2D waveformPreviewTexture;
     Vector3 rightHandInitialDelta;
     Vector3 leftHandInitialDelta;
@@ -83,7 +84,7 @@ public class TestManager : MonoBehaviour
     {
         CalibrateIK();
         calibrated = true;
-        onCalibrate?.Invoke(markerHip, rigHip);
+        onCalibrate?.Invoke(markerHip.transform, rigHip);
     }
 
     private void CalibrateIK()
@@ -114,8 +115,16 @@ public class TestManager : MonoBehaviour
         yield return new WaitUntil(() => testRunning);
         yield return new WaitUntil(() => songRunning);
         StartCoroutine(WaitForMotionStartRoutine());
+        BeatDetector.beatDetected += BeatHappened;
         yield return new WaitWhile(() => songRunning);
+        BeatDetector.beatDetected -= BeatHappened;
+
         testRoutine = null;
+    }
+
+    private void BeatHappened(BeatDetector obj)
+    {
+        BeatDetected();
     }
 
     IEnumerator WaitForMotionStartRoutine()
@@ -259,6 +268,7 @@ public class TestManager : MonoBehaviour
         {
             correctBeatDetected?.Invoke();
             Debug.Log("correct");
+            Instantiate(correctBeatParticles, motionSyncTestTransforms[0].position, Quaternion.identity).Play();
         }
         else
         {

@@ -87,7 +87,7 @@ public class MarkerGroup : MonoBehaviour
         //transitionMatrix.Mat.CopyTo(globalKalman.TransitionMatrix);
         Matrix<float> measurementMatrix = new Matrix<float>(dim, statevecSize);
         measurementMatrix.SetIdentity();
-        Debug.Log("Measurement Matrix \n" + StringifyMatrix(measurementMatrix));
+        //Debug.Log("Measurement Matrix \n" + StringifyMatrix(measurementMatrix));
 
         Matrix<float> processNoise = new Matrix<float>(statevecSize, statevecSize);
         for (int j = 0; j < statevecSize; j++)
@@ -191,7 +191,7 @@ public class MarkerGroup : MonoBehaviour
                 }
             }
         }
-        Debug.Log(StringifyMatrix(transitionMatrix));
+        //Debug.Log(StringifyMatrix(transitionMatrix));
     }
     // Update is called once per frame
     void Update()
@@ -237,6 +237,7 @@ public class MarkerGroup : MonoBehaviour
         avgPosition /= (float)count;
 
         lastAveragePosition = avgPosition;
+        controllingTransform.position = lastAveragePosition;
     }
 
     private void UpdateVisualization()

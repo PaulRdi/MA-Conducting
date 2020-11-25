@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 
 public class ParticleFilter : MonoBehaviour
 {
-    [SerializeField] string fileName;
     [SerializeField] ComputeShader particleFilter;
     [SerializeField] Transform[] trackingBones;
     [SerializeField] Transform[] recordedBones;
@@ -34,7 +33,7 @@ public class ParticleFilter : MonoBehaviour
     void Start()
     {
         recordedValues = new List<int>();
-        Debug.Log(trackingBones.Length);
+        //Debug.Log(trackingBones.Length);
         particles = new F_Particle[numParticles];
         for (int i = 0; i < numParticles; i++)
         {

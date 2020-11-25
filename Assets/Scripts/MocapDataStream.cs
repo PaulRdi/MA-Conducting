@@ -28,15 +28,15 @@ public class MocapDataStream
                            - TestConfig.current.startOffset;
 
             int n = 0;
-            while (currentFrame-1 < data.dspTimeToMoCapFrame.Keys.Count &&
+            while (currentFrame < data.dspTimeToMoCapFrame.Keys.Count-1 &&
                 data.dspTimeToMoCapFrame[currentFrame].relativeDspTime < currDSP)
             {
                 currentFrame++; //catch up if frame rate of player is slower than recorded frame rate.
                 n++;
             }                   //wait if frame rate of player is faster than recorded frame rate.
 
-            if (n > 0)
-                Debug.Log("Catch up: " + n + " frames");
+            //if (n > 0)
+            //    Debug.Log("Catch up: " + n + " frames");
             for (int i = 0; i < controllingTransforms.Length; i++)
             {
                 controllingTransforms[i].position = data.dspTimeToMoCapFrame[currentFrame][i];

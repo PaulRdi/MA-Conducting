@@ -6,6 +6,8 @@ using UnityEngine.Rendering.HighDefinition;
 
 public class BeatDetector : MonoBehaviour
 {
+    public static Action<BeatDetector> beatDetected;
+
     Vector3 lastPos;
     Vector3 lastVel;
     Vector3 vel;
@@ -52,6 +54,7 @@ public class BeatDetector : MonoBehaviour
             beatRoutine = StartCoroutine(DetectedBeatRoutine());
 
         lastPos = transform.position;
+
         lastVel = vel;
     }
 
@@ -61,7 +64,7 @@ public class BeatDetector : MonoBehaviour
 
     IEnumerator DetectedBeatRoutine()
     {
-        Debug.Log("beat");
+        beatDetected?.Invoke(this);
         yield return new WaitForSeconds(beatTime);
         beatRoutine = null;
     }

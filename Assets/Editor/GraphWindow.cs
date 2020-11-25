@@ -90,7 +90,7 @@ public class GraphWindow : EditorWindow
             float t = (float)refToStuff[i] / max;
             points[i] = new Vector3((float)i + xOffset, Mathf.Lerp(scale, 0, t));
         }
-        Handles.color = Color.green;
+        Handles.color = Color.blue;
         Handles.DrawAAPolyLine(points);
         Handles.color = Color.black;
         Handles.DrawLine(new Vector3(40.0f, 0.0f), new Vector3(40.0f, scale + 10.0f));

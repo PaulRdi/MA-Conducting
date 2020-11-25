@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class IKTracker : MonoBehaviour
 {
-    [SerializeField] MarkerGroup referencedMarkerGroup;
+    [SerializeField] Transform referencedMarkerGroup;
     [SerializeField] bool useOffsetToHip = true;
-    [SerializeField] MarkerGroup markerHip;
+    [SerializeField] Transform markerHip;
 
     Transform rigHip;
     bool calibrated;
@@ -23,7 +23,7 @@ public class IKTracker : MonoBehaviour
 
     private void MotionTrackingDataCapturer_onCalibrate(MarkerGroup arg1, Transform arg2)
     {
-        Init(arg1, arg2);
+        Init(arg1.transform, arg2);
     }
 
     void OnDisable()
@@ -33,14 +33,14 @@ public class IKTracker : MonoBehaviour
 
     }
 
-    private void TestManager_onCalibrate(MarkerGroup markerHip, Transform rigHip)
+    private void TestManager_onCalibrate(Transform markerHip, Transform rigHip)
     {
         Init(markerHip, rigHip);
     }
 
-    private void Init(MarkerGroup markerHip, Transform rigHip)
+    private void Init(Transform markerHip, Transform rigHip)
     {
-        calibratedOffset = transform.position - referencedMarkerGroup.lastAveragePosition;
+        calibratedOffset = transform.position - referencedMarkerGroup.position;
         this.markerHip = markerHip;
         this.rigHip = rigHip;
         calibrated = true;
@@ -57,12 +57,12 @@ public class IKTracker : MonoBehaviour
     {
         if (useOffsetToHip)
         {
-            Vector3 markerGroupOffsetFromHip = referencedMarkerGroup.lastAveragePosition - markerHip.lastAveragePosition;
+            Vector3 markerGroupOffsetFromHip = referencedMarkerGroup.position - markerHip.position;
             transform.position = rigHip.position + markerGroupOffsetFromHip;
         }
         else
         {
-            transform.position = referencedMarkerGroup.lastAveragePosition + calibratedOffset;
+            transform.position = referencedMarkerGroup.position + calibratedOffset;
         }
     }
 }
