@@ -683,6 +683,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 739184607}
   m_CullTransparentMesh: 0
+--- !u!4 &957867420 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4585767693794272148, guid: 07ce3fa012abcc34a93151c155953ea2,
+    type: 3}
+  m_PrefabInstance: {fileID: 983292595}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &983292595
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -704,6 +710,11 @@ PrefabInstance:
         type: 3}
       propertyPath: predictionMode
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: measurementNoiseMagnitude
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 4585767692790086654, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
@@ -734,6 +745,11 @@ PrefabInstance:
         type: 3}
       propertyPath: predictionMode
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4585767693023433041, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: debugSphereSize
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 4585767693045680788, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
@@ -1303,6 +1319,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1303831415 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4585767693140657549, guid: 07ce3fa012abcc34a93151c155953ea2,
+    type: 3}
+  m_PrefabInstance: {fileID: 983292595}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1351980382 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4585767694407704779, guid: 07ce3fa012abcc34a93151c155953ea2,
+    type: 3}
+  m_PrefabInstance: {fileID: 983292595}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1410585707
 GameObject:
   m_ObjectHideFlags: 0
@@ -1432,31 +1460,51 @@ PrefabInstance:
     - target: {fileID: 461515737, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
-      objectReference: {fileID: 1607362028}
+      objectReference: {fileID: 957867420}
     - target: {fileID: 461515737, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 461515737, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
+      propertyPath: markerHip
+      value: 
+      objectReference: {fileID: 1351980382}
     - target: {fileID: 717269385, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
-      objectReference: {fileID: 2037278901}
+      objectReference: {fileID: 983292597}
+    - target: {fileID: 717269385, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
+      propertyPath: markerHip
+      value: 
+      objectReference: {fileID: 1351980382}
     - target: {fileID: 1172212549, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
-      objectReference: {fileID: 990727567}
+      objectReference: {fileID: 1351980382}
+    - target: {fileID: 1172212549, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
+      propertyPath: markerHip
+      value: 
+      objectReference: {fileID: 1351980382}
     - target: {fileID: 1791758562, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
-      objectReference: {fileID: 1607362028}
+      objectReference: {fileID: 983292598}
+    - target: {fileID: 1791758562, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
+      propertyPath: markerHip
+      value: 
+      objectReference: {fileID: 1351980382}
     - target: {fileID: 1841019578, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
-      objectReference: {fileID: 2037278901}
+      objectReference: {fileID: 1303831415}
     - target: {fileID: 1841019578, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1841019578, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
+      propertyPath: markerHip
+      value: 
+      objectReference: {fileID: 1351980382}
     - target: {fileID: 6132459552125553679, guid: 812ff333a1b158342a9a017efa643a45,
         type: 3}
       propertyPath: m_Name

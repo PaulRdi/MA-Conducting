@@ -28,7 +28,7 @@ public class TestManager : MonoBehaviour
     [SerializeField] Transform leftHandIKRef;
     [SerializeField] Transform rightHandTransform, leftHandTransform;
     [SerializeField] Transform rigHip;
-    [SerializeField] MarkerGroup markerHip;
+    [SerializeField] Transform markerHip;
     [SerializeField] Animator rigAnimator;
     [SerializeField] RawImage waveformPreviewImage;
     [SerializeField] Transform[] motionSyncTestTransforms;
@@ -84,7 +84,7 @@ public class TestManager : MonoBehaviour
     {
         CalibrateIK();
         calibrated = true;
-        onCalibrate?.Invoke(markerHip.transform, rigHip);
+        onCalibrate?.Invoke(markerHip, rigHip);
     }
 
     private void CalibrateIK()
@@ -103,9 +103,16 @@ public class TestManager : MonoBehaviour
 
         // calibrate suit step
         calibrateSuitButton.gameObject.SetActive(true);
-        calibrateSuitButton.onClick.AddListener(Calibrate);
         dataStreamer.LoadStreamAndInit();
+        yield return new WaitUntil(() => dataStreamer.initialized);
+        calibrateSuitButton.onClick.AddListener(Calibrate);
+        var frame0 = dataStreamer.dataStream.data.dspTimeToMoCapFrame[0];
+        rightHandTransform.position = frame0[0];
+        leftHandTransform.position = frame0[1];
+        markerHip.position = frame0[2];
+
         yield return new WaitUntil(() => calibrated);
+        calibrateSuitButton.onClick.RemoveListener(Calibrate);
         yield return new WaitUntil(() => dataStreamer.initialized);
         calibrateSuitButton.onClick.RemoveListener(Calibrate);
         calibrateSuitButton.gameObject.SetActive(false);
@@ -114,6 +121,8 @@ public class TestManager : MonoBehaviour
         startTestButton.onClick.AddListener(StartTest);
         yield return new WaitUntil(() => testRunning);
         yield return new WaitUntil(() => songRunning);
+        startTestButton.onClick.RemoveListener(StartTest);
+        startTestButton.gameObject.SetActive(false);
         StartCoroutine(WaitForMotionStartRoutine());
         BeatDetector.beatDetected += BeatHappened;
         yield return new WaitWhile(() => songRunning);
@@ -191,8 +200,10 @@ public class TestManager : MonoBehaviour
 
     private void UpdateBeats()
     {
-        if (totalBeats >= song.beats.Count)
+        if (totalBeats >= song.beats.Count ||
+            currBeat >= song.beats.Count)
             return;
+        
         double dspTime = AudioSettings.dspTime - startDSPTime;
         dspDelta = dspTime - lastDSPTime;
         double dspDiff = song.beats[totalBeats].dspTime - dspTime;

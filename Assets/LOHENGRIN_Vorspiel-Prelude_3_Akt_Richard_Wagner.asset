@@ -10,212 +10,212 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01a73c5d0d2d07645b66e48b25fc622a, type: 3}
-  m_Name: LOHENGRIN_Vorspiel-Prelude_3_Akt_Richard_Wagner
+  m_Name: LOHENGRIN_Vorspiel-Prelude_3_Akt_Richard_Wagner 1
   m_EditorClassIdentifier: 
   audioClip: {fileID: 8300000, guid: f0f8b16a76c7633438999a460e03229b, type: 3}
   beats:
   - beat: 0
-    dspTime: 5.610666666665566
+    dspTime: 5.589333333333343
   - beat: 1
     dspTime: 6.2506666666668025
   - beat: 2
-    dspTime: 6.954666666666526
+    dspTime: 6.933333333333394
   - beat: 3
-    dspTime: 7.701333333332514
+    dspTime: 7.722666666666555
   - beat: 0
-    dspTime: 8.426666666666279
+    dspTime: 8.469333333333452
   - beat: 1
-    dspTime: 9.152000000000044
+    dspTime: 9.21600000000035
   - beat: 2
-    dspTime: 9.962666666666337
+    dspTime: 9.984000000000378
   - beat: 3
-    dspTime: 10.688000000000102
+    dspTime: 10.730666666667275
   - beat: 0
-    dspTime: 11.456000000000131
+    dspTime: 11.434666666666999
   - beat: 1
-    dspTime: 12.202666666666119
+    dspTime: 12.22400000000016
   - beat: 2
-    dspTime: 12.970666666666148
+    dspTime: 12.970666666667057
   - beat: 3
-    dspTime: 13.674666666665871
+    dspTime: 13.717333333333045
   - beat: 0
-    dspTime: 14.399999999999636
+    dspTime: 14.44266666666681
   - beat: 1
-    dspTime: 15.189333333331888
+    dspTime: 15.168000000000575
   - beat: 2
-    dspTime: 15.914666666665653
+    dspTime: 15.89333333333343
   - beat: 3
-    dspTime: 16.639999999999418
+    dspTime: 16.618666666667195
   - beat: 0
-    dspTime: 17.386666666665406
+    dspTime: 17.386666666667224
   - beat: 1
-    dspTime: 18.175999999999476
+    dspTime: 18.154666666667254
   - beat: 2
-    dspTime: 18.90133333333324
+    dspTime: 18.88000000000011
   - beat: 3
-    dspTime: 19.626666666665187
+    dspTime: 19.605333333333874
   - beat: 0
-    dspTime: 20.373333333332994
+    dspTime: 20.35199999999986
   - beat: 1
-    dspTime: 21.034666666666453
+    dspTime: 21.056000000000495
   - beat: 2
-    dspTime: 21.78133333333244
+    dspTime: 21.824000000000524
   - beat: 3
-    dspTime: 22.54933333333247
+    dspTime: 22.528000000000247
   - beat: 0
-    dspTime: 23.253333333332193
+    dspTime: 23.253333333333103
   - beat: 1
     dspTime: 24
   - beat: 2
-    dspTime: 24.746666666665988
+    dspTime: 24.76800000000003
   - beat: 3
-    dspTime: 25.493333333331975
+    dspTime: 25.493333333333794
   - beat: 0
-    dspTime: 26.21866666666574
+    dspTime: 26.176000000000386
   - beat: 1
-    dspTime: 26.943999999999505
+    dspTime: 26.922666666666373
   - beat: 2
-    dspTime: 27.64799999999923
+    dspTime: 27.66933333333327
   - beat: 3
-    dspTime: 28.373333333332994
+    dspTime: 28.373333333333903
   - beat: 0
-    dspTime: 29.141333333333023
+    dspTime: 29.141333333333932
   - beat: 1
-    dspTime: 29.845333333332746
+    dspTime: 29.824000000000524
   - beat: 2
-    dspTime: 30.54933333333247
+    dspTime: 30.528000000000247
   - beat: 3
-    dspTime: 31.23199999999997
+    dspTime: 31.253333333333103
   - beat: 0
-    dspTime: 31.97866666666596
+    dspTime: 31.957333333333736
   - beat: 1
-    dspTime: 32.68266666666568
+    dspTime: 32.70399999999972
   - beat: 2
-    dspTime: 33.386666666665406
+    dspTime: 33.386666666667224
   - beat: 3
     dspTime: 34.09066666666695
   - beat: 0
-    dspTime: 34.837333333332936
+    dspTime: 34.837333333333845
   - beat: 1
-    dspTime: 35.58399999999892
+    dspTime: 35.52000000000044
   - beat: 2
-    dspTime: 36.28799999999865
+    dspTime: 36.288000000000466
   - beat: 3
-    dspTime: 36.949333333332106
+    dspTime: 36.99200000000019
   - beat: 0
-    dspTime: 37.717333333332135
+    dspTime: 37.69599999999991
   - beat: 1
-    dspTime: 38.42133333333186
+    dspTime: 38.378666666666504
   - beat: 2
-    dspTime: 39.146666666665624
+    dspTime: 39.10400000000027
   - beat: 3
-    dspTime: 39.87199999999939
+    dspTime: 39.80799999999999
   - beat: 0
-    dspTime: 40.597333333333154
+    dspTime: 40.55466666666689
   - beat: 1
-    dspTime: 41.30133333333288
+    dspTime: 41.25866666666661
   - beat: 2
-    dspTime: 42.02666666666664
+    dspTime: 42.00533333333351
   - beat: 3
-    dspTime: 42.730666666666366
+    dspTime: 42.709333333333234
   - beat: 0
     dspTime: 43.498666666666395
   - beat: 1
     dspTime: 44.22400000000016
   - beat: 2
-    dspTime: 44.99200000000019
+    dspTime: 44.97066666666706
   - beat: 3
-    dspTime: 45.69599999999991
+    dspTime: 45.65333333333365
   - beat: 0
-    dspTime: 46.4426666666659
+    dspTime: 46.35733333333337
   - beat: 1
-    dspTime: 47.146666666665624
+    dspTime: 47.1253333333334
   - beat: 2
-    dspTime: 47.89333333333343
+    dspTime: 47.8720000000003
   - beat: 3
     dspTime: 48.55466666666689
   - beat: 0
-    dspTime: 49.30133333333288
+    dspTime: 49.279999999999745
   - beat: 1
-    dspTime: 49.98399999999856
+    dspTime: 49.98400000000038
   - beat: 2
-    dspTime: 50.730666666666366
+    dspTime: 50.709333333333234
   - beat: 3
-    dspTime: 51.45600000000013
+    dspTime: 51.434666666667
   - beat: 0
-    dspTime: 52.18133333333208
+    dspTime: 52.159999999999854
   - beat: 1
-    dspTime: 52.949333333332106
+    dspTime: 52.86400000000049
   - beat: 2
-    dspTime: 53.610666666665566
+    dspTime: 53.56800000000021
   - beat: 3
-    dspTime: 54.31466666666529
+    dspTime: 54.35733333333337
   - beat: 0
-    dspTime: 55.039999999999054
+    dspTime: 55.061333333333096
   - beat: 1
-    dspTime: 55.76533333333282
+    dspTime: 55.76533333333373
   - beat: 2
-    dspTime: 56.46933333333254
+    dspTime: 56.490666666666584
   - beat: 3
-    dspTime: 57.19466666666631
+    dspTime: 57.19466666666722
   - beat: 0
-    dspTime: 57.96266666666634
+    dspTime: 57.98400000000038
   - beat: 1
-    dspTime: 58.66666666666606
+    dspTime: 58.709333333333234
   - beat: 2
-    dspTime: 59.370666666665784
+    dspTime: 59.391999999999825
   - beat: 3
     dspTime: 60.053333333333285
   - beat: 0
-    dspTime: 60.79999999999927
+    dspTime: 60.80000000000018
   - beat: 1
-    dspTime: 61.48266666666677
+    dspTime: 61.503999999999905
   - beat: 2
-    dspTime: 62.22933333333276
+    dspTime: 62.14400000000023
   - beat: 3
-    dspTime: 62.933333333332484
+    dspTime: 62.933333333333394
   - beat: 0
-    dspTime: 63.65866666666625
+    dspTime: 63.65866666666716
   - beat: 1
-    dspTime: 64.36266666666597
+    dspTime: 64.34133333333375
   - beat: 2
-    dspTime: 65.08799999999974
+    dspTime: 64.98133333333317
   - beat: 3
-    dspTime: 65.8133333333335
+    dspTime: 65.77066666666724
   - beat: 0
-    dspTime: 66.55999999999949
+    dspTime: 66.51733333333323
   - beat: 1
-    dspTime: 67.26399999999921
+    dspTime: 67.24266666666699
   - beat: 2
     dspTime: 68.05333333333328
   - beat: 3
-    dspTime: 68.73599999999897
+    dspTime: 68.73599999999988
   - beat: 0
-    dspTime: 69.46133333333273
+    dspTime: 69.41866666666647
   - beat: 1
-    dspTime: 70.20799999999872
+    dspTime: 70.20800000000054
   - beat: 2
-    dspTime: 70.91200000000026
+    dspTime: 70.86933333333309
   - beat: 3
-    dspTime: 71.68000000000029
+    dspTime: 71.65866666666716
   - beat: 0
-    dspTime: 72.53333333333285
+    dspTime: 72.57600000000002
   - beat: 1
-    dspTime: 73.27999999999884
+    dspTime: 73.30133333333379
   - beat: 2
-    dspTime: 74.0053333333326
+    dspTime: 74.02666666666664
   - beat: 3
-    dspTime: 74.70933333333232
+    dspTime: 74.70933333333323
   - beat: 0
-    dspTime: 75.43466666666609
+    dspTime: 75.39199999999983
   - beat: 1
-    dspTime: 76.15999999999985
+    dspTime: 76.1813333333339
   - beat: 2
-    dspTime: 76.86399999999958
+    dspTime: 76.84266666666645
   - beat: 3
-    dspTime: 77.61066666666557
+    dspTime: 77.58933333333334
   - beat: 0
-    dspTime: 78.29333333333307
+    dspTime: 78.27199999999993
   - beat: 1
     dspTime: 79.01866666666683
   - beat: 2
@@ -223,190 +223,294 @@ MonoBehaviour:
   - beat: 3
     dspTime: 80.49066666666658
   - beat: 0
-    dspTime: 81.21599999999853
+    dspTime: 81.23733333333348
   - beat: 1
-    dspTime: 81.96266666666634
+    dspTime: 81.9413333333332
   - beat: 2
-    dspTime: 82.75199999999859
+    dspTime: 82.73066666666728
   - beat: 3
-    dspTime: 83.51999999999862
+    dspTime: 83.52000000000044
   - beat: 0
-    dspTime: 84.39466666666522
+    dspTime: 84.35199999999986
   - beat: 1
-    dspTime: 85.18399999999929
+    dspTime: 85.2480000000005
   - beat: 2
-    dspTime: 86.05866666666589
+    dspTime: 86.0586666666668
   - beat: 3
-    dspTime: 86.91200000000026
+    dspTime: 86.9333333333334
   - beat: 0
-    dspTime: 87.76533333333282
+    dspTime: 87.78666666666686
   - beat: 1
-    dspTime: 88.70399999999972
+    dspTime: 88.55466666666689
   - beat: 2
-    dspTime: 89.57866666666632
+    dspTime: 89.4933333333338
   - beat: 3
-    dspTime: 90.45333333333292
+    dspTime: 90.45333333333383
   - beat: 0
-    dspTime: 91.37066666666578
+    dspTime: 91.34933333333356
   - beat: 1
-    dspTime: 92.18133333333208
+    dspTime: 92.15999999999985
   - beat: 2
-    dspTime: 93.01333333333241
+    dspTime: 92.99200000000019
   - beat: 3
-    dspTime: 93.88799999999901
+    dspTime: 93.82400000000052
   - beat: 0
-    dspTime: 94.74133333333339
+    dspTime: 94.76266666666652
   - beat: 1
-    dspTime: 95.68000000000029
+    dspTime: 95.63733333333312
   - beat: 2
-    dspTime: 96.59733333333315
+    dspTime: 96.57600000000002
   - beat: 3
-    dspTime: 97.62133333333259
+    dspTime: 97.57866666666723
   - beat: 0
-    dspTime: 98.6239999999998
+    dspTime: 98.5600000000004
   - beat: 1
-    dspTime: 99.51999999999862
+    dspTime: 99.434666666667
   - beat: 2
-    dspTime: 100.4373333333333
+    dspTime: 100.33066666666673
   - beat: 3
-    dspTime: 101.3119999999999
+    dspTime: 101.2480000000005
   - beat: 0
-    dspTime: 102.22933333333276
+    dspTime: 102.16533333333336
   - beat: 1
-    dspTime: 103.0613333333331
+    dspTime: 103.03999999999996
   - beat: 2
-    dspTime: 104.02133333333222
+    dspTime: 103.97866666666687
   - beat: 3
-    dspTime: 104.95999999999913
+    dspTime: 104.85333333333347
   - beat: 0
-    dspTime: 105.92000000000007
+    dspTime: 105.8133333333335
   - beat: 1
-    dspTime: 106.73066666666637
+    dspTime: 106.6880000000001
   - beat: 2
-    dspTime: 107.58399999999892
+    dspTime: 107.54133333333357
   - beat: 3
-    dspTime: 107.64799999999923
+    dspTime: 108.41600000000017
   - beat: 0
-    dspTime: 108.41599999999926
+    dspTime: 109.33333333333394
   - beat: 1
-    dspTime: 109.3760000000002
+    dspTime: 110.27199999999993
   - beat: 2
-    dspTime: 110.29333333333307
+    dspTime: 111.16800000000057
   - beat: 3
-    dspTime: 111.27466666666623
+    dspTime: 112.17066666666688
   - beat: 0
-    dspTime: 112.29866666666567
+    dspTime: 113.0666666666666
   - beat: 1
-    dspTime: 113.15200000000004
+    dspTime: 113.98400000000038
   - beat: 2
-    dspTime: 114.0053333333326
+    dspTime: 114.83733333333385
   - beat: 3
-    dspTime: 114.85866666666698
+    dspTime: 115.75466666666671
   - beat: 0
-    dspTime: 114.8799999999992
-  - beat: 1
-    dspTime: 115.77599999999984
-  - beat: 2
     dspTime: 116.71466666666674
-  - beat: 3
-    dspTime: 117.69599999999991
-  - beat: 0
-    dspTime: 118.63466666666682
   - beat: 1
-    dspTime: 119.48799999999937
+    dspTime: 117.67466666666678
   - beat: 2
-    dspTime: 120.36266666666597
+    dspTime: 118.48533333333307
   - beat: 3
-    dspTime: 121.21599999999853
+    dspTime: 119.38133333333371
   - beat: 0
-    dspTime: 122.0693333333329
+    dspTime: 120.27733333333344
   - beat: 1
-    dspTime: 123.00799999999981
+    dspTime: 121.0666666666666
   - beat: 2
-    dspTime: 123.88266666666641
+    dspTime: 122.00533333333351
   - beat: 3
-    dspTime: 124.86399999999958
+    dspTime: 122.96533333333355
   - beat: 0
-    dspTime: 125.8239999999987
+    dspTime: 123.92533333333358
   - beat: 1
-    dspTime: 126.71999999999935
+    dspTime: 124.84266666666645
   - beat: 2
-    dspTime: 127.59466666666594
+    dspTime: 125.76000000000022
   - beat: 3
-    dspTime: 128.5119999999988
+    dspTime: 126.61333333333369
   - beat: 0
-    dspTime: 129.4293333333335
+    dspTime: 127.59466666666685
   - beat: 1
-    dspTime: 130.41066666666666
+    dspTime: 128.49066666666658
   - beat: 2
-    dspTime: 131.37066666666578
+    dspTime: 129.40800000000036
   - beat: 3
-    dspTime: 132.28799999999865
+    dspTime: 130.32533333333322
   - beat: 0
-    dspTime: 133.14133333333302
+    dspTime: 131.3066666666664
   - beat: 1
-    dspTime: 134.03733333333184
+    dspTime: 132.15999999999985
   - beat: 2
-    dspTime: 134.9973333333328
+    dspTime: 133.07733333333363
   - beat: 3
-    dspTime: 135.01866666666683
+    dspTime: 134.03733333333366
   - beat: 0
-    dspTime: 135.85066666666535
+    dspTime: 134.95466666666653
   - beat: 1
-    dspTime: 136.78933333333225
+    dspTime: 135.82933333333312
   - beat: 2
-    dspTime: 137.83466666666573
+    dspTime: 136.85333333333347
   - beat: 3
-    dspTime: 138.8159999999989
+    dspTime: 137.85599999999977
   - beat: 0
-    dspTime: 139.6906666666655
+    dspTime: 138.8800000000001
   - beat: 1
-    dspTime: 140.5653333333321
+    dspTime: 139.66933333333327
   - beat: 2
-    dspTime: 141.54666666666526
+    dspTime: 140.5013333333336
   - beat: 3
-    dspTime: 142.67733333333308
+    dspTime: 141.46133333333364
   - beat: 0
-    dspTime: 143.3813333333328
+    dspTime: 142.61333333333369
   - beat: 1
-    dspTime: 144.1279999999988
+    dspTime: 143.3813333333337
   - beat: 2
-    dspTime: 144.89599999999882
+    dspTime: 144.10666666666657
   - beat: 3
-    dspTime: 145.6213333333326
+    dspTime: 144.85333333333347
   - beat: 0
-    dspTime: 146.38933333333262
+    dspTime: 145.66399999999976
   - beat: 1
-    dspTime: 147.07200000000012
+    dspTime: 146.32533333333322
   - beat: 2
-    dspTime: 147.79733333333206
+    dspTime: 146.94400000000041
   - beat: 3
-    dspTime: 148.5013333333336
+    dspTime: 147.71200000000044
   - beat: 0
-    dspTime: 149.20533333333333
+    dspTime: 148.4373333333333
   - beat: 1
-    dspTime: 149.95199999999932
+    dspTime: 149.1840000000002
   - beat: 2
-    dspTime: 150.67733333333308
+    dspTime: 149.95200000000023
   - beat: 3
-    dspTime: 151.03999999999905
+    dspTime: 150.61333333333369
   - beat: 0
-    dspTime: 151.08266666666532
+    dspTime: 151.40266666666685
   - beat: 1
-    dspTime: 151.4453333333331
+    dspTime: 152.0640000000003
   - beat: 2
-    dspTime: 152.21333333333314
+    dspTime: 152.89599999999973
   - beat: 3
-    dspTime: 153.02399999999943
+    dspTime: 153.6213333333335
   - beat: 0
-    dspTime: 153.04533333333347
+    dspTime: 154.34666666666726
   - beat: 1
-    dspTime: 153.70666666666693
+    dspTime: 155.0079999999998
   - beat: 2
-    dspTime: 154.0693333333329
+    dspTime: 155.818666666667
   - beat: 3
-    dspTime: 154.41066666666666
+    dspTime: 156.54399999999987
   - beat: 0
-    dspTime: 155.11466666666638
+    dspTime: 157.22666666666646
   - beat: 1
-    dspTime: 155.90399999999863
+    dspTime: 157.9306666666671
+  - beat: 2
+    dspTime: 158.61333333333369
+  - beat: 3
+    dspTime: 159.36000000000058
+  - beat: 0
+    dspTime: 160.08533333333344
+  - beat: 1
+    dspTime: 160.8106666666672
+  - beat: 2
+    dspTime: 161.57866666666723
+  - beat: 3
+    dspTime: 162.3040000000001
+  - beat: 0
+    dspTime: 163.0079999999998
+  - beat: 1
+    dspTime: 163.6906666666664
+  - beat: 2
+    dspTime: 164.3733333333339
+  - beat: 3
+    dspTime: 165.1199999999999
+  - beat: 0
+    dspTime: 165.80266666666648
+  - beat: 1
+    dspTime: 166.46399999999994
+  - beat: 2
+    dspTime: 167.16800000000057
+  - beat: 3
+    dspTime: 167.95733333333374
+  - beat: 0
+    dspTime: 168.6826666666666
+  - beat: 1
+    dspTime: 169.4293333333335
+  - beat: 2
+    dspTime: 170.15466666666725
+  - beat: 3
+    dspTime: 170.83733333333385
+  - beat: 0
+    dspTime: 171.58399999999983
+  - beat: 1
+    dspTime: 172.2453333333333
+  - beat: 2
+    dspTime: 173.0560000000005
+  - beat: 3
+    dspTime: 173.71733333333304
+  - beat: 0
+    dspTime: 174.50666666666712
+  - beat: 1
+    dspTime: 175.2533333333331
+  - beat: 2
+    dspTime: 176.04266666666717
+  - beat: 3
+    dspTime: 176.8106666666672
+  - beat: 0
+    dspTime: 178.04799999999977
+  - beat: 1
+    dspTime: 178.83733333333385
+  - beat: 2
+    dspTime: 179.52000000000044
+  - beat: 3
+    dspTime: 180.28800000000047
+  - beat: 0
+    dspTime: 181.03466666666645
+  - beat: 1
+    dspTime: 181.88799999999992
+  - beat: 2
+    dspTime: 182.84799999999996
+  - beat: 3
+    dspTime: 183.72266666666656
+  - beat: 0
+    dspTime: 184.51199999999972
+  - beat: 1
+    dspTime: 185.66399999999976
+  - beat: 2
+    dspTime: 186.6880000000001
+  - beat: 3
+    dspTime: 187.58399999999983
+  - beat: 0
+    dspTime: 188.88533333333362
+  - beat: 1
+    dspTime: 189.7386666666671
+  - beat: 2
+    dspTime: 190.59200000000055
+  - beat: 3
+    dspTime: 191.50933333333342
+  - beat: 0
+    dspTime: 192.59733333333315
+  - beat: 1
+    dspTime: 193.51466666666693
+  - beat: 2
+    dspTime: 194.4960000000001
+  - beat: 3
+    dspTime: 195.64800000000014
+  - beat: 0
+    dspTime: 197.0560000000005
+  - beat: 1
+    dspTime: 198.33600000000024
+  - beat: 2
+    dspTime: 199.10400000000027
+  - beat: 3
+    dspTime: 199.7440000000006
+  - beat: 0
+    dspTime: 200.38400000000001
+  - beat: 1
+    dspTime: 201.10933333333378
+  - beat: 2
+    dspTime: 201.77066666666724
+  - beat: 3
+    dspTime: 202.51733333333323
+  - beat: 0
+    dspTime: 203.19999999999982
+  - beat: 1
+    dspTime: 205.5039999999999

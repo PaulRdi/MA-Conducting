@@ -31,7 +31,10 @@ public class AudioEditor : EditorWindow
         Repaint();
         
     }
-
+    void OnDrawGizmos()
+    {
+        HandleInput();
+    }
     [MenuItem("Window/Audio Editor")]
     public static void CreateAudioPlayer()
     {
@@ -42,7 +45,7 @@ public class AudioEditor : EditorWindow
     }
     private void OnGUI()
     {
-        HandleInput();
+        //HandleInput();
 
         GUILayout.BeginHorizontal();
         song = (Song)EditorGUILayout.ObjectField(song, typeof(Song));
@@ -145,10 +148,13 @@ public class AudioEditor : EditorWindow
 
     private void HandleInput()
     {
+        var e = Event.current;
         if (state == AudioEditMode.Recording &&
-                    Event.current != null &&
-                    Event.current.type == EventType.KeyDown &&
-                    Event.current.keyCode == KeyCode.G)
+                    e != null &&
+                    (e.type == EventType.KeyDown &&
+                    e.keyCode == KeyCode.G) ||
+                    (e.type == EventType.MouseDown &&
+                    e.button == 0))
         {
             double currDSP = AudioSettings.dspTime - dspStart;
             song.beats.Add(new Beat(currBeat, currDSP));

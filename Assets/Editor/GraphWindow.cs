@@ -56,6 +56,7 @@ public class GraphWindow : EditorWindow
     {
         Repaint();
     }
+    
     private void OnInspectorUpdate()
     {
         if (!EditorApplication.isPlaying)

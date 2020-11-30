@@ -41,6 +41,7 @@ public class MarkerGroup : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] float alpha = 0.95f;
     [SerializeField] int numSavedFrames = 50;
     [SerializeField] float lineWidth = .03f;
+    [SerializeField] float measurementNoiseMagnitude = 1e-4f;
     float epsilon = 0.01f;
     UnityEngine.Vector3 avgHeading;
     //speed the hmm extrapolates with when marker data is lost.
@@ -130,13 +131,7 @@ public class MarkerGroup : MonoBehaviour
             {
                 processNoise[j, j] = 1e-2f;
 
-            }
-
-            Matrix<float> measurementNoise = new Matrix<float>(dim, dim);
-            for (int j = 0; j < dim; j++)
-            {
-                measurementNoise[j, j] = 1e-4f;
-            }
+            }            
 
             Matrix<float> state = new Matrix<float>(statevecSize, 1);
             state.SetRandNormal(new MCvScalar(0.0f), new MCvScalar(5.0f));
@@ -146,7 +141,6 @@ public class MarkerGroup : MonoBehaviour
 
             transitionMatrix.Mat.CopyTo(kalmans[i].TransitionMatrix);
             measurementMatrix.Mat.CopyTo(kalmans[i].MeasurementMatrix);
-            measurementNoise.Mat.CopyTo(kalmans[i].MeasurementNoiseCov);
             state.Mat.CopyTo(kalmans[i].StatePre);
             processNoise.Mat.CopyTo(kalmans[i].ProcessNoiseCov);
             errorCov.Mat.CopyTo(kalmans[i].ErrorCovPost);
@@ -361,6 +355,14 @@ public class MarkerGroup : MonoBehaviour
             avgPosition += markers[i].transform.position;
             count++;
         }
+
+        Matrix<float> measurementNoise = new Matrix<float>(dim, dim);
+        for (int j = 0; j < dim; j++)
+        {
+            measurementNoise[j, j] = measurementNoiseMagnitude;
+        }
+        measurementNoise.Mat.CopyTo(globalKalman.MeasurementNoiseCov);
+
         if (count == 0)
             return;
         avgPosition /= (float)count;
@@ -368,6 +370,8 @@ public class MarkerGroup : MonoBehaviour
         Matrix<float> transitionMatrix = new Matrix<float>(statevecSize, statevecSize);
         InitTransitionMatrix(1, ref transitionMatrix);
         transitionMatrix.Mat.CopyTo(globalKalman.TransitionMatrix);
+
+
 
         globalKalman.Predict();
         globalKalman.Correct(new Matrix<float>(new float[] { avgPosition.x, avgPosition.y, avgPosition.z }).Mat);

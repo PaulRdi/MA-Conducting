@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _beatBuffer: 0.15
   _motionAccuracy: 1
+  _startOffet: 1

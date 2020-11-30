@@ -914,12 +914,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &139327410 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4585767694407704779, guid: 07ce3fa012abcc34a93151c155953ea2,
-    type: 3}
-  m_PrefabInstance: {fileID: 4585767693279569652}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &148434031
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1026,7 +1020,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh145596
+  m_Name: pb_Mesh20166
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1355,7 +1349,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh145442
+  m_Name: pb_Mesh20012
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2316,7 +2310,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh145036
+  m_Name: pb_Mesh19616
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -12307,18 +12301,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 589080433}
   m_CullTransparentMesh: 0
---- !u!114 &592038739 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
-    type: 3}
-  m_PrefabInstance: {fileID: 4585767693279569652}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d36362b2a3b47641864df5720b323bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &592140708
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17093,7 +17075,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh145250
+  m_Name: pb_Mesh19820
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -22911,7 +22893,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh145758
+  m_Name: pb_Mesh20328
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -29560,7 +29542,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh145380
+  m_Name: pb_Mesh19948
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -35375,7 +35357,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh144788
+  m_Name: pb_Mesh19370
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -37623,10 +37605,10 @@ MonoBehaviour:
   farScaleTransform: {fileID: 62356255}
   rightHandIKRef: {fileID: 1791758561}
   leftHandIKRef: {fileID: 717269384}
-  rightHandTransform: {fileID: 572537722}
-  leftHandTransform: {fileID: 1102621306}
+  rightHandTransform: {fileID: 874328891668130314}
+  leftHandTransform: {fileID: 874328893319150346}
   rigHip: {fileID: 943104521}
-  markerHip: {fileID: 592038739}
+  markerHip: {fileID: 874328893289092943}
   rigAnimator: {fileID: 943104510}
   waveformPreviewImage: {fileID: 1594196655}
   motionSyncTestTransforms:
@@ -40111,7 +40093,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh145498
+  m_Name: pb_Mesh20068
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -41232,7 +41214,7 @@ GameObject:
   - component: {fileID: 874328891668130314}
   - component: {fileID: 874328891668130315}
   m_Layer: 0
-  m_Name: Transforms::RightHand
+  m_Name: Recorded::Transforms::RightHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41308,7 +41290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 874328893289092943}
   m_Layer: 0
-  m_Name: Transforms::Waist
+  m_Name: Recorded::Transforms::Waist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41338,7 +41320,7 @@ GameObject:
   m_Component:
   - component: {fileID: 874328893319150346}
   m_Layer: 0
-  m_Name: Transforms::LeftHand
+  m_Name: Recorded::Transforms::LeftHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41384,27 +41366,27 @@ PrefabInstance:
     - target: {fileID: 717269385, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
-      objectReference: {fileID: 1102621306}
+      objectReference: {fileID: 874328893319150346}
     - target: {fileID: 717269385, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: markerHip
       value: 
-      objectReference: {fileID: 139327410}
+      objectReference: {fileID: 874328893289092943}
     - target: {fileID: 1172212549, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
-      objectReference: {fileID: 139327410}
+      objectReference: {fileID: 874328893289092943}
     - target: {fileID: 1172212549, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: markerHip
       value: 
-      objectReference: {fileID: 139327410}
+      objectReference: {fileID: 874328893289092943}
     - target: {fileID: 1791758562, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
-      objectReference: {fileID: 572537722}
+      objectReference: {fileID: 874328891668130314}
     - target: {fileID: 1791758562, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: markerHip
       value: 
-      objectReference: {fileID: 139327410}
+      objectReference: {fileID: 874328893289092943}
     - target: {fileID: 1841019578, guid: 812ff333a1b158342a9a017efa643a45, type: 3}
       propertyPath: referencedMarkerGroup
       value: 
