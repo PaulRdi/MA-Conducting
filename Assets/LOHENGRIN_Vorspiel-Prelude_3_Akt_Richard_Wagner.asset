@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01a73c5d0d2d07645b66e48b25fc622a, type: 3}
-  m_Name: LOHENGRIN_Vorspiel-Prelude_3_Akt_Richard_Wagner 1
+  m_Name: LOHENGRIN_Vorspiel-Prelude_3_Akt_Richard_Wagner
   m_EditorClassIdentifier: 
   audioClip: {fileID: 8300000, guid: f0f8b16a76c7633438999a460e03229b, type: 3}
   beats:
