@@ -11,15 +11,17 @@ public class MocapDataStream
 {
     public MoCapData data;
     public double currDSP;
+    public int currentFrame { get; set; }
+
     public MocapDataStream(string jsonMocapData)
     {
         data = JsonConvert.DeserializeObject<MoCapData>(jsonMocapData);
+        currentFrame = 0;
     }
     public IEnumerator Play(Transform[] controllingTransforms)
     {
-        int currentFrame = 0;
         double startDSPTime = AudioSettings.dspTime;
-
+        currentFrame = 0;
         while (currentFrame < data.dspTimeToMoCapFrame.Keys.Count)
         {
             currDSP = AudioSettings.dspTime 
@@ -37,13 +39,18 @@ public class MocapDataStream
 
             //if (n > 0)
             //    Debug.Log("Catch up: " + n + " frames");
-            for (int i = 0; i < controllingTransforms.Length; i++)
-            {
-                controllingTransforms[i].position = data.dspTimeToMoCapFrame[currentFrame][i];
-            }
+            UpdateControllingTransforms(controllingTransforms);
             yield return null;
         }
         yield return null;
+    }
+
+    public void UpdateControllingTransforms(Transform[] controllingTransforms)
+    {
+        for (int i = 0; i < controllingTransforms.Length; i++)
+        {
+            controllingTransforms[i].position = data.dspTimeToMoCapFrame[currentFrame][i];
+        }
     }
 }
 

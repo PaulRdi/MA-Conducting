@@ -107,10 +107,10 @@ public class TestManager : MonoBehaviour
         yield return new WaitUntil(() => dataStreamer.initialized);
         calibrateSuitButton.onClick.AddListener(Calibrate);
         var frame0 = dataStreamer.dataStream.data.dspTimeToMoCapFrame[0];
+        
+        markerHip.position = frame0[2];
         rightHandTransform.position = frame0[0];
         leftHandTransform.position = frame0[1];
-        markerHip.position = frame0[2];
-
         yield return new WaitUntil(() => calibrated);
         calibrateSuitButton.onClick.RemoveListener(Calibrate);
         yield return new WaitUntil(() => dataStreamer.initialized);
