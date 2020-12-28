@@ -37633,7 +37633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed04f59c751a6774abf3f8fea924345b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: lohengrin_test_0.json
+  fileName: 2020_12_28.json
   testLoadButton: {fileID: 0}
   testPlayButton: {fileID: 0}
   dspText: {fileID: 510538112}
@@ -41572,6 +41572,16 @@ PrefabInstance:
       propertyPath: owl
       value: 
       objectReference: {fileID: 138191172}
+    - target: {fileID: 4585767692881096888, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: id
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4585767692881096894, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_Name
+      value: ID_10::RightHand
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767692938615524, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
@@ -41717,11 +41727,21 @@ PrefabInstance:
       propertyPath: lineWidth
       value: 0.01
       objectReference: {fileID: 0}
+    - target: {fileID: 4585767694382182563, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_Name
+      value: 'ID_12::RightHand '
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767694382182573, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
       value: 
       objectReference: {fileID: 138191172}
+    - target: {fileID: 4585767694382182573, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: id
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767694399668932, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
@@ -41817,10 +41837,20 @@ PrefabInstance:
       propertyPath: owl
       value: 
       objectReference: {fileID: 138191172}
+    - target: {fileID: 4585767694634542328, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_Name
+      value: ID_11::RightHand
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767694634542330, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
       value: 
       objectReference: {fileID: 138191172}
+    - target: {fileID: 4585767694634542330, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: id
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07ce3fa012abcc34a93151c155953ea2, type: 3}

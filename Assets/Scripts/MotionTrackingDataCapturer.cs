@@ -9,7 +9,7 @@ using System.IO;
 public class MotionTrackingDataCapturer : MonoBehaviour
 {
     public static event Action<MarkerGroup, Transform> onCalibrate; //pushes hip transforms (marker hip, then rig hip)
-
+    [SerializeField] string fileName = "2020_12_28.json";
     [SerializeField] Song song;
     [SerializeField] MarkerGroup[] markerGroups;
     [SerializeField] Transform skeletonRoot;
@@ -79,16 +79,7 @@ public class MotionTrackingDataCapturer : MonoBehaviour
     {
         if (!capturing)
             return;
-        capturing = false;
-
-        string baseFileName = "lohengrin_test";
-        string fileName = baseFileName;
-        int counter = 0;
-        while (File.Exists(Application.streamingAssetsPath +"/" + fileName + ".json"))
-        {
-            fileName = baseFileName + "_" + counter.ToString()+".json";
-            counter++;
-        }
+        capturing = false;       
         song.moCapData.Save(fileName);
     }
 }

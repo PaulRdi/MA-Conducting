@@ -164,11 +164,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed04f59c751a6774abf3f8fea924345b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: lohengrin_test.json
+  fileName: 2020_12_28_take3.json
   testLoadButton: {fileID: 2007889970}
   testPlayButton: {fileID: 739184609}
   dspText: {fileID: 0}
-  debugGizmoSize: 1
+  debugGizmoSize: 0.115
 --- !u!114 &181184680 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3959034204837415669, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa,
@@ -709,7 +709,7 @@ PrefabInstance:
     - target: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: predictionMode
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
@@ -731,6 +731,16 @@ PrefabInstance:
       propertyPath: owl
       value: 
       objectReference: {fileID: 181184680}
+    - target: {fileID: 4585767692881096888, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: id
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4585767692881096894, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_Name
+      value: ID_10::RightHand
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767692938615524, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
@@ -756,11 +766,21 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4585767693045680788, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_Name
+      value: ID_13::RightHand
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767693045680790, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
       value: 
       objectReference: {fileID: 181184680}
+    - target: {fileID: 4585767693045680790, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: id
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767693160361775, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
@@ -846,6 +866,11 @@ PrefabInstance:
       propertyPath: owl
       value: 
       objectReference: {fileID: 181184680}
+    - target: {fileID: 4585767693980048975, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767694043237747, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
@@ -866,11 +891,21 @@ PrefabInstance:
       propertyPath: predictionMode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4585767694382182563, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_Name
+      value: 'ID_12::RightHand '
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767694382182573, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
       value: 
       objectReference: {fileID: 181184680}
+    - target: {fileID: 4585767694382182573, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: id
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767694399668932, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
@@ -961,11 +996,21 @@ PrefabInstance:
       propertyPath: owl
       value: 
       objectReference: {fileID: 181184680}
+    - target: {fileID: 4585767694634542328, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_Name
+      value: ID_11::RightHand
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767694634542330, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: owl
       value: 
       objectReference: {fileID: 181184680}
+    - target: {fileID: 4585767694634542330, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: id
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07ce3fa012abcc34a93151c155953ea2, type: 3}
 --- !u!4 &983292597 stripped
@@ -1290,7 +1335,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5e690a980f97fa43afeff81f63e3c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  song: {fileID: 11400000, guid: 3d957ce4a00ce364a822d9874cf81c44, type: 2}
+  fileName: 2020_12_28_take3.json
+  song: {fileID: 11400000, guid: 4612e2950a9888a40aaa2678eccec27e, type: 2}
   markerGroups:
   - {fileID: 1607362028}
   - {fileID: 2037278901}
@@ -2443,6 +2489,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Phasespace
       objectReference: {fileID: 0}
+    - target: {fileID: 3959034204837415666, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3959034204837415668, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2506,7 +2557,17 @@ PrefabInstance:
     - target: {fileID: 3959034204837415669, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa,
         type: 3}
       propertyPath: Frequency
-      value: 960
+      value: 240
+      objectReference: {fileID: 0}
+    - target: {fileID: 3959034204837415669, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa,
+        type: 3}
+      propertyPath: SlaveMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3959034204837415669, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa,
+        type: 3}
+      propertyPath: Profile
+      value: MoCap%20Suit%201166
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa, type: 3}
