@@ -15,7 +15,7 @@ public class FullDataReader
     public void Read(string data)
     {
         this.data = new Dictionary<double, FullMocapFrame>();
-        string[] frames = data.Split('-');
+        string[] frames = data.Split('@');
         foreach(string frameData in frames)
         {
             var frame = FullMocapFrame.Deserialize(frameData);

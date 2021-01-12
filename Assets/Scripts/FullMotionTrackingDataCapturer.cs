@@ -60,7 +60,7 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
                     markNextFrame = false;
                 }
 
-                data.Add("-");
+                data.Add("@");
                 lastDSPTime = AudioSettings.dspTime;
             }
             if (UnityEngine.Input.GetKeyDown(KeyCode.P))

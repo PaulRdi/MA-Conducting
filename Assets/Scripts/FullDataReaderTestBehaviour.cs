@@ -21,31 +21,51 @@ public class FullDataReaderTestBehaviour : MonoBehaviour
     {
         if (UnityEngine.Input.GetKeyDown(KeyCode.F8))
         {
-            string filePath = FullMotionTrackingDataCapturer.path + file;
-            if (File.Exists(filePath))
-            {
-                Debug.Log("Starting Deserialize");
-                this.reading = true;
-                Task.Factory.StartNew<string>(() =>
-                {
-                    return File.ReadAllText(filePath);
-                })
-                .ContinueWith(t =>
-                {
-                    this.fdr = new FullDataReader();
-                    this.fdr.Read(t.Result);
-                })
-                .ContinueWith(t =>
-                {
-                    Debug.Log("Deserialize complete");
-                    this.reading = false;
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-            }
+            DeserializeSync();
         }
 
         if (UnityEngine.Input.GetKeyDown(KeyCode.F9))
         {
             Debug.Log(fdr.data[0].positions[0]);
+        }
+    }
+
+    private void DeserializeAsync()
+    {
+        string filePath = FullMotionTrackingDataCapturer.path + file;
+        if (File.Exists(filePath))
+        {
+            Debug.Log("Starting Deserialize");
+            this.reading = true;
+            Task.Factory.StartNew<string>(() =>
+            {
+                return File.ReadAllText(filePath);
+            })
+            .ContinueWith(t =>
+            {
+                this.fdr = new FullDataReader();
+                this.fdr.Read(t.Result);
+            })
+            .ContinueWith(t =>
+            {
+                Debug.Log("Deserialize complete");
+                this.reading = false;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+    }
+    private void DeserializeSync()
+    {
+        string filePath = FullMotionTrackingDataCapturer.path + file;
+        if (File.Exists(filePath))
+        {
+            Debug.Log("Starting Deserialize");
+            this.reading = true;
+            string fileText = File.ReadAllText(filePath);            
+            this.fdr = new FullDataReader();
+            this.fdr.Read(fileText);
+            Debug.Log("Deserialize complete");
+            this.reading = false;
+
         }
     }
 }
