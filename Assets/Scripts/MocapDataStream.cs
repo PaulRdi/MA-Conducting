@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.ComponentModel;
 
+
 public class MocapDataStream
 {
     public MoCapData data;

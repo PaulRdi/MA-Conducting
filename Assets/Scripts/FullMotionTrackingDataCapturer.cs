@@ -19,53 +19,92 @@ using System.IO;
 /// </summary>
 public class FullMotionTrackingDataCapturer : MonoBehaviour
 {
+    public static string path => Application.streamingAssetsPath + "/FullRecordings/";
     bool recording;
+    public bool writing { get; private set; }
     [SerializeField] OWLClient client;
-    [SerializeField] int[] trackingMarkers;
     [SerializeField] string fileName = "full_recording.csv";
     List<string> data;
     double startDSPTime;
+    double lastDSPTime;
+    bool markNextFrame = false;
 
     private void Awake()
     {
         recording = false;
+        writing = false;
     }
 
     private void Update()
     {
+        Debug.Log(client.State);
         if (client != null &&
-            client.State == OWLClient.ConnectionState.Streaming &&
+            client.State == OWLClient.ConnectionState.Initialized &&
             recording)
         {
-            data.Add("f:" + (AudioSettings.dspTime - startDSPTime).ToString() + ",");
-            foreach (PhaseSpace.Unity.Marker m in client.Markers)
+            if (lastDSPTime != AudioSettings.dspTime)
             {
-                data.Add(m.id.ToString() + "," 
-                    + m.position.x.ToString() + "," 
-                    + m.position.y.ToString() + ","
-                    + m.position.z.ToString() + ","
-                    + (int)m.Condition);
-                
-            }
+                data.Add("f:" + (AudioSettings.dspTime - startDSPTime).ToString() + ",");
+                foreach (PhaseSpace.Unity.Marker m in client.Markers)
+                {
+                    data.Add(m.id.ToString() + ","
+                        + m.position.x.ToString() + ","
+                        + m.position.y.ToString() + ","
+                        + m.position.z.ToString() + ","
+                        + (int)m.Condition);
 
+                }
+                if (markNextFrame)
+                {
+                    data.Add("m");
+                    markNextFrame = false;
+                }
+
+                data.Add("-");
+                lastDSPTime = AudioSettings.dspTime;
+            }
             if (UnityEngine.Input.GetKeyDown(KeyCode.P))
             {
-                data.Add("m,");
+                markNextFrame = true;
+            }
+            if (UnityEngine.Input.GetKeyDown(KeyCode.F6))
+            {
+                TryStopRecroding();
+            }
+        }
+        else
+        {
+            if (UnityEngine.Input.GetKeyDown(KeyCode.F5))
+            {
+                TryStartRecording();
+            }
+            if (UnityEngine.Input.GetKeyDown(KeyCode.F7))
+            {
+                Serialize();
             }
         }
     }
 
+    private void TryStopRecroding()
+    {
+        Debug.Log("stopped recording. \n" + "Frame Count = " + data.Count);
+        recording = false;
+    }
+
     bool TryStartRecording()
     {
-        if (client.State == OWLClient.ConnectionState.Streaming)
+        if (client.State == OWLClient.ConnectionState.Initialized)
         {
+            markNextFrame = false;
             data = new List<string>();
             recording = true;
             startDSPTime = AudioSettings.dspTime;
+            Debug.Log("Starting recording!");
             return true;
         }
         else
         {
+            Debug.Log("Could not start recording");
             return false;
         }
     }
@@ -77,18 +116,37 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
             Debug.LogWarning("Cant save data while recording.");
             return;
         }
+        if (writing)
+        {
+            Debug.LogWarning("Cant save data while writing data.");
+            return;
+        }
         if (data == null)
         {
             Debug.LogWarning("No recording data.");
             return;
         }
-        string dump = "";
+        Debug.Log("Start string building");
+        StringBuilder dump = new StringBuilder();
         foreach(string s in data)
         {
-            dump += s;
-            dump += "\n";
+            dump.Append(s);
+            dump.Append("\n");
         }
-        File.WriteAllText(Application.streamingAssetsPath + "/FullRecordings/" + fileName, dump);
+        Debug.Log("Start write");
+        writing = true;
+            
+        Task.Factory.StartNew(() =>
+            {
+                File.WriteAllText(path + fileName, dump.ToString());
+                writing = false;
+            })
+            .ContinueWith(
+            (t) =>
+            {
+                Debug.Log("finished write");
+            }, 
+            TaskScheduler.FromCurrentSynchronizationContext());
     }
 }
 
