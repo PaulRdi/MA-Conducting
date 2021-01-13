@@ -1386,7 +1386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   client: {fileID: 181184680}
-  fileName: full_recording.csv
+  fileName: full_recording.json
 --- !u!4 &1070097979
 Transform:
   m_ObjectHideFlags: 0
@@ -1413,7 +1413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f816c00f32226d4181faefd3e55dd03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  file: full_recording.csv
+  file: full_recording_2.json
 --- !u!1 &1078861346
 GameObject:
   m_ObjectHideFlags: 0
@@ -3263,7 +3263,7 @@ PrefabInstance:
     - target: {fileID: 3959034204837415666, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3959034204837415668, guid: 75d2ac60d209d9e4f9d97ded49f2c0fa,
         type: 3}

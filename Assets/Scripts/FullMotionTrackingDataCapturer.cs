@@ -58,6 +58,7 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
                     frame.conditions[i] = marker.Condition;
                 }
                 markNextFrame = false;
+                data.Add(frame);
 
             }
             if (UnityEngine.Input.GetKeyDown(KeyCode.P))
@@ -130,7 +131,7 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
         writing = true;
         Task.Factory.StartNew(() =>
             {
-                File.WriteAllText(path, JsonConvert.SerializeObject(data));              
+                File.WriteAllText(path+fileName, JsonConvert.SerializeObject(data));              
                 writing = false;
             })
             .ContinueWith(

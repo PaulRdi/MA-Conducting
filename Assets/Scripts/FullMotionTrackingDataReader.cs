@@ -12,14 +12,13 @@ public class FullDataReader
 {
     public Dictionary<double, FullMocapFrame> data;
 
-    public void Read(string filePath)
+    public void Read(string data)
     {
-        string readString = File.ReadAllText(filePath);
-        var frames = JsonConvert.DeserializeObject<FullMocapFrame[]>(readString);
-        data = new Dictionary<double, FullMocapFrame>();
+        var frames = JsonConvert.DeserializeObject<FullMocapFrame[]>(data);
+        this.data = new Dictionary<double, FullMocapFrame>();
         foreach (var frame in frames)
         {
-            data.Add(frame.dspTime, frame);
+            this.data.Add(frame.dspTime, frame);
         }
     }
 
