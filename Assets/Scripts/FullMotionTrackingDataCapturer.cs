@@ -7,6 +7,7 @@ using UnityEngine;
 using PhaseSpace.OWL;
 using PhaseSpace.Unity;
 using System.IO;
+using Newtonsoft.Json;
 
 /// <summary>
 /// Data Layout:
@@ -24,7 +25,7 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
     public bool writing { get; private set; }
     [SerializeField] OWLClient client;
     [SerializeField] string fileName = "full_recording.csv";
-    List<string> data;
+    List<FullMocapFrame> data;
     double startDSPTime;
     double lastDSPTime;
     bool markNextFrame = false;
@@ -44,24 +45,20 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
         {
             if (lastDSPTime != AudioSettings.dspTime)
             {
-                data.Add("f:" + (AudioSettings.dspTime - startDSPTime).ToString() + ",");
-                foreach (PhaseSpace.Unity.Marker m in client.Markers)
-                {
-                    data.Add(m.id.ToString() + ","
-                        + m.position.x.ToString() + ","
-                        + m.position.y.ToString() + ","
-                        + m.position.z.ToString() + ","
-                        + (int)m.Condition);
+                FullMocapFrame frame = new FullMocapFrame(
+                        AudioSettings.dspTime - startDSPTime,
+                        markNextFrame,
+                        client.Markers.Count);
 
-                }
-                if (markNextFrame)
+                for (int i = 0; i < client.Markers.Count; i++)
                 {
-                    data.Add("m");
-                    markNextFrame = false;
+                    var marker = client.Markers[i];
+                    frame.idToArrayIndex.Add((int)marker.id, i);
+                    frame.positions[i] = marker.position;
+                    frame.conditions[i] = marker.Condition;
                 }
+                markNextFrame = false;
 
-                data.Add("@");
-                lastDSPTime = AudioSettings.dspTime;
             }
             if (UnityEngine.Input.GetKeyDown(KeyCode.P))
             {
@@ -71,6 +68,7 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
             {
                 TryStopRecroding();
             }
+            lastDSPTime = AudioSettings.dspTime;
         }
         else
         {
@@ -96,7 +94,7 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
         if (client.State == OWLClient.ConnectionState.Initialized)
         {
             markNextFrame = false;
-            data = new List<string>();
+            data = new List<FullMocapFrame>();
             recording = true;
             startDSPTime = AudioSettings.dspTime;
             Debug.Log("Starting recording!");
@@ -127,23 +125,17 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
             return;
         }
         Debug.Log("Start string building");
-        StringBuilder dump = new StringBuilder();
-        foreach(string s in data)
-        {
-            dump.Append(s);
-            dump.Append("\n");
-        }
+        
         Debug.Log("Start write");
         writing = true;
-            
         Task.Factory.StartNew(() =>
             {
-                File.WriteAllText(path + fileName, dump.ToString());
+                File.WriteAllText(path, JsonConvert.SerializeObject(data));              
                 writing = false;
             })
             .ContinueWith(
             (t) =>
-            {
+            {                
                 Debug.Log("finished write");
             }, 
             TaskScheduler.FromCurrentSynchronizationContext());

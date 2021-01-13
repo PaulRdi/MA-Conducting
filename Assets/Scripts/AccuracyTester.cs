@@ -13,7 +13,6 @@ public class AccuracyTester : MonoBehaviour
     void Start()
     {
         this.particlefilter = GetComponent<ParticleFilter>();
-
     }
 
     // Update is called once per frame
