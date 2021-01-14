@@ -1386,7 +1386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   client: {fileID: 181184680}
-  fileName: full_recording.json
+  fileName: wagner_lohengrin_ref4_rhythm.json
 --- !u!4 &1070097979
 Transform:
   m_ObjectHideFlags: 0
@@ -1413,7 +1413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f816c00f32226d4181faefd3e55dd03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  file: full_recording_2.json
+  file: wagner_lohengrin_ref4_rhythm.json
 --- !u!1 &1078861346
 GameObject:
   m_ObjectHideFlags: 0

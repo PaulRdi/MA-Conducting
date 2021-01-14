@@ -1,0 +1,3 @@
+10-13 -> hand left
+20-23 -> right hand
+5,7,9,31 -> waist
