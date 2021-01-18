@@ -19,18 +19,30 @@ public enum MarkerPredictionMode
     Kalman,
     KalmanGlobal
 }
+public enum DataSource
+{
+    PhaseSpace,
+    Self
+}
 
 //Dont use rigidbody because e.g. hands are not rigid.
 //Average positions of marker to control transform.
 //Use HMM or KF to estimate marker position
 public class MarkerGroup : MonoBehaviour
 {
+    [SerializeField] DataSource dataSource;
+    [SerializeField] MotionRecording recording;
+
+
     [SerializeField] Transform controllingTransform;
     [SerializeField] MarkerPredictionMode predictionMode = MarkerPredictionMode.Kalman;
-    OWLMarker[] markers;
+    //OWLMarker[] markers;
+    MarkerCustom[] markers;
     KalmanFilter[] kalmans;
     KalmanFilter globalKalman;
-    OWLClient owl;
+    //OWLClient owl;
+
+
     public UnityEngine.Vector3 lastAveragePosition;
     public int activeMarkerCount;
     UnityEngine.Vector3[] headings;
@@ -54,7 +66,7 @@ public class MarkerGroup : MonoBehaviour
 
     void Start()
     {
-        markers = GetComponentsInChildren<OWLMarker>();
+        markers = GetComponentsInChildren<MarkerCustom>();
         if (TryGetComponent<LineRenderer>(out LineRenderer lineRenderer))
         {
             lr = lineRenderer;
@@ -70,7 +82,6 @@ public class MarkerGroup : MonoBehaviour
             Debug.LogWarning("No markers detected for " + this.gameObject.name, this);
         else
         {
-            owl = markers[0].owl;
             headings = new UnityEngine.Vector3[markers.Length];
             positions = new UnityEngine.Vector3[markers.Length];
             alphaSum = new float[markers.Length];
@@ -190,8 +201,7 @@ public class MarkerGroup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (markers.Length <= 0 ||
-            !owl.Ready)
+        if (markers.Length <= 0)
             return;
 
         switch (predictionMode)
@@ -221,7 +231,7 @@ public class MarkerGroup : MonoBehaviour
         for (int i = 0; i < markers.Length; i++)
         {
             int id = markers[i].id;
-            if ((int)owl.Markers[id].cond < 3)
+            if ((int)DataRouter.MCond(dataSource, id, recording) < 3)
                 continue;
             avgPosition += markers[i].transform.position;
             count++;
@@ -261,8 +271,8 @@ public class MarkerGroup : MonoBehaviour
             //transition model is last marker heading
             //gets slower the more uncertain position is
             int id = markers[i].id;
-            if (owl.Markers[id].Condition == TrackingCondition.Invalid ||
-                owl.Markers[id].Condition == TrackingCondition.Undefined)
+            if (DataRouter.MCond(dataSource, id, recording) == TrackingCondition.Invalid ||
+                DataRouter.MCond(dataSource, id, recording) == TrackingCondition.Undefined)
             {
                 alphaSum[i] *= alpha;
                 positions[i] += headings[i] * Time.deltaTime;
@@ -305,7 +315,7 @@ public class MarkerGroup : MonoBehaviour
             kalmans[i].Predict();
 
             Matrix<float> measurementNoise = new Matrix<float>(dim, dim);
-            if ((int)owl.Markers[markers[i].id].cond < 3)
+            if ((int)DataRouter.MCond(dataSource, markers[i].id, recording) < 3)
             {
                 for (int j = 0; j < dim; j++)
                 {
@@ -350,7 +360,7 @@ public class MarkerGroup : MonoBehaviour
         for (int i = 0; i < markers.Length; i++)
         {
             int id = markers[i].id;
-            if ((int)owl.Markers[id].cond < 3)
+            if ((int)DataRouter.MCond(dataSource, markers[i].id, recording) < 3)
                 continue;
             avgPosition += markers[i].transform.position;
             count++;
