@@ -17,8 +17,20 @@ public class IKTracker : MonoBehaviour
     void OnEnable()
     {
         TestManager.onCalibrate += TestManager_onCalibrate;
+        TestManagerVersion2.onCalibrate += TestManagerVersion2_onCalibrate;
         MotionTrackingDataCapturer.onCalibrate += MotionTrackingDataCapturer_onCalibrate;
         calibrated = false;
+    }
+    void OnDisable()
+    {
+        TestManager.onCalibrate -= TestManager_onCalibrate;
+        TestManagerVersion2.onCalibrate -= TestManagerVersion2_onCalibrate;
+        MotionTrackingDataCapturer.onCalibrate -= MotionTrackingDataCapturer_onCalibrate;
+    }
+
+    private void TestManagerVersion2_onCalibrate(MarkerGroup arg1, Transform arg2)
+    {
+        Init(arg1.transform, arg2);
     }
 
     private void MotionTrackingDataCapturer_onCalibrate(MarkerGroup arg1, Transform arg2)
@@ -26,12 +38,7 @@ public class IKTracker : MonoBehaviour
         Init(arg1.transform, arg2);
     }
 
-    void OnDisable()
-    {
-        TestManager.onCalibrate -= TestManager_onCalibrate;
-        MotionTrackingDataCapturer.onCalibrate -= MotionTrackingDataCapturer_onCalibrate;
-
-    }
+    
 
     private void TestManager_onCalibrate(Transform markerHip, Transform rigHip)
     {

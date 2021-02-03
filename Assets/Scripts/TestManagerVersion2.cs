@@ -6,32 +6,52 @@ using UnityEngine;
 using PhaseSpace;
 using PhaseSpace.Unity;
 using System;
-public enum TestState
+
+public enum DataState
 {
     NotLoaded,
     LoadingData,
-    Calibrating,
-    RunningSong,
     Loaded
+}
+public enum TestState
+{
+    Off,
+    Initializing,
+    Running
 }
 public class TestManagerVersion2 : MonoBehaviour
 {
 
     public static event Action dataLoaded;
+    public static event Action<MarkerGroup, Transform> onCalibrate;
 
     [SerializeField] MotionRecording recording1;
     [SerializeField] MotionRecording recording2;
-    Dictionary <MotionRecording, FullDataReader> motionReaders;
 
-    public TestState state { get; private set; }
+    [SerializeField] Transform recordesSuit_rightHandIKRef, recordedSuit_leftHandIKRef;
+    [SerializeField] Transform recordedSuit_rightHandTransform, recordedSuit_leftHandTransform;
+    [SerializeField] Transform rigHip;
+    [SerializeField] Transform markerHip;
+
+    public DataState dataState { get; private set; }
+    public TestState testState { get; private set; }
     Coroutine loadRoutine;
+    Coroutine testRoutine;
 
     double currentDSPTime;
 
     void Awake()
     {
-        state = TestState.NotLoaded;
+        dataState = DataState.NotLoaded;
+        testState = TestState.Off;
         TryLoadData();
+    }
+
+    void TryStartTest()
+    {
+        if (dataState != DataState.Loaded)
+            return;
+
     }
 
     void TryLoadData()
@@ -51,11 +71,17 @@ public class TestManagerVersion2 : MonoBehaviour
 
     }
 
+    IEnumerator TestRoutine()
+    {
+        testState = TestState.Initializing;
+        currentDSPTime = 0.0d;
+        TryGetMoCapFrame(recording1, out FullMocapFrame frame0);
+        yield return null;
+    }
+
     IEnumerator LoadRoutine()
     {
-        state = TestState.LoadingData;
-        currentDSPTime = 0.0d;
-        motionReaders = new Dictionary<MotionRecording, FullDataReader>();
+        dataState = DataState.LoadingData;
         Debug.Log("Data loading: <color=#ffaa00>start</color>");
 
         Task.Factory.StartNew(() => LoadData())
@@ -67,18 +93,18 @@ public class TestManagerVersion2 : MonoBehaviour
                         t.Exception.Flatten().Handle(e =>
                         {
                             Debug.Log("Data Loading: <color=#ff0000>error</color> \n" + e.ToString());
-                            state = TestState.NotLoaded;
+                            dataState = DataState.NotLoaded;
                             return true;
                         });
                     }
                     else
                     {
-                        state = TestState.Loaded;
+                        dataState = DataState.Loaded;
                     }
                 }, 
                 TaskScheduler.FromCurrentSynchronizationContext());
 
-        yield return new WaitUntil(() => state == TestState.Loaded);
+        yield return new WaitUntil(() => dataState == DataState.Loaded);
         dataLoaded?.Invoke();
         Debug.Log("Data loading: <color=#00ff00>success</color>");
     }
@@ -87,10 +113,12 @@ public class TestManagerVersion2 : MonoBehaviour
     {
         string data1 = File.ReadAllText(FullMotionTrackingDataCapturer.path + recording1.fileName);
         string data2 = File.ReadAllText(FullMotionTrackingDataCapturer.path + recording2.fileName);
-        motionReaders.Add(recording1, new FullDataReader());
-        motionReaders.Add(recording2, new FullDataReader());
-        motionReaders[recording1].Read(data1);
-        motionReaders[recording2].Read(data2);
+        var reader1 = new FullDataReader();
+        var reader2 = new FullDataReader();
+        reader1.Read(data1);
+        reader2.Read(data2);
+        recording1.Init(reader1);
+        recording2.Init(reader2);
     }
 
     public Vector3 GetMarkerPos(MotionRecording recording, int id)
@@ -128,7 +156,7 @@ public class TestManagerVersion2 : MonoBehaviour
         MotionRecording rec;
         frame = default;
 
-        if (state == TestState.NotLoaded)
+        if (dataState == DataState.NotLoaded)
         {
             Debug.LogError("Test was not loaded. Cannot get marker data.");
             return false;
@@ -142,8 +170,7 @@ public class TestManagerVersion2 : MonoBehaviour
             Debug.LogError("Error getting mocap frame. An invalid recording was assigned.");
             return false;
         }
-        FullDataReader fdr = motionReaders[recording];
-        frame = fdr.data[currentDSPTime];
+        frame = recording.dataReader.data[currentDSPTime];
         return true;
     }
 }

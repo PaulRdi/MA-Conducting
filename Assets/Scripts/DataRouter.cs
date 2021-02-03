@@ -11,6 +11,17 @@ public class DataRouter : MonoBehaviour
     static DataRouter instance;
     public OWLClient owl;
     public TestManagerVersion2 tm;
+    public bool owlInitialized
+    {
+        get
+        {
+            if (owl?.State == OWLClient.ConnectionState.Initialized ||
+                owl?.State == OWLClient.ConnectionState.Open ||
+                owl?.State == OWLClient.ConnectionState.Streaming)
+                return true;
+            return false;
+        }
+    }
     void Awake()
     {
         instance = this;
@@ -23,10 +34,19 @@ public class DataRouter : MonoBehaviour
         switch (source)
         {
             case DataSource.PhaseSpace:
-                break;
+                if (instance.owl == default ||
+                    !instance.owlInitialized)
+                {
+                    Debug.LogError("Cannot get OWL based marker position from uninitialized system.");
+                    break;
+                }
+                return instance.owl.Markers[id].position;
             case DataSource.Self:
                 if (r == default)
-                    throw new System.Exception("Must provide a recording to get position from non-phasespace-streaming.");
+                {
+                    Debug.LogError("Must provide a recording to get position from non-phasespace-streaming.");
+                    break;
+                }
                 return instance.tm.GetMarkerPos(r, id);
                 
         }
@@ -39,10 +59,19 @@ public class DataRouter : MonoBehaviour
         switch (source)
         {
             case DataSource.PhaseSpace:
-                break;
+                if (instance.owl == default ||
+                    !instance.owlInitialized)
+                {
+                    Debug.LogError("Cannot get OWL based marker position from uninitialized system.");
+                    break;
+                }
+                return instance.owl.Markers[id].Condition;
             case DataSource.Self:
                 if (r == default)
-                    throw new System.Exception("Must provide a recording to get condition from non-phasespace-streaming.");         
+                {
+                    Debug.LogError("Must provide a recording to get condition from non-phasespace-streaming.");
+                    break;
+                }
                 return instance.tm.GetMarkerCond(r, id);
         }
 

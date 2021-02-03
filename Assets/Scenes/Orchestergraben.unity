@@ -14805,6 +14805,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recording1: {fileID: 11400000, guid: 490c83ea62b4e9947afea2a1589ed5dc, type: 2}
   recording2: {fileID: 11400000, guid: 2881872dd771d3b48adeb0a52e4af3fa, type: 2}
+  recordesSuit_rightHandIKRef: {fileID: 1791758561}
+  recordedSuit_leftHandIKRef: {fileID: 717269384}
+  recordedSuit_rightHandTransform: {fileID: 874328891668130314}
+  recordedSuit_leftHandTransform: {fileID: 874328893319150346}
+  rigHip: {fileID: 943104521}
+  markerHip: {fileID: 874328893289092943}
 --- !u!1001 &883486786
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18717,6 +18723,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SUIT_Realtime_Self
+      objectReference: {fileID: 0}
+    - target: {fileID: 4585767694411359996, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4585767694411359997, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
@@ -41313,7 +41324,7 @@ PrefabInstance:
     - target: {fileID: 6132459552125553679, guid: 812ff333a1b158342a9a017efa643a45,
         type: 3}
       propertyPath: m_Name
-      value: MannequinRig
+      value: Recording_Rig
       objectReference: {fileID: 0}
     - target: {fileID: 7152145706545053212, guid: 812ff333a1b158342a9a017efa643a45,
         type: 3}
@@ -41466,7 +41477,7 @@ PrefabInstance:
     - target: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: predictionMode
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
@@ -41517,7 +41528,7 @@ PrefabInstance:
     - target: {fileID: 4585767693023433041, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: predictionMode
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4585767693023433041, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
@@ -41678,7 +41689,7 @@ PrefabInstance:
     - target: {fileID: 4585767694331083848, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: predictionMode
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4585767694331083848, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
