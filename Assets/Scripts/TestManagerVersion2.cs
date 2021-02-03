@@ -5,7 +5,7 @@ using System.IO;
 using UnityEngine;
 using PhaseSpace;
 using PhaseSpace.Unity;
-
+using System;
 public enum TestState
 {
     NotLoaded,
@@ -17,43 +17,76 @@ public enum TestState
 public class TestManagerVersion2 : MonoBehaviour
 {
 
+    public static event Action dataLoaded;
+
     [SerializeField] MotionRecording recording1;
     [SerializeField] MotionRecording recording2;
     Dictionary <MotionRecording, FullDataReader> motionReaders;
 
     public TestState state { get; private set; }
-    Coroutine testRoutine;
+    Coroutine loadRoutine;
 
     double currentDSPTime;
 
     void Awake()
     {
         state = TestState.NotLoaded;
+        TryLoadData();
     }
 
-    void TryStartTest()
+    void TryLoadData()
     {
-        if (testRoutine == null &&
+        if (recording1 == default ||
+            recording2 == default)
+        {
+            Debug.LogError("Motion recording missing in TestManagerVersion2");
+            return;
+        }
+        if (loadRoutine == null &&
             File.Exists(FullMotionTrackingDataCapturer.path + recording1.fileName) &&
             File.Exists(FullMotionTrackingDataCapturer.path + recording2.fileName))
-                testRoutine = StartCoroutine(TestRoutine());
+            loadRoutine = StartCoroutine(LoadRoutine());
+        else
+            Debug.LogError("Could not find a recording file. Please assign the correct file names to the config files.");
+
     }
 
-    IEnumerator TestRoutine()
+    IEnumerator LoadRoutine()
     {
         state = TestState.LoadingData;
         currentDSPTime = 0.0d;
         motionReaders = new Dictionary<MotionRecording, FullDataReader>();
+        Debug.Log("Data loading: <color=#ffaa00>start</color>");
+
         Task.Factory.StartNew(() => LoadData())
-            .ContinueWith(t => state = TestState.Loaded);
+            .ContinueWith(
+                t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        t.Exception.Flatten().Handle(e =>
+                        {
+                            Debug.Log("Data Loading: <color=#ff0000>error</color> \n" + e.ToString());
+                            state = TestState.NotLoaded;
+                            return true;
+                        });
+                    }
+                    else
+                    {
+                        state = TestState.Loaded;
+                    }
+                }, 
+                TaskScheduler.FromCurrentSynchronizationContext());
 
         yield return new WaitUntil(() => state == TestState.Loaded);
+        dataLoaded?.Invoke();
+        Debug.Log("Data loading: <color=#00ff00>success</color>");
     }
 
-    async void LoadData()
+    void LoadData()
     {
-        string data1 = await Task.Run<string>(() => File.ReadAllText(FullMotionTrackingDataCapturer.path + recording1.fileName));
-        string data2 = await Task.Run<string>(() => File.ReadAllText(FullMotionTrackingDataCapturer.path + recording2.fileName));
+        string data1 = File.ReadAllText(FullMotionTrackingDataCapturer.path + recording1.fileName);
+        string data2 = File.ReadAllText(FullMotionTrackingDataCapturer.path + recording2.fileName);
         motionReaders.Add(recording1, new FullDataReader());
         motionReaders.Add(recording2, new FullDataReader());
         motionReaders[recording1].Read(data1);
