@@ -47,11 +47,11 @@ public class DataRouter : MonoBehaviour
                     Debug.LogError("Must provide a recording to get position from non-phasespace-streaming.");
                     break;
                 }
-                return instance.tm.GetMarkerPos(r, id);
+                return instance.transform.TransformPoint(instance.tm.GetMarkerPos(r, id));
                 
         }
 
-        return default;
+        return instance.transform.TransformPoint(Vector3.zero);
     }
 
     public static TrackingCondition MCond(DataSource source, int id, MotionRecording r = default)
@@ -75,6 +75,6 @@ public class DataRouter : MonoBehaviour
                 return instance.tm.GetMarkerCond(r, id);
         }
 
-        return default;
+        return TrackingCondition.Invalid;
     }
 }

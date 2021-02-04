@@ -6,7 +6,8 @@ using UnityEngine;
 using PhaseSpace;
 using PhaseSpace.Unity;
 using System;
-
+using UnityEngine.UI;
+using TMPro;
 public enum DataState
 {
     NotLoaded,
@@ -15,7 +16,7 @@ public enum DataState
 }
 public enum TestState
 {
-    Off,
+    Idle,
     Initializing,
     Running
 }
@@ -23,38 +24,68 @@ public class TestManagerVersion2 : MonoBehaviour
 {
 
     public static event Action dataLoaded;
+    public static event Action<double> tick;
     public static event Action<MarkerGroup, Transform> onCalibrate;
 
     [SerializeField] MotionRecording recording1;
     [SerializeField] MotionRecording recording2;
 
-    [SerializeField] Transform recordesSuit_rightHandIKRef, recordedSuit_leftHandIKRef;
-    [SerializeField] Transform recordedSuit_rightHandTransform, recordedSuit_leftHandTransform;
+    [SerializeField] Transform recordedSuit_rightHandIKRef, recordedSuit_leftHandIKRef;
+    [SerializeField] MarkerGroup recordedSuit_rightHand, recordedSuit_leftHand;
     [SerializeField] Transform rigHip;
-    [SerializeField] Transform markerHip;
+    [SerializeField] Transform rigParent;
+    [SerializeField] MarkerGroup markerHip;
+
+    [SerializeField] Button tryStartTestButton;
+    [SerializeField] GameObject loadingDataPanel;
+    [SerializeField] GameObject loadingDataErrorPanel;
+    [SerializeField] TextMeshProUGUI loadingDataErrorText;
+
+    public bool manualTick = false;
+    bool tickKeyPressed;
 
     public DataState dataState { get; private set; }
     public TestState testState { get; private set; }
     Coroutine loadRoutine;
     Coroutine testRoutine;
 
+    double startDSPTime;
     double currentDSPTime;
+    double lastDSPTime;
+    int dspIndex;
 
     void Awake()
     {
         dataState = DataState.NotLoaded;
-        testState = TestState.Off;
-        TryLoadData();
+        testState = TestState.Idle;
+        TryLoadData(TryStartTest);
     }
 
+    private void SetIdleTestState()
+    {
+        testState = TestState.Idle;
+    }
+
+    private void Update()
+    {        
+        if (UnityEngine.Input.GetKeyDown(KeyCode.F9))
+            tickKeyPressed = true;
+    }
+    private void LateUpdate()
+    {
+        lastDSPTime = AudioSettings.dspTime;
+    }
     void TryStartTest()
     {
         if (dataState != DataState.Loaded)
             return;
-
+        if (testRoutine == null)
+        {
+            testRoutine = StartCoroutine(TestRoutine());
+        }
     }
 
-    void TryLoadData()
+    void TryLoadData(Action finishSuccessfulAction)
     {
         if (recording1 == default ||
             recording2 == default)
@@ -65,7 +96,7 @@ public class TestManagerVersion2 : MonoBehaviour
         if (loadRoutine == null &&
             File.Exists(FullMotionTrackingDataCapturer.path + recording1.fileName) &&
             File.Exists(FullMotionTrackingDataCapturer.path + recording2.fileName))
-            loadRoutine = StartCoroutine(LoadRoutine());
+            loadRoutine = StartCoroutine(LoadRoutine(finishSuccessfulAction));
         else
             Debug.LogError("Could not find a recording file. Please assign the correct file names to the config files.");
 
@@ -75,13 +106,43 @@ public class TestManagerVersion2 : MonoBehaviour
     {
         testState = TestState.Initializing;
         currentDSPTime = 0.0d;
+        dspIndex = 0;
+        startDSPTime = AudioSettings.dspTime;
         TryGetMoCapFrame(recording1, out FullMocapFrame frame0);
+        recordedSuit_rightHand.ForceMeasurement();
+        recordedSuit_leftHand.ForceMeasurement();
+        markerHip.ForceMeasurement();
         yield return null;
+        Util.CalibrateIK(
+            recordedSuit_rightHandIKRef,
+            recordedSuit_leftHandIKRef,
+            recordedSuit_rightHand.controllingTransform,
+            recordedSuit_leftHand.controllingTransform,
+            rigParent);
+        onCalibrate?.Invoke(markerHip, rigHip);
+
+        while (currentDSPTime < 300.0d)
+        {
+            if (!manualTick)
+            {
+                currentDSPTime = AudioSettings.dspTime - startDSPTime;
+                yield return null;
+            }
+            else
+            {
+                currentDSPTime += AudioSettings.dspTime - lastDSPTime;
+                yield return new WaitUntil(() => tickKeyPressed);
+            }
+            if (lastDSPTime != AudioSettings.dspTime)
+                tick?.Invoke(AudioSettings.dspTime - lastDSPTime);
+            tickKeyPressed = false;
+        }
     }
 
-    IEnumerator LoadRoutine()
+    IEnumerator LoadRoutine(Action finishSuccessfulAction)
     {
         dataState = DataState.LoadingData;
+        loadingDataPanel.gameObject.SetActive(true);
         Debug.Log("Data loading: <color=#ffaa00>start</color>");
 
         Task.Factory.StartNew(() => LoadData())
@@ -90,12 +151,16 @@ public class TestManagerVersion2 : MonoBehaviour
                 {
                     if (t.IsFaulted)
                     {
+                        var errorMessage = "Data Loading: <color=#ff0000>error</color> \n";
                         t.Exception.Flatten().Handle(e =>
                         {
-                            Debug.Log("Data Loading: <color=#ff0000>error</color> \n" + e.ToString());
+                            errorMessage += e.ToString();
                             dataState = DataState.NotLoaded;
                             return true;
                         });
+                        loadingDataErrorPanel.SetActive(true);
+                        loadingDataErrorText.text = errorMessage;
+                        StopDataLoading();
                     }
                     else
                     {
@@ -105,8 +170,19 @@ public class TestManagerVersion2 : MonoBehaviour
                 TaskScheduler.FromCurrentSynchronizationContext());
 
         yield return new WaitUntil(() => dataState == DataState.Loaded);
+        finishSuccessfulAction?.Invoke();
         dataLoaded?.Invoke();
+        loadingDataPanel.gameObject.SetActive(false);
+        loadRoutine = null;
         Debug.Log("Data loading: <color=#00ff00>success</color>");
+    }
+
+    private void StopDataLoading()
+    {
+        loadingDataPanel.SetActive(false);
+        if (loadRoutine != null)
+            StopCoroutine(loadRoutine);
+        loadRoutine = null;
     }
 
     void LoadData()
@@ -148,29 +224,36 @@ public class TestManagerVersion2 : MonoBehaviour
             }
             Debug.LogWarning("Could not find provided marker ID in recording: " + recording.fileName);
         }
-        return default;
+        return TrackingCondition.Undefined;
     }
 
     private bool TryGetMoCapFrame(MotionRecording recording, out FullMocapFrame frame)
     {
-        MotionRecording rec;
         frame = default;
+        if (dataState != DataState.Loaded)
+        {
+            return false;
+        }
+        
+        if (!recording.initialized)
+        {
+            return false;
+        }
 
-        if (dataState == DataState.NotLoaded)
+
+        double selectedDspTime = recording.dspTimes[dspIndex];
+        while (currentDSPTime - selectedDspTime > 0d)
         {
-            Debug.LogError("Test was not loaded. Cannot get marker data.");
-            return false;
+            dspIndex++;
+            if (dspIndex < recording.dspTimes.Length)
+                selectedDspTime = recording.dspTimes[dspIndex];
+            else
+                return false;
         }
-        if (recording == recording1)
-            rec = recording1;
-        else if (recording == recording2)
-            rec = recording2;
-        else
-        {
-            Debug.LogError("Error getting mocap frame. An invalid recording was assigned.");
-            return false;
-        }
-        frame = recording.dataReader.data[currentDSPTime];
+
+        frame = recording.dataReader.data[selectedDspTime];
+            
         return true;
+        
     }
 }

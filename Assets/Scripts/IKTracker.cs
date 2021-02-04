@@ -30,12 +30,12 @@ public class IKTracker : MonoBehaviour
 
     private void TestManagerVersion2_onCalibrate(MarkerGroup arg1, Transform arg2)
     {
-        Init(arg1.transform, arg2);
+        Init(arg1.controllingTransform, arg2);
     }
 
     private void MotionTrackingDataCapturer_onCalibrate(MarkerGroup arg1, Transform arg2)
     {
-        Init(arg1.transform, arg2);
+        Init(arg1.controllingTransform, arg2);
     }
 
     

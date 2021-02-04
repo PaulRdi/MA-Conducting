@@ -59,12 +59,13 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
                 }
                 markNextFrame = false;
                 data.Add(frame);
-
             }
+
             if (UnityEngine.Input.GetKeyDown(KeyCode.P))
             {
                 markNextFrame = true;
             }
+
             if (UnityEngine.Input.GetKeyDown(KeyCode.F6))
             {
                 TryStopRecroding();

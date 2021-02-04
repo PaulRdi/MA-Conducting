@@ -19,7 +19,7 @@ public class MotionRecording : ScriptableObject
     {
         get; private set;
     }
-
+    public double[] dspTimes;
     private void Awake()
     {
         initialized = false;
@@ -28,6 +28,8 @@ public class MotionRecording : ScriptableObject
     {
         initialized = true;
         this.dataReader = fdr;
+        this.dspTimes = dataReader.data.Keys.OrderBy(d => d).ToArray();
     }
+
 }
 

@@ -30,11 +30,10 @@ public enum DataSource
 //Use HMM or KF to estimate marker position
 public class MarkerGroup : MonoBehaviour
 {
-    [SerializeField] DataSource dataSource;
-    [SerializeField] MotionRecording recording;
+    public DataSource dataSource;
+    public MotionRecording recording;
 
-
-    [SerializeField] Transform controllingTransform;
+    public Transform controllingTransform;
     [SerializeField] MarkerPredictionMode predictionMode = MarkerPredictionMode.Kalman;
     //OWLMarker[] markers;
     MarkerCustom[] markers;
@@ -42,9 +41,8 @@ public class MarkerGroup : MonoBehaviour
     KalmanFilter globalKalman;
     //OWLClient owl;
 
-
     public UnityEngine.Vector3 lastAveragePosition;
-    public int activeMarkerCount;
+    [SerializeField] int activeMarkerCount;
     UnityEngine.Vector3[] headings;
     UnityEngine.Vector3[] positions;
     float[] alphaSum;
@@ -54,6 +52,7 @@ public class MarkerGroup : MonoBehaviour
     [SerializeField] int numSavedFrames = 50;
     [SerializeField] float lineWidth = .03f;
     [SerializeField] float measurementNoiseMagnitude = 1e-4f;
+    [SerializeField] float processNoiseMagnitude = 1e-2f;
     float epsilon = 0.01f;
     UnityEngine.Vector3 avgHeading;
     //speed the hmm extrapolates with when marker data is lost.
@@ -63,6 +62,49 @@ public class MarkerGroup : MonoBehaviour
     int dim = 3;
     LineRenderer lr;
     Queue<Vector3> lastPositions;
+
+    private void Awake()
+    {
+        foreach (MarkerCustom marker in GetComponentsInChildren<MarkerCustom>(true))
+        {
+            marker.Init(this);
+        }
+    }
+
+    private void OnEnable()
+    {
+        TestManagerVersion2.tick += Tick;
+    }
+
+    private void OnDisable()
+    {
+        TestManagerVersion2.tick -= Tick;
+    }
+
+    void Tick(double dt)
+    {
+        if (markers.Length <= 0)
+            return;
+
+        switch (predictionMode)
+        {
+            case MarkerPredictionMode.HMM:
+                UpdateMarkerPositionsMarkov();
+                break;
+            case MarkerPredictionMode.Kalman:
+                UpdateMarkerPositionsKalman(dt);
+                break;
+            case MarkerPredictionMode.KalmanGlobal:
+                UpdateMarkerPositionsGlobalKalman(dt);
+                break;
+            case MarkerPredictionMode.None:
+                UpdateMarkerPositionsAverage();
+                break;
+
+        }
+        controllingTransform.position = lastAveragePosition;
+        UpdateVisualization();
+    }
 
     void Start()
     {
@@ -88,9 +130,25 @@ public class MarkerGroup : MonoBehaviour
             active = new bool[markers.Length];
             kalmans = new KalmanFilter[markers.Length];
 
-            CreateLocalKalman();
+            CreateLocalKalman(Time.deltaTime);
             CreateGlobalKalman();
         }
+    }
+
+    internal void ForceMeasurement()
+    {
+        int count = 0;
+        Vector3 avgPosition = Vector3.zero;
+        for (int i = 0; i < markers.Length; i++)
+        {
+            int id = markers[i].id;
+            if ((int)DataRouter.MCond(dataSource, markers[i].id, recording) < 3)
+                continue;
+            avgPosition += markers[i].transform.position;
+            count++;
+        }
+        avgPosition /= (float)count;
+        controllingTransform.position = avgPosition;
     }
 
     private void CreateGlobalKalman()
@@ -104,35 +162,28 @@ public class MarkerGroup : MonoBehaviour
         Matrix<float> processNoise = new Matrix<float>(statevecSize, statevecSize);
         for (int j = 0; j < statevecSize; j++)
         {
-            processNoise[j, j] = 1.0e-4f;
-        }
-
-        Matrix<float> measurementNoise = new Matrix<float>(dim, dim);
-        for (int j = 0; j < dim; j++)
-        {
-            measurementNoise[j, j] = 1.0e-3f;
-        }
+            processNoise[j, j] = processNoiseMagnitude;
+        }        
 
         Matrix<float> state = new Matrix<float>(statevecSize, 1);
-        state.SetRandNormal(new MCvScalar(0.0f), new MCvScalar(5.0f));
+        state.SetRandNormal(new MCvScalar(0.0f), new MCvScalar(1.0f));
 
         Matrix<float> errorCov = new Matrix<float>(statevecSize, statevecSize);
         errorCov.SetIdentity();
 
         measurementMatrix.Mat.CopyTo(globalKalman.MeasurementMatrix);
-        measurementNoise.Mat.CopyTo(globalKalman.MeasurementNoiseCov);
         state.Mat.CopyTo(globalKalman.StatePre);
         processNoise.Mat.CopyTo(globalKalman.ProcessNoiseCov);
         errorCov.Mat.CopyTo(globalKalman.ErrorCovPost);
     }
 
-    private void CreateLocalKalman()
+    private void CreateLocalKalman(double dt)
     {
         for (int i = 0; i < kalmans.Length; i++)
         {
             kalmans[i] = new KalmanFilter(statevecSize, dim, 0, Emgu.CV.CvEnum.DepthType.Cv32F);
             Matrix<float> transitionMatrix = new Matrix<float>(statevecSize, statevecSize);
-            InitTransitionMatrix(1, ref transitionMatrix);
+            InitTransitionMatrix(1, ref transitionMatrix, dt);
 
             Matrix<float> measurementMatrix = new Matrix<float>(dim, statevecSize);
             measurementMatrix.SetIdentity();
@@ -140,7 +191,7 @@ public class MarkerGroup : MonoBehaviour
             Matrix<float> processNoise = new Matrix<float>(statevecSize, statevecSize);
             for (int j = 0; j < statevecSize; j++)
             {
-                processNoise[j, j] = 1e-2f;
+                processNoise[j, j] = 1e-4f;
 
             }            
 
@@ -158,7 +209,7 @@ public class MarkerGroup : MonoBehaviour
         }
     }
 
-    private void InitTransitionMatrix(int numMarkers, ref Matrix<float> transitionMatrix)
+    private void InitTransitionMatrix(int numMarkers, ref Matrix<float> transitionMatrix, double dt)
     {
         for (int i = 0; i < statevecSize; i++)
         {
@@ -171,10 +222,10 @@ public class MarkerGroup : MonoBehaviour
                     switch (offset)
                     {
                         case 0:
-                            transitionMatrix[i, j] = 1 + Time.deltaTime;
+                            transitionMatrix[i, j] = 1 + (float)dt;
                             break;
                         case -3:
-                            transitionMatrix[i, j] = -Time.deltaTime;
+                            transitionMatrix[i, j] = -(float)dt;
                             break;
                         default:
                             transitionMatrix[i, j] = 0.0f;
@@ -196,33 +247,10 @@ public class MarkerGroup : MonoBehaviour
                 }
             }
         }
-        //Debug.Log(StringifyMatrix(transitionMatrix));
+        Debug.Log(StringifyMatrix(transitionMatrix));
     }
     // Update is called once per frame
-    void Update()
-    {
-        if (markers.Length <= 0)
-            return;
-
-        switch (predictionMode)
-        {
-            case MarkerPredictionMode.HMM:
-                UpdateMarkerPositionsMarkov();
-                break;
-            case MarkerPredictionMode.Kalman:
-                UpdateMarkerPositionsKalman();
-                break;
-            case MarkerPredictionMode.KalmanGlobal:
-                UpdateMarkerPositionsGlobalKalman();
-                break;
-            case MarkerPredictionMode.None:
-                UpdateMarkerPositionsAverage();
-                break;
-
-        }
-        controllingTransform.position = lastAveragePosition;
-        UpdateVisualization();
-    }
+    
 
     private void UpdateMarkerPositionsAverage()
     {
@@ -304,12 +332,12 @@ public class MarkerGroup : MonoBehaviour
         avgHeading = avgHeading.normalized;
     }
 
-    private void UpdateMarkerPositionsKalman()
+    private void UpdateMarkerPositionsKalman(double dt)
     {
         for (int i = 0; i < markers.Length; i++)
         {
             Matrix<float> transitionMatrix = new Matrix<float>(statevecSize, statevecSize);
-            InitTransitionMatrix(1, ref transitionMatrix);
+            InitTransitionMatrix(1, ref transitionMatrix, dt);
             transitionMatrix.Mat.CopyTo(kalmans[i].TransitionMatrix);
 
             kalmans[i].Predict();
@@ -319,7 +347,7 @@ public class MarkerGroup : MonoBehaviour
             {
                 for (int j = 0; j < dim; j++)
                 {
-                    measurementNoise[j, j] = 1e-1f;
+                    measurementNoise[j, j] = 1e-2f;
                 }
             }
             else
@@ -353,15 +381,21 @@ public class MarkerGroup : MonoBehaviour
         lastAveragePosition = new Vector3(sum[0, 0], sum[1, 0], sum[2, 0]);
     }
 
-    private void UpdateMarkerPositionsGlobalKalman()
+    private void UpdateMarkerPositionsGlobalKalman(double dt)
     {
         int count = 0;
         Vector3 avgPosition = Vector3.zero;
         for (int i = 0; i < markers.Length; i++)
         {
             int id = markers[i].id;
-            if ((int)DataRouter.MCond(dataSource, markers[i].id, recording) < 3)
+            var cond = DataRouter.MCond(dataSource, markers[i].id, recording);
+            if (DataRouter.MPos(dataSource, markers[i].id, recording) == transform.position)
+                Debug.Log(markers[i].id + " " + cond);
+
+            if ((int)cond < 3)
+            {
                 continue;
+            }
             avgPosition += markers[i].transform.position;
             count++;
         }
@@ -378,10 +412,8 @@ public class MarkerGroup : MonoBehaviour
         avgPosition /= (float)count;
 
         Matrix<float> transitionMatrix = new Matrix<float>(statevecSize, statevecSize);
-        InitTransitionMatrix(1, ref transitionMatrix);
+        InitTransitionMatrix(1, ref transitionMatrix, dt);
         transitionMatrix.Mat.CopyTo(globalKalman.TransitionMatrix);
-
-
 
         globalKalman.Predict();
         globalKalman.Correct(new Matrix<float>(new float[] { avgPosition.x, avgPosition.y, avgPosition.z }).Mat);
