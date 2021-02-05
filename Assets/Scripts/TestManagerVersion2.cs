@@ -29,17 +29,20 @@ public class TestManagerVersion2 : MonoBehaviour
 
     [SerializeField] MotionRecording recording1;
     [SerializeField] MotionRecording recording2;
+    [SerializeField] Song song;
 
     [SerializeField] Transform recordedSuit_rightHandIKRef, recordedSuit_leftHandIKRef;
     [SerializeField] MarkerGroup recordedSuit_rightHand, recordedSuit_leftHand;
     [SerializeField] Transform rigHip;
     [SerializeField] Transform rigParent;
     [SerializeField] MarkerGroup markerHip;
+    [SerializeField] Animator rigAnimator;
 
     [SerializeField] Button tryStartTestButton;
     [SerializeField] GameObject loadingDataPanel;
     [SerializeField] GameObject loadingDataErrorPanel;
     [SerializeField] TextMeshProUGUI loadingDataErrorText;
+
 
     public bool manualTick = false;
     bool tickKeyPressed;
@@ -52,7 +55,6 @@ public class TestManagerVersion2 : MonoBehaviour
     double startDSPTime;
     double currentDSPTime;
     double lastDSPTime;
-    int dspIndex;
 
     void Awake()
     {
@@ -106,12 +108,13 @@ public class TestManagerVersion2 : MonoBehaviour
     {
         testState = TestState.Initializing;
         currentDSPTime = 0.0d;
-        dspIndex = 0;
         startDSPTime = AudioSettings.dspTime;
-        TryGetMoCapFrame(recording1, out FullMocapFrame frame0);
+        TryGetMoCapFrame(recording1, out FullMocapFrame frame0_rec1, 0);
+        TryGetMoCapFrame(recording2, out FullMocapFrame frame0_rec2, 0);
         recordedSuit_rightHand.ForceMeasurement();
         recordedSuit_leftHand.ForceMeasurement();
         markerHip.ForceMeasurement();
+        rigAnimator.enabled = false;
         yield return null;
         Util.CalibrateIK(
             recordedSuit_rightHandIKRef,
@@ -119,8 +122,9 @@ public class TestManagerVersion2 : MonoBehaviour
             recordedSuit_rightHand.controllingTransform,
             recordedSuit_leftHand.controllingTransform,
             rigParent);
+        yield return null;
         onCalibrate?.Invoke(markerHip, rigHip);
-
+        rigAnimator.enabled = true;
         while (currentDSPTime < 300.0d)
         {
             if (!manualTick)
@@ -201,7 +205,6 @@ public class TestManagerVersion2 : MonoBehaviour
     {
         if (TryGetMoCapFrame(recording, out FullMocapFrame frame))
         {
-
             if (frame.idToArrayIndex.ContainsKey(id))
             {
                 int idx = frame.idToArrayIndex[id];
@@ -210,6 +213,8 @@ public class TestManagerVersion2 : MonoBehaviour
             Debug.LogWarning("Could not find provided marker ID in recording: " + recording.fileName);
             return default;
         }
+        Debug.LogWarning("Could not get MoCap frame in: " + recording.fileName);
+    
         return default;
     }
 
@@ -239,21 +244,50 @@ public class TestManagerVersion2 : MonoBehaviour
         {
             return false;
         }
-
-
-        double selectedDspTime = recording.dspTimes[dspIndex];
-        while (currentDSPTime - selectedDspTime > 0d)
+        double selectedDspTime = 0d;
+        if (recording.currentFrameIndex < recording.dspTimes.Length)
+            selectedDspTime = recording.dspTimes[recording.currentFrameIndex];
+        else
+            return false;
+        while (currentDSPTime - selectedDspTime + recording.dspTimeOffset > 0d)
         {
-            dspIndex++;
-            if (dspIndex < recording.dspTimes.Length)
-                selectedDspTime = recording.dspTimes[dspIndex];
+            recording.currentFrameIndex++;
+            if (recording.currentFrameIndex < recording.dspTimes.Length)
+                selectedDspTime = recording.dspTimes[recording.currentFrameIndex];
             else
                 return false;
         }
 
         frame = recording.dataReader.data[selectedDspTime];
             
-        return true;
+        return true;        
+    }
+
+    private bool TryGetMoCapFrame(MotionRecording recording, out FullMocapFrame frame, int frameIndex)
+    {
+        frame = default;
+        if (dataState != DataState.Loaded)
+        {
+            return false;
+        }
+
+        if (!recording.initialized)
+        {
+            return false;
+        }
+
+
+        double selectedDspTime = recording.dspTimes[frameIndex];
+
+        if (recording.currentFrameIndex < recording.dspTimes.Length)
+            selectedDspTime = recording.dspTimes[recording.currentFrameIndex];
+        else
+            return false;
         
+
+        frame = recording.dataReader.data[selectedDspTime];
+
+        return true;
+
     }
 }

@@ -40,7 +40,6 @@ float2 seed;
 void FilterParticles(uint id : SV_DispatchThreadID)
 {
 	//Problem! Converges to center of gravity
-	//Problem! With buffers, sometimes resamples at 0,0,0 (seems there is an additional bone at 0,0,0)
 	GravityBased(id);
 
 	//BoneIndexBased(id);

@@ -115,7 +115,7 @@ public class Util
         Quaternion tposeRotation = Quaternion.FromToRotation(rigTposeVector, suitTposeVector);
 
         float scale = suitTposeVector.magnitude / rigTposeVector.magnitude;
-
+        Debug.Log("Scale: " + scale);
         rig.transform.localScale *= scale;
         rig.transform.Rotate(Vector3.up, tposeRotation.eulerAngles.y);
     }

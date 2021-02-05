@@ -19,7 +19,11 @@ public class MotionRecording : ScriptableObject
     {
         get; private set;
     }
+    public double dspTimeOffset { get; private set; }
+    [NonSerialized]
     public double[] dspTimes;
+    [NonSerialized]
+    public int currentFrameIndex;
     private void Awake()
     {
         initialized = false;
@@ -27,8 +31,15 @@ public class MotionRecording : ScriptableObject
     public void Init(FullDataReader fdr)
     {
         initialized = true;
+        currentFrameIndex = 0;
         this.dataReader = fdr;
         this.dspTimes = dataReader.data.Keys.OrderBy(d => d).ToArray();
+
+        var markedFrame = dataReader.data.Values.FirstOrDefault(f => f.isMarked);
+        if (markedFrame != default)
+        {
+            dspTimeOffset = markedFrame.dspTime;
+        }
     }
 
 }

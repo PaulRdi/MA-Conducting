@@ -247,7 +247,7 @@ public class MarkerGroup : MonoBehaviour
                 }
             }
         }
-        Debug.Log(StringifyMatrix(transitionMatrix));
+        //Debug.Log(StringifyMatrix(transitionMatrix));
     }
     // Update is called once per frame
     
