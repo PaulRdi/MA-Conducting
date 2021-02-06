@@ -135,14 +135,15 @@ public class MarkerGroup : MonoBehaviour
         }
     }
 
-    internal void ForceMeasurement()
+    internal void ForceMeasurement(int frameID = -1)
     {
         int count = 0;
         Vector3 avgPosition = Vector3.zero;
         for (int i = 0; i < markers.Length; i++)
         {
             int id = markers[i].id;
-            if ((int)DataRouter.MCond(dataSource, markers[i].id, recording) < 3)
+            markers[i].ForceMeasurement(frameID);
+            if ((int)DataRouter.MCond(dataSource, markers[i].id, recording, frameID) < 3)
                 continue;
             avgPosition += markers[i].transform.position;
             count++;

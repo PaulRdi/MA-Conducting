@@ -20355,6 +20355,27 @@ Material:
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+--- !u!1 &1276561587 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4585767694377979021, guid: 07ce3fa012abcc34a93151c155953ea2,
+    type: 3}
+  m_PrefabInstance: {fileID: 4585767693279569652}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1276561588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276561587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979485e914a594d45b50252edefd11f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  accelerationThreshold: 0.04
+  beatTime: 0.25
+  phaseSpace: {fileID: 138191173}
 --- !u!1 &1278490450
 GameObject:
   m_ObjectHideFlags: 0
@@ -20416,7 +20437,7 @@ MonoBehaviour:
   speed: 1
   gravity: 0
   trackedParticles: {fileID: 1278490455}
-  minMaxDist: {x: 0.25, y: 0.5}
+  minMaxDist: {x: 0.1, y: 0.3}
   lastNumberOfResamples: 0
   recordedValues: 
 --- !u!4 &1278490453
@@ -48022,6 +48043,11 @@ PrefabInstance:
       propertyPath: phaseSpace
       value: 
       objectReference: {fileID: 138191173}
+    - target: {fileID: 4585767692774153615, guid: 07ce3fa012abcc34a93151c155953ea2,
+        type: 3}
+      propertyPath: accelerationThreshold
+      value: 0.04
+      objectReference: {fileID: 0}
     - target: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: predictionMode

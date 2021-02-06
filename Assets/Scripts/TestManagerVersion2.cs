@@ -111,18 +111,17 @@ public class TestManagerVersion2 : MonoBehaviour
         startDSPTime = AudioSettings.dspTime;
         TryGetMoCapFrame(recording1, out FullMocapFrame frame0_rec1, 0);
         TryGetMoCapFrame(recording2, out FullMocapFrame frame0_rec2, 0);
-        recordedSuit_rightHand.ForceMeasurement();
-        recordedSuit_leftHand.ForceMeasurement();
-        markerHip.ForceMeasurement();
+        recordedSuit_rightHand.ForceMeasurement(0);
+        recordedSuit_leftHand.ForceMeasurement(0);
+        markerHip.ForceMeasurement(0);
         rigAnimator.enabled = false;
-        yield return null;
+        Physics.SyncTransforms();
         Util.CalibrateIK(
             recordedSuit_rightHandIKRef,
             recordedSuit_leftHandIKRef,
             recordedSuit_rightHand.controllingTransform,
             recordedSuit_leftHand.controllingTransform,
             rigParent);
-        yield return null;
         onCalibrate?.Invoke(markerHip, rigHip);
         rigAnimator.enabled = true;
         while (currentDSPTime < 300.0d)
@@ -201,33 +200,64 @@ public class TestManagerVersion2 : MonoBehaviour
         recording2.Init(reader2);
     }
 
-    public Vector3 GetMarkerPos(MotionRecording recording, int id)
+    public Vector3 GetMarkerPos(MotionRecording recording, int id, int frameID = -1)
     {
-        if (TryGetMoCapFrame(recording, out FullMocapFrame frame))
-        {
-            if (frame.idToArrayIndex.ContainsKey(id))
+        if (frameID >= 0)
+        {            
+            if (TryGetMoCapFrame(recording, out FullMocapFrame frame, frameID))
             {
-                int idx = frame.idToArrayIndex[id];
-                return frame.positions[idx];
+                if (frame.idToArrayIndex.ContainsKey(id))
+                {
+                    int idx = frame.idToArrayIndex[id];
+                    return frame.positions[idx];
+                }
+                Debug.LogWarning("Could not find provided marker ID in recording: " + recording.fileName);
+                return default;
             }
-            Debug.LogWarning("Could not find provided marker ID in recording: " + recording.fileName);
-            return default;
+        }
+        else
+        {
+            if (TryGetMoCapFrame(recording, out FullMocapFrame frame))
+            {
+                if (frame.idToArrayIndex.ContainsKey(id))
+                {
+                    int idx = frame.idToArrayIndex[id];
+                    return frame.positions[idx];
+                }
+                Debug.LogWarning("Could not find provided marker ID in recording: " + recording.fileName);
+                return default;
+            }
         }
         Debug.LogWarning("Could not get MoCap frame in: " + recording.fileName);
     
         return default;
     }
 
-    public TrackingCondition GetMarkerCond(MotionRecording recording, int id)
+    public TrackingCondition GetMarkerCond(MotionRecording recording, int id, int frameID = -1)
     {
-        if (TryGetMoCapFrame(recording, out FullMocapFrame frame))
+        if (frameID >= 0)
         {
-            if (frame.idToArrayIndex.ContainsKey(id))
+            if (TryGetMoCapFrame(recording, out FullMocapFrame frame, frameID))
             {
-                int idx = frame.idToArrayIndex[id];
-                return frame.conditions[idx];
+                if (frame.idToArrayIndex.ContainsKey(id))
+                {
+                    int idx = frame.idToArrayIndex[id];
+                    return frame.conditions[idx];
+                }
+                Debug.LogWarning("Could not find provided marker ID in recording: " + recording.fileName);
             }
-            Debug.LogWarning("Could not find provided marker ID in recording: " + recording.fileName);
+        }
+        else
+        {
+            if (TryGetMoCapFrame(recording, out FullMocapFrame frame))
+            {
+                if (frame.idToArrayIndex.ContainsKey(id))
+                {
+                    int idx = frame.idToArrayIndex[id];
+                    return frame.conditions[idx];
+                }
+                Debug.LogWarning("Could not find provided marker ID in recording: " + recording.fileName);
+            }
         }
         return TrackingCondition.Undefined;
     }
@@ -278,13 +308,6 @@ public class TestManagerVersion2 : MonoBehaviour
 
 
         double selectedDspTime = recording.dspTimes[frameIndex];
-
-        if (recording.currentFrameIndex < recording.dspTimes.Length)
-            selectedDspTime = recording.dspTimes[recording.currentFrameIndex];
-        else
-            return false;
-        
-
         frame = recording.dataReader.data[selectedDspTime];
 
         return true;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,5 +30,10 @@ public class MarkerCustom : MonoBehaviour
     void Tick(double dt)
     {
         transform.position = DataRouter.MPos(source, id, recording);
+    }
+
+    internal void ForceMeasurement(int frameID)
+    {
+        transform.position = DataRouter.MPos(source, id, recording, frameID);
     }
 }

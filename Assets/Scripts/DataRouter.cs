@@ -29,7 +29,7 @@ public class DataRouter : MonoBehaviour
         owl = FindObjectOfType<OWLClient>();
     }
 
-    public static Vector3 MPos(DataSource source, int id, MotionRecording r = default)
+    public static Vector3 MPos(DataSource source, int id, MotionRecording r = default, int frameID = -1)
     {
         switch (source)
         {
@@ -47,14 +47,14 @@ public class DataRouter : MonoBehaviour
                     Debug.LogError("Must provide a recording to get position from non-phasespace-streaming.");
                     break;
                 }
-                return instance.transform.TransformPoint(instance.tm.GetMarkerPos(r, id));
+                return instance.transform.TransformPoint(instance.tm.GetMarkerPos(r, id, frameID));
                 
         }
 
         return instance.transform.TransformPoint(Vector3.zero);
     }
 
-    public static TrackingCondition MCond(DataSource source, int id, MotionRecording r = default)
+    public static TrackingCondition MCond(DataSource source, int id, MotionRecording r = default, int frameID = -1)
     {
         switch (source)
         {
@@ -72,7 +72,7 @@ public class DataRouter : MonoBehaviour
                     Debug.LogError("Must provide a recording to get condition from non-phasespace-streaming.");
                     break;
                 }
-                return instance.tm.GetMarkerCond(r, id);
+                return instance.tm.GetMarkerCond(r, id, frameID);
         }
 
         return TrackingCondition.Invalid;
