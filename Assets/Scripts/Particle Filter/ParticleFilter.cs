@@ -15,7 +15,7 @@ public class ParticleFilter : MonoBehaviour
     [SerializeField] Transform min, max;
     [SerializeField] Transform recordedBonesOrigin, trackingBonesOrigin;
 
-    [SerializeField] int numParticles = 8192;
+    int numParticles;
     [SerializeField] float speed = 1.0f;
     [SerializeField] float gravity = 100.0f;
     [SerializeField] ParticleSystem trackedParticles;
@@ -27,12 +27,11 @@ public class ParticleFilter : MonoBehaviour
     int frameCounter = 0;
 
     public int lastNumberOfResamples;
-    public List<int> recordedValues;
-    int maxSamples = 1000;
 
     void Start()
     {
-        recordedValues = new List<int>();
+        numParticles = TestConfig.current.numParticles;
+
         //Debug.Log(trackingBones.Length);
         particles = new F_Particle[numParticles];
         for (int i = 0; i < numParticles; i++)
@@ -53,6 +52,7 @@ public class ParticleFilter : MonoBehaviour
 
     void Update()
     {
+        numParticles = TestConfig.current.numParticles;
         GPU_PARTICLES();
         //CPU_PARTICLES();
         int numResamples = 0;
@@ -208,5 +208,18 @@ public class ParticleFilter : MonoBehaviour
         float y = Mathf.Sin(phi) * Mathf.Sin(theta);
         float z = Mathf.Cos(phi);
         return new Vector3(x, y, z);
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach(var bone in trackingBones)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(bone.position, minMaxDist.x);
+            Gizmos.color = Color.green;
+            Gizmos.color = new Color(Gizmos.color.r, Gizmos.color.g, Gizmos.color.b, .3f);
+            Gizmos.DrawSphere(bone.position, minMaxDist.y);
+
+        }
     }
 }

@@ -28,8 +28,7 @@ public class AudioEditor : EditorWindow
     AudioEditMode state;
     private void Update()
     {
-        Repaint();
-        
+        Repaint();        
     }
     void OnDrawGizmos()
     {

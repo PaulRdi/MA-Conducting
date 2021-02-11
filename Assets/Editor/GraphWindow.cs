@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 using System;
@@ -26,6 +27,7 @@ public class GraphWindow : EditorWindow
     int lastDraw;
     bool initialized;
     AccuracyTester tester;
+    TestManagerVersion2 testManager;
     private void OnEnable()
     {
         int w = 400;
@@ -72,6 +74,7 @@ public class GraphWindow : EditorWindow
     {
         initialized = true;
         tester = FindObjectOfType<AccuracyTester>();
+        testManager = FindObjectOfType<TestManagerVersion2>();
     }
 
     private void HandleDraw()
@@ -82,21 +85,46 @@ public class GraphWindow : EditorWindow
         float max = 8192.0f;
         float scale = 100.0f;
         float xOffset = 50;
-        List<int> refToStuff = tester.recordedValues;
-        Vector3[] points = new Vector3[refToStuff.Count];
+        List<int> particleDeaths = tester.recordedValues;
+        List<double> particleDeathsAverages = tester.recordedAverages;
+        List<double> accuracies = testManager.recordedAccuracies;
+        Vector3[] points = new Vector3[TestConfig.current.maxRecordedValues];
+        Vector3[] points2 = new Vector3[TestConfig.current.maxRecordedValues];
+        Vector3[] points3 = new Vector3[TestConfig.current.maxRecordedValues];
+        Rect graphs1 = EditorGUILayout.BeginVertical();
         EditorGUI.LabelField(new Rect(new Vector2(10.0f, scale), new Vector2(30.0f, 30.0f)), min.ToString());
         EditorGUI.LabelField(new Rect(new Vector2(10.0f, 0.0f), new Vector2(30.0f, 30.0f)), max.ToString());
-        for (int i = 0; i < points.Length; i++)
+        
+
+        for (int i = 0; i < TestConfig.current.maxRecordedValues; i++)
         {
-            float t = (float)refToStuff[i] / max;
-            points[i] = new Vector3((float)i + xOffset, Mathf.Lerp(scale, 0, t));
+            if (i < particleDeaths.Count)
+            {
+                float t = (float)particleDeaths[i] / max;
+                points[i] = new Vector3((float)i + xOffset, Mathf.Lerp(scale, 0, t));
+            }
+
+            if (i < particleDeathsAverages.Count)
+            {
+                float t2 = (float)particleDeathsAverages[i] / max;
+                points2[i] = new Vector3((float)i + xOffset, Mathf.Lerp(scale, 0, t2));
+            }
+
+            if (i < accuracies.Count)
+                points3[i] = new Vector3((float)i + xOffset, Mathf.Lerp(scale, 0, (float)accuracies[i]));
         }
+
         Handles.color = Color.blue;
-        Handles.DrawAAPolyLine(points);
+        Handles.DrawAAPolyLine(TestConfig.current.graphLineWidth, particleDeaths.Count, points);
+        Handles.color = Color.red;
+        Handles.DrawAAPolyLine(TestConfig.current.graphLineWidth, particleDeathsAverages.Count, points2);
+        Handles.color = Color.green;
+        Handles.DrawAAPolyLine(TestConfig.current.graphLineWidth, accuracies.Count, points3);
         Handles.color = Color.black;
         Handles.DrawLine(new Vector3(40.0f, 0.0f), new Vector3(40.0f, scale + 10.0f));
         Handles.DrawLine(new Vector3(30.0f, 0.0f), new Vector3(1050.0f, 0.0f));
         Handles.DrawLine(new Vector3(30.0f, scale), new Vector3(1050.0f, scale));
+        EditorGUILayout.EndVertical();
     }
 
     private void OnContent(MeshGenerationContext obj)

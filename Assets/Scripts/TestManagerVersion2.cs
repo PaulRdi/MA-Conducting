@@ -27,6 +27,7 @@ public class TestManagerVersion2 : MonoBehaviour
     public static event Action<double> tick;
     public static event Action<MarkerGroup, Transform> onCalibrate;
 
+    [SerializeField] TestConfig config;
     [SerializeField] MotionRecording recording1;
     [SerializeField] MotionRecording recording2;
     [SerializeField] Song song;
@@ -42,7 +43,11 @@ public class TestManagerVersion2 : MonoBehaviour
     [SerializeField] GameObject loadingDataPanel;
     [SerializeField] GameObject loadingDataErrorPanel;
     [SerializeField] TextMeshProUGUI loadingDataErrorText;
+    [SerializeField] Image accuracyBar;
 
+    [SerializeField] AudioSource audioSource;
+
+    [SerializeField] AccuracyTester accuracyTester;
 
     public bool manualTick = false;
     bool tickKeyPressed;
@@ -52,14 +57,27 @@ public class TestManagerVersion2 : MonoBehaviour
     Coroutine loadRoutine;
     Coroutine testRoutine;
 
-    double startDSPTime;
-    double currentDSPTime;
-    double lastDSPTime;
+    double startDSPTimeMotion;
+    double currentDSPTimeMotion;
+    double lastDspTimeMotion;
+
+    double currentDSPTimeSong;
+    double startDSPTimeSong;
+
+    Beat currentBeat;
+    bool currentBeatHit;
+    Beat lastBeat;
+    int beatIndex;
+
+    double currentAccuracy;
+    public List<double> recordedAccuracies;
 
     void Awake()
     {
         dataState = DataState.NotLoaded;
         testState = TestState.Idle;
+        recordedAccuracies = new List<double>();
+        TestConfig.current = config;
         TryLoadData(TryStartTest);
     }
 
@@ -72,10 +90,11 @@ public class TestManagerVersion2 : MonoBehaviour
     {        
         if (UnityEngine.Input.GetKeyDown(KeyCode.F9))
             tickKeyPressed = true;
+        UpdateAccuracy();
     }
     private void LateUpdate()
     {
-        lastDSPTime = AudioSettings.dspTime;
+        lastDspTimeMotion = AudioSettings.dspTime;
     }
     void TryStartTest()
     {
@@ -106,9 +125,59 @@ public class TestManagerVersion2 : MonoBehaviour
 
     IEnumerator TestRoutine()
     {
+        InitTest();
+        audioSource.PlayOneShot(song.audioClip);
+        while (currentDSPTimeSong < song.beats[0].dspTime)
+        {
+            currentDSPTimeSong = AudioSettings.dspTime - startDSPTimeSong;
+            yield return null;
+        }
+        currentAccuracy = 1.0;
+        startDSPTimeMotion = AudioSettings.dspTime;
+        while (currentDSPTimeMotion < 300.0d)
+        {
+            if (!manualTick)
+            {
+                currentDSPTimeMotion = AudioSettings.dspTime - startDSPTimeMotion;
+                currentDSPTimeSong = AudioSettings.dspTime - startDSPTimeSong;
+                yield return null;
+            }
+            else
+            {
+                currentDSPTimeMotion += AudioSettings.dspTime - lastDspTimeMotion;
+                yield return new WaitUntil(() => tickKeyPressed);
+            }
+            if (lastDspTimeMotion != AudioSettings.dspTime)
+                tick?.Invoke(AudioSettings.dspTime - lastDspTimeMotion);
+            tickKeyPressed = false;
+            if (currentBeat.dspTime - currentDSPTimeSong < TestConfig.current.beatBuffer / 2.0)
+            {
+                if (beatIndex + 1 < song.beats.Count)
+                {
+                    beatIndex++;
+                    lastBeat = currentBeat;
+                    currentBeat = song.beats[beatIndex];
+                    if (!currentBeatHit)
+                    {
+                        currentAccuracy -= TestConfig.current.missedBeatPenalty;
+                        Debug.Log("Missed beat!");
+                    }
+                    currentBeatHit = false;
+                }
+            }
+        }
+        StopTest();
+    }
+
+
+    private void InitTest()
+    {
         testState = TestState.Initializing;
-        currentDSPTime = 0.0d;
-        startDSPTime = AudioSettings.dspTime;
+        currentAccuracy = 1.0;
+        currentDSPTimeMotion = 0.0d;
+        startDSPTimeMotion = AudioSettings.dspTime;
+        currentDSPTimeSong = 0.0d;
+        startDSPTimeSong = AudioSettings.dspTime;
         TryGetMoCapFrame(recording1, out FullMocapFrame frame0_rec1, 0);
         TryGetMoCapFrame(recording2, out FullMocapFrame frame0_rec2, 0);
         recordedSuit_rightHand.ForceMeasurement(0);
@@ -124,22 +193,9 @@ public class TestManagerVersion2 : MonoBehaviour
             rigParent);
         onCalibrate?.Invoke(markerHip, rigHip);
         rigAnimator.enabled = true;
-        while (currentDSPTime < 300.0d)
-        {
-            if (!manualTick)
-            {
-                currentDSPTime = AudioSettings.dspTime - startDSPTime;
-                yield return null;
-            }
-            else
-            {
-                currentDSPTime += AudioSettings.dspTime - lastDSPTime;
-                yield return new WaitUntil(() => tickKeyPressed);
-            }
-            if (lastDSPTime != AudioSettings.dspTime)
-                tick?.Invoke(AudioSettings.dspTime - lastDSPTime);
-            tickKeyPressed = false;
-        }
+        testState = TestState.Running;
+        currentBeat = song.beats[0];
+        BeatDetector.beatDetected += BeatDetector_beatDetected;
     }
 
     IEnumerator LoadRoutine(Action finishSuccessfulAction)
@@ -178,6 +234,50 @@ public class TestManagerVersion2 : MonoBehaviour
         loadingDataPanel.gameObject.SetActive(false);
         loadRoutine = null;
         Debug.Log("Data loading: <color=#00ff00>success</color>");
+    }
+
+    private void UpdateAccuracy()
+    {
+        int pdc = TestConfig.current.particleDeathCutoff;
+        double overExpectedParticleDeaths = Math.Max(0, accuracyTester.lastAverage - pdc);
+        double underExpectedParticleDeaths = Math.Max(0, -(accuracyTester.lastAverage - pdc));
+        double maxParticleDeathsOverExpectation = TestConfig.current.numParticles - pdc;
+        double maxParticleDeathsUnderExpectation = TestConfig.current.numParticles - maxParticleDeathsOverExpectation;
+        double overestimatedParticleDeathRatio = overExpectedParticleDeaths / maxParticleDeathsOverExpectation;
+        double underestimatedParticleDeathRatio = underExpectedParticleDeaths / maxParticleDeathsUnderExpectation;
+
+        currentAccuracy -= overestimatedParticleDeathRatio * TestConfig.current.maxAccuracyLossPerSecond * Time.deltaTime;
+        currentAccuracy += underestimatedParticleDeathRatio * TestConfig.current.maxAccuracyGainPerSecond * Time.deltaTime;
+
+        currentAccuracy = Math.Min(1.0, Math.Max(0.0, currentAccuracy));
+
+        accuracyBar.fillAmount = (float)currentAccuracy;
+
+        if (recordedAccuracies.Count >= TestConfig.current.maxRecordedValues)
+            recordedAccuracies.RemoveAt(0);
+        recordedAccuracies.Add(currentAccuracy);
+    }
+
+    private void BeatDetector_beatDetected(BeatDetector obj)
+    {
+        if (Math.Abs(currentBeat.dspTime - currentDSPTimeSong) <= TestConfig.current.beatBuffer &&
+            !currentBeatHit)
+        {
+            currentBeatHit = true;
+            Debug.Log("Correct Beat!");
+            currentAccuracy += TestConfig.current.correctBeatAccuracyBonus;
+        }
+    }
+
+    void StopTest()
+    {
+        if (testRoutine != null)
+        {
+            StopCoroutine(testRoutine);
+            testRoutine = null;
+        }
+        testState = TestState.Idle;
+        BeatDetector.beatDetected -= BeatDetector_beatDetected;
     }
 
     private void StopDataLoading()
@@ -279,7 +379,7 @@ public class TestManagerVersion2 : MonoBehaviour
             selectedDspTime = recording.dspTimes[recording.currentFrameIndex];
         else
             return false;
-        while (currentDSPTime - selectedDspTime + recording.dspTimeOffset > 0d)
+        while (currentDSPTimeMotion - selectedDspTime + recording.dspTimeOffset > 0d)
         {
             recording.currentFrameIndex++;
             if (recording.currentFrameIndex < recording.dspTimes.Length)

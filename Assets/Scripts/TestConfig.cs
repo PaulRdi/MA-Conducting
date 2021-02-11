@@ -20,6 +20,30 @@ public class TestConfig : ScriptableObject
     public double startOffset => _startOffet;
     [SerializeField] double _startOffet = 1.0;
 
+    public int particleDeathCutoff => _particleDeathCutoff;
+    [SerializeField] int _particleDeathCutoff = 1200;
+
+    public int numParticles => _numParticles;
+    [SerializeField] int _numParticles = 8192;
+
+    public double maxAccuracyLossPerSecond => _maxAccuracyLossPerSecond;
+    [SerializeField] double _maxAccuracyLossPerSecond = .2f;
+
+    public double maxAccuracyGainPerSecond => _maxAccuracyGainPerSecond;
+    [SerializeField] double _maxAccuracyGainPerSecond = .2f;
+
+    public int maxRecordedValues => _maxRecordedValues;
+    [SerializeField] int _maxRecordedValues = 1000;
+
+    public float graphLineWidth => _graphLineWidth;
+    [SerializeField] float _graphLineWidth = 3.0f;
+
+    public float correctBeatAccuracyBonus => _correctBeatAccuracyBonus;
+    [SerializeField] float _correctBeatAccuracyBonus = .05f;
+
+    public float missedBeatPenalty => _missedBeatPenalty;
+    [SerializeField] float _missedBeatPenalty = 0.05f;
+
     public static TestConfig current
     {
         get

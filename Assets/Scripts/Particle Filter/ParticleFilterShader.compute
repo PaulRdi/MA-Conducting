@@ -156,7 +156,11 @@ void GravityBased(uint id) {
 	if (weight < random(seed))
 	{
 		//particles[id].position = Resample(particles[id].position, closestDir, bones[closestBoneIndex].position);
-		particles[id].position = Resample(particles[id].position - trackingBonesOrigin.xyz, closestDir, trackingBones[closestBoneIndex].xyz - trackingBonesOrigin.xyz);
+		particles[id].position = Resample(
+			particles[id].position - trackingBonesOrigin.xyz, 
+			closestDir, 
+			trackingBones[closestBoneIndex].xyz - trackingBonesOrigin.xyz);
+
 		particles[id].position += trackingBonesOrigin.xyz;
 		particles[id].resampleFlag = 1;
 	}
