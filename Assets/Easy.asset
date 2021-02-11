@@ -22,4 +22,4 @@ MonoBehaviour:
   _maxRecordedValues: 1000
   _graphLineWidth: 3
   _correctBeatAccuracyBonus: 0.05
-  _missedBeatPenalty: 0.025
+  _missedBeatPenalty: 0.03
