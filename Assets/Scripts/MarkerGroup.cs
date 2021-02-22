@@ -34,6 +34,7 @@ public class MarkerGroup : MonoBehaviour
     public MotionRecording recording;
 
     public Transform controllingTransform;
+    [SerializeField] bool debug = false;
     [SerializeField] MarkerPredictionMode predictionMode = MarkerPredictionMode.Kalman;
     //OWLMarker[] markers;
     MarkerCustom[] markers;
@@ -53,6 +54,9 @@ public class MarkerGroup : MonoBehaviour
     [SerializeField] float lineWidth = .03f;
     [SerializeField] float measurementNoiseMagnitude = 1e-4f;
     [SerializeField] float processNoiseMagnitude = 1e-2f;
+    [SerializeField] float localKalmanMeasurementNoiseLow = 1e-2f;
+    [SerializeField] float localKalmanMeasurementNoiseHigh = 1e-4f;
+
     float epsilon = 0.01f;
     UnityEngine.Vector3 avgHeading;
     //speed the hmm extrapolates with when marker data is lost.
@@ -92,10 +96,10 @@ public class MarkerGroup : MonoBehaviour
                 UpdateMarkerPositionsMarkov();
                 break;
             case MarkerPredictionMode.Kalman:
-                UpdateMarkerPositionsKalman(dt);
+                UpdateMarkerPositionsKalman(1.0);
                 break;
             case MarkerPredictionMode.KalmanGlobal:
-                UpdateMarkerPositionsGlobalKalman(dt);
+                UpdateMarkerPositionsGlobalKalman(.1f);
                 break;
             case MarkerPredictionMode.None:
                 UpdateMarkerPositionsAverage();
@@ -119,6 +123,8 @@ public class MarkerGroup : MonoBehaviour
             lr.widthMultiplier = lineWidth;
             lr.positionCount = numSavedFrames;
         }
+        if (!debug)
+            lr.enabled = false;
         lastPositions = new Queue<Vector3>();
         if (markers.Length <= 0)
             Debug.LogWarning("No markers detected for " + this.gameObject.name, this);
@@ -192,12 +198,12 @@ public class MarkerGroup : MonoBehaviour
             Matrix<float> processNoise = new Matrix<float>(statevecSize, statevecSize);
             for (int j = 0; j < statevecSize; j++)
             {
-                processNoise[j, j] = 1e-4f;
+                processNoise[j, j] = localKalmanMeasurementNoiseLow;
 
             }            
 
             Matrix<float> state = new Matrix<float>(statevecSize, 1);
-            state.SetRandNormal(new MCvScalar(0.0f), new MCvScalar(5.0f));
+            state.SetRandNormal(new MCvScalar(0.0f), new MCvScalar(1.0f));
 
             Matrix<float> errorCov = new Matrix<float>(statevecSize, statevecSize);
             errorCov.SetIdentity();
@@ -248,7 +254,7 @@ public class MarkerGroup : MonoBehaviour
                 }
             }
         }
-        //Debug.Log(StringifyMatrix(transitionMatrix));
+        Debug.Log("Transition Matrix: \n"+StringifyMatrix(transitionMatrix));
     }
     // Update is called once per frame
     
@@ -285,7 +291,7 @@ public class MarkerGroup : MonoBehaviour
             lastPositions.Enqueue(lastAveragePosition);
         }
 
-        lr.SetPositions(lastPositions.ToArray());
+        lr?.SetPositions(lastPositions.ToArray());
     }
 
     private void UpdateMarkerPositionsMarkov()
@@ -348,23 +354,22 @@ public class MarkerGroup : MonoBehaviour
             {
                 for (int j = 0; j < dim; j++)
                 {
-                    measurementNoise[j, j] = 1e-2f;
+                    measurementNoise[j, j] = localKalmanMeasurementNoiseHigh;
                 }
             }
             else
             {
                 for (int j = 0; j < dim; j++)
                 {
-                    measurementNoise[j, j] = 1e-4f;
+                    measurementNoise[j, j] = localKalmanMeasurementNoiseLow;
                 }
-            }
-            
-
-            kalmans[i].Correct(
+                kalmans[i].Correct(
                 new Matrix<float>(new float[]{
                     markers[i].transform.position.x,
                     markers[i].transform.position.y,
                     markers[i].transform.position.z }).Mat);
+            }        
+  
         }
         Matrix<float> sum = new Matrix<float>(statevecSize, 1);
         int count = 0;
@@ -428,6 +433,8 @@ public class MarkerGroup : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (!debug)
+            return;
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(controllingTransform.position, debugSphereSize);
     }

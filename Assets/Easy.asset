@@ -12,14 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a22f3c7abe51ea24caf1f8170334be56, type: 3}
   m_Name: Easy
   m_EditorClassIdentifier: 
-  _beatBuffer: 0.25
-  _motionAccuracy: 1
+  _beatBuffer: 0.5
   _startOffet: 1
   _particleDeathCutoff: 450
   _numParticles: 8192
-  _maxAccuracyLossPerSecond: 0.20000000298023224
-  _maxAccuracyGainPerSecond: 0.20000000298023224
+  _maxAccuracyLossPerSecond: 0.2
+  _maxAccuracyGainPerSecond: 0.2
   _maxRecordedValues: 1000
   _graphLineWidth: 3
-  _correctBeatAccuracyBonus: 0.05
-  _missedBeatPenalty: 0.03
+  _correctBeatAccuracyBonus: 0.02
+  _missedBeatPenalty: 0.05
+  _accelerationThreshold: 0.04
+  _beatTime: 0.05
+  _beatNumVelocityEntries: 10
+  _particleSpeedMod: 1
+  _jointGravity: 0.6
+  _maxG: 0.1
+  _moveAccuracyNumFrames: 60
+  _particleMinMaxDist: {x: 0.06, y: 0.2}

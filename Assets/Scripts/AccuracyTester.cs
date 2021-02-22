@@ -9,7 +9,6 @@ public class AccuracyTester : MonoBehaviour
 {
     public int maxNumValues = 100;
     public List<int> recordedValues;
-    public int framesForAverage = 60;
     public double lastAverage;
     public List<double> recordedAverages;
 
@@ -21,13 +20,13 @@ public class AccuracyTester : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         recordedValues.Add(particlefilter.lastNumberOfResamples);
         if (recordedValues.Count >= TestConfig.current.maxRecordedValues)
             recordedValues.RemoveAt(0);
 
-        lastAverage = recordedValues.Skip(Math.Max(0, recordedValues.Count - framesForAverage)).Average();
+        lastAverage = recordedValues.Skip(Math.Max(0, recordedValues.Count - TestConfig.current.moveAccuracyNumFrames)).Average();
         recordedAverages.Add(lastAverage);
         if (recordedAverages.Count >= TestConfig.current.maxRecordedValues)
             recordedAverages.RemoveAt(0);

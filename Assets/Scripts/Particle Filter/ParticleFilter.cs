@@ -16,10 +16,7 @@ public class ParticleFilter : MonoBehaviour
     [SerializeField] Transform recordedBonesOrigin, trackingBonesOrigin;
 
     int numParticles;
-    [SerializeField] float speed = 1.0f;
-    [SerializeField] float gravity = 100.0f;
     [SerializeField] ParticleSystem trackedParticles;
-    [SerializeField] Vector2 minMaxDist;
 
     Dictionary<int, Vector3[]> recordedData;
     F_Particle[] particles;
@@ -87,7 +84,7 @@ public class ParticleFilter : MonoBehaviour
         int kernelID = particleFilter.FindKernel("FilterParticles");
         UpdateComputeShaderData(kernelID, particleBuffer);
 
-        int numThreads = numParticles / 512;
+        int numThreads = numParticles / 16;
         particleFilter.Dispatch(kernelID, numThreads, 1, 1);
 
         particleBuffer.GetData(particles);
@@ -103,10 +100,11 @@ public class ParticleFilter : MonoBehaviour
         particleBuffer.SetData(particles, 0, 0, numParticles);
         particleFilter.SetBuffer(kernelID, "particles", particleBuffer);
         particleFilter.SetFloat("deltaTime", Time.deltaTime);
-        particleFilter.SetFloat("speed", speed);
-        particleFilter.SetFloat("gravity", gravity);
-        particleFilter.SetFloat("minDist", minMaxDist.x);
-        particleFilter.SetFloat("maxDist", minMaxDist.y);
+        particleFilter.SetFloat("speed", TestConfig.current.particleSpeedMod);
+        particleFilter.SetFloat("gravity", TestConfig.current.jointGravity);
+        particleFilter.SetFloat("minDist", TestConfig.current.particleMinMaxDist.x);
+        particleFilter.SetFloat("maxDist", TestConfig.current.particleMinMaxDist.y);
+        particleFilter.SetFloat("maxG", TestConfig.current.maxG);
 
         particleFilter.SetVectorArray("recordedBones", GetVectorArray(recordedBones.Select(b => (Vector4)b.position)));
         particleFilter.SetInt("numRecordedBones", recordedBones.Length);
@@ -149,7 +147,7 @@ public class ParticleFilter : MonoBehaviour
             Vector3 d = tBonePos - centeredParticlePosition;
             float l = d.magnitude;
             distanceSum += d;
-            dir += d * gravity * (1.0f / (l * l));
+            dir += d * TestConfig.current.jointGravity * (1.0f / (l * l));
 
             if (l < closestDir.magnitude)
             {
@@ -157,7 +155,7 @@ public class ParticleFilter : MonoBehaviour
             }
 
             float distanceToClosest = closestDir.magnitude;
-            particles[id].position += closestDir.normalized * speed * Time.deltaTime;
+            particles[id].position += closestDir.normalized * TestConfig.current.particleSpeedMod * Time.deltaTime;
 
             Vector3 bonePos = trackingBones[boneID].position - trackingBonesOrigin.position;
             d = bonePos - (particles[id].position - trackingBonesOrigin.position);
@@ -170,7 +168,7 @@ public class ParticleFilter : MonoBehaviour
 
             distanceToClosest = closestDir.magnitude;
             //reweight
-            float weight = 1.0f - Mathf.Min((distanceToClosest - minMaxDist.x) / (minMaxDist.y - minMaxDist.x), 1.0f);
+            float weight = 1.0f - Mathf.Min((distanceToClosest - TestConfig.current.particleMinMaxDist.x) / (TestConfig.current.particleMinMaxDist.y - TestConfig.current.particleMinMaxDist.x), 1.0f);
             //weight now is between 0.0 and 1.0 between minDist and maxDist
             //if weight is high -> particle was close to nearest joint.
             //With this -> resample particle if it died
@@ -194,7 +192,7 @@ public class ParticleFilter : MonoBehaviour
 
     Vector3 Resample(Vector3 lastPos, Vector3 closestDir, Vector3 bone)
     {
-        return bone + SampleSphereCoord(new Vector2(closestDir.y, closestDir.z) * UnityEngine.Random.Range(0f, 1.0f) * minMaxDist.x);
+        return bone + SampleSphereCoord(new Vector2(closestDir.y, closestDir.z) * UnityEngine.Random.Range(0f, 1.0f) * TestConfig.current.particleMinMaxDist.x);
 
         //return bones[closestBoneIndex] - closestDir * random(closestDir.xy);
     }
@@ -215,10 +213,10 @@ public class ParticleFilter : MonoBehaviour
         foreach(var bone in trackingBones)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawSphere(bone.position, minMaxDist.x);
+            Gizmos.DrawSphere(bone.position, TestConfig.current.particleMinMaxDist.x);
             Gizmos.color = Color.green;
             Gizmos.color = new Color(Gizmos.color.r, Gizmos.color.g, Gizmos.color.b, .3f);
-            Gizmos.DrawSphere(bone.position, minMaxDist.y);
+            Gizmos.DrawSphere(bone.position, TestConfig.current.particleMinMaxDist.y);
 
         }
     }

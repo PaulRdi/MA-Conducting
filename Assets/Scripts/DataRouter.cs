@@ -31,6 +31,7 @@ public class DataRouter : MonoBehaviour
 
     public static Vector3 MPos(DataSource source, int id, MotionRecording r = default, int frameID = -1)
     {
+        Vector3 pos = Vector3.zero;
         switch (source)
         {
             case DataSource.PhaseSpace:
@@ -40,18 +41,20 @@ public class DataRouter : MonoBehaviour
                     Debug.LogError("Cannot get OWL based marker position from uninitialized system.");
                     break;
                 }
-                return instance.owl.Markers[id].position;
+                pos = instance.owl.Markers[id].position;
+                break;
             case DataSource.Self:
                 if (r == default)
                 {
                     Debug.LogError("Must provide a recording to get position from non-phasespace-streaming.");
                     break;
                 }
-                return instance.transform.TransformPoint(instance.tm.GetMarkerPos(r, id, frameID));
+                pos = instance.tm.GetMarkerPos(r, id, frameID);
+                break;
                 
         }
 
-        return instance.transform.TransformPoint(Vector3.zero);
+        return instance.transform.TransformPoint(pos);
     }
 
     public static TrackingCondition MCond(DataSource source, int id, MotionRecording r = default, int frameID = -1)

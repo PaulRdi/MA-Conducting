@@ -12,6 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a22f3c7abe51ea24caf1f8170334be56, type: 3}
   m_Name: fallbackTestConfig
   m_EditorClassIdentifier: 
-  _beatBuffer: 50
+  _beatBuffer: 0.25
   _motionAccuracy: 1
   _startOffet: 1
+  _particleDeathCutoff: 1200
+  _numParticles: 8192
+  _maxAccuracyLossPerSecond: 0.20000000298023224
+  _maxAccuracyGainPerSecond: 0.20000000298023224
+  _maxRecordedValues: 1000
+  _graphLineWidth: 3
+  _correctBeatAccuracyBonus: 0.05
+  _missedBeatPenalty: 0.05

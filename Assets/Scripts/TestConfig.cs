@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName=  "testConfig.asset")]
+[CreateAssetMenu(fileName = "testConfig.asset")]
 public class TestConfig : ScriptableObject
 {
 
@@ -11,11 +11,6 @@ public class TestConfig : ScriptableObject
     /// </summary>
     public double beatBuffer => _beatBuffer;
     [SerializeField] double _beatBuffer = 50;
-
-    public float motionAccuracy => _motionAccuracy;
-    [Range(0f, 1f)]
-    [SerializeField]
-    float _motionAccuracy = 1.0f;
 
     public double startOffset => _startOffet;
     [SerializeField] double _startOffet = 1.0;
@@ -43,6 +38,30 @@ public class TestConfig : ScriptableObject
 
     public float missedBeatPenalty => _missedBeatPenalty;
     [SerializeField] float _missedBeatPenalty = 0.05f;
+
+    public float accelerationThreshold => _accelerationThreshold;
+    [SerializeField] float _accelerationThreshold = .04f;
+
+    public float beatTime => _beatTime;
+    [SerializeField] float _beatTime = .05f;
+
+    public int beatNumVelocityEntries => _beatNumVelocityEntries;
+    [SerializeField] int _beatNumVelocityEntries = 10;
+
+    public float particleSpeedMod => _particleSpeedMod;
+    [SerializeField] float _particleSpeedMod = 1.0f;
+
+    public float jointGravity => _jointGravity;
+    [SerializeField] float _jointGravity = 0.6f;
+
+    public float maxG => _maxG;
+    [SerializeField] float _maxG = .1f;
+
+    public int moveAccuracyNumFrames => _moveAccuracyNumFrames;
+    [SerializeField] int _moveAccuracyNumFrames = 60;
+
+    public Vector2 particleMinMaxDist => _particleMinMaxDist;
+    [SerializeField] Vector2 _particleMinMaxDist = new Vector2(.06f, .2f);
 
     public static TestConfig current
     {

@@ -14,11 +14,6 @@ public class BeatDetector : MonoBehaviour
     Vector3 vel;
     Vector3 deltaVel;
     Coroutine beatRoutine;
-
-
-    public float accelerationThreshold = 1.0f;
-    public float beatTime = 0.5f;
-    public int numVelocityEntries = 10;
     Func<bool> condition;
     List<float> recordedVelocityDeltas;
 
@@ -37,7 +32,7 @@ public class BeatDetector : MonoBehaviour
 
         condition = () =>
         {
-            return recordedVelocityDeltas.Average() > accelerationThreshold;
+            return recordedVelocityDeltas.Average() > TestConfig.current.accelerationThreshold;
         };
         //condition = () =>
         //{
@@ -49,7 +44,12 @@ public class BeatDetector : MonoBehaviour
         //    return Mathf.Abs(rotatedVel.y) > accelerationThreshold;
         //};
     }
-
+    private void Update()
+    {
+        if (beatRoutine == null &&
+            condition.Invoke())
+            beatRoutine = StartCoroutine(DetectedBeatRoutine());
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -57,11 +57,9 @@ public class BeatDetector : MonoBehaviour
         vel = transform.position - lastPos;
         deltaVel = vel - lastVel;
         recordedVelocityDeltas.Add(deltaVel.magnitude);
-        if (recordedVelocityDeltas.Count >= numVelocityEntries)
+        if (recordedVelocityDeltas.Count >= TestConfig.current.beatNumVelocityEntries)
             recordedVelocityDeltas.RemoveAt(0);
-        if (beatRoutine == null &&
-            condition.Invoke())
-            beatRoutine = StartCoroutine(DetectedBeatRoutine());
+        
 
         lastPos = transform.position;
         lastVel = vel;
@@ -73,7 +71,8 @@ public class BeatDetector : MonoBehaviour
             system.Emit(1);
         beatDetected?.Invoke(this);
         Debug.Log("beat");
-        yield return new WaitForSeconds(beatTime);
+        //yield return new WaitForSeconds(beatTime);
+        yield return null;
         beatRoutine = null;
     }
 }

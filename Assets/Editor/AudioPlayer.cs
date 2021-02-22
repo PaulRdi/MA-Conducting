@@ -131,7 +131,7 @@ public class AudioEditor : EditorWindow
                 height, 
                 Color.grey, 
                 dspTime,
-                .015));
+                TestConfig.current.beatBuffer));
         GUILayout.EndHorizontal();
     }
 
