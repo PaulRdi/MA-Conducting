@@ -5,10 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "testConfig.asset")]
 public class TestConfig : ScriptableObject
 {
+    public bool debug => _debug;
+    [SerializeField] bool _debug = false;
 
-    /// <summary>
-    /// The time a beat is valid in seconds
-    /// </summary>
     public double beatBuffer => _beatBuffer;
     [SerializeField] double _beatBuffer = 50;
 
@@ -48,6 +47,9 @@ public class TestConfig : ScriptableObject
     public int beatNumVelocityEntries => _beatNumVelocityEntries;
     [SerializeField] int _beatNumVelocityEntries = 10;
 
+    public float beatMinAngleVelocity => _beatMinAngleVelocity;
+    [SerializeField] float _beatMinAngleVelocity = .05f;
+
     public float particleSpeedMod => _particleSpeedMod;
     [SerializeField] float _particleSpeedMod = 1.0f;
 
@@ -62,6 +64,9 @@ public class TestConfig : ScriptableObject
 
     public Vector2 particleMinMaxDist => _particleMinMaxDist;
     [SerializeField] Vector2 _particleMinMaxDist = new Vector2(.06f, .2f);
+
+    public Vector2 minMaxLightStrength => _minMaxLightStrength;
+    [SerializeField] Vector2 _minMaxLightStrength = new Vector2(1.2f, 4.0f);
 
     public static TestConfig current
     {

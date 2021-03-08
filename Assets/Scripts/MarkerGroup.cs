@@ -120,10 +120,11 @@ public class MarkerGroup : MonoBehaviour
         else
         {
             lr = gameObject.AddComponent<LineRenderer>();
-            lr.widthMultiplier = lineWidth;
-            lr.positionCount = numSavedFrames;
+            
         }
-        if (!debug)
+        lr.widthMultiplier = lineWidth;
+        lr.positionCount = numSavedFrames;
+        if (!TestConfig.current.debug)
             lr.enabled = false;
         lastPositions = new Queue<Vector3>();
         if (markers.Length <= 0)
@@ -254,7 +255,7 @@ public class MarkerGroup : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Transition Matrix: \n"+StringifyMatrix(transitionMatrix));
+        //Debug.Log("Transition Matrix: \n"+StringifyMatrix(transitionMatrix));
     }
     // Update is called once per frame
     
@@ -433,7 +434,7 @@ public class MarkerGroup : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!debug)
+        if (!TestConfig.current.debug)
             return;
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(controllingTransform.position, debugSphereSize);

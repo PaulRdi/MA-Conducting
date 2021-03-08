@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a22f3c7abe51ea24caf1f8170334be56, type: 3}
+  m_Name: Easy
+  m_EditorClassIdentifier: 
+  _debug: 0
+  _beatBuffer: 0.5
+  _startOffet: 1
+  _particleDeathCutoff: 300
+  _numParticles: 8192
+  _maxAccuracyLossPerSecond: 1
+  _maxAccuracyGainPerSecond: 0.2
+  _maxRecordedValues: 1000
+  _graphLineWidth: 3
+  _correctBeatAccuracyBonus: 0.02
+  _missedBeatPenalty: 0.05
+  _accelerationThreshold: 0.04
+  _beatTime: 0.05
+  _beatNumVelocityEntries: 10
+  _beatMinAngleVelocity: 25
+  _particleSpeedMod: 1
+  _jointGravity: 0.6
+  _maxG: 0.1
+  _moveAccuracyNumFrames: 60
+  _particleMinMaxDist: {x: 0.06, y: 0.2}
+  _minMaxLightStrength: {x: 1.2, y: 3.25}

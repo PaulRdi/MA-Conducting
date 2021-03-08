@@ -24,7 +24,7 @@ public class FullMotionTrackingDataCapturer : MonoBehaviour
     bool recording;
     public bool writing { get; private set; }
     [SerializeField] OWLClient client;
-    [SerializeField] string fileName = "full_recording.csv";
+    [SerializeField] string fileName = "full_recording.json";
     List<FullMocapFrame> data;
     double startDSPTime;
     double lastDSPTime;

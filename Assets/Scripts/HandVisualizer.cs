@@ -1,48 +1,33 @@
-﻿using PhaseSpace.OWL;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IKTracker : MonoBehaviour
+public class HandVisualizer : MonoBehaviour
 {
+    Vector3 calibratedOffset;
     [SerializeField] Transform referencedMarkerGroup;
-    [SerializeField] bool useOffsetToHip = true;
-    [SerializeField] Transform markerHip;
-
+    [SerializeField] bool useOffsetToHip;
+    Transform markerHip;
     Transform rigHip;
     bool calibrated;
-    Vector3 calibratedOffset;
     // Start is called before the first frame update
-    void OnEnable()
+
+    private void Awake()
     {
-        TestManager.onCalibrate += TestManager_onCalibrate;
-        TestManagerVersion2.recorded_onCalibrate += TestManagerVersion2_onCalibrate;
-        MotionTrackingDataCapturer.onCalibrate += MotionTrackingDataCapturer_onCalibrate;
         calibrated = false;
     }
-    void OnDisable()
+    void OnEnable()
     {
-        TestManager.onCalibrate -= TestManager_onCalibrate;
-        TestManagerVersion2.recorded_onCalibrate -= TestManagerVersion2_onCalibrate;
-        MotionTrackingDataCapturer.onCalibrate -= MotionTrackingDataCapturer_onCalibrate;
+        TestManagerVersion2.realtime_onCalibrate += TestManagerVersion2_realtime_onCalibrate;
+    }
+    private void OnDisable()
+    {
+        TestManagerVersion2.realtime_onCalibrate -= TestManagerVersion2_realtime_onCalibrate;
     }
 
-    private void TestManagerVersion2_onCalibrate(MarkerGroup arg1, Transform arg2)
+    private void TestManagerVersion2_realtime_onCalibrate(MarkerGroup arg1, Transform arg2)
     {
         Init(arg1.controllingTransform, arg2);
-    }
-
-    private void MotionTrackingDataCapturer_onCalibrate(MarkerGroup arg1, Transform arg2)
-    {
-        Init(arg1.controllingTransform, arg2);
-    }
-
-    
-
-    private void TestManager_onCalibrate(Transform markerHip, Transform rigHip)
-    {
-        Init(markerHip, rigHip);
     }
 
     private void Init(Transform markerHip, Transform rigHip)

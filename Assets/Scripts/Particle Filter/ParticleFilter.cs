@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 public class ParticleFilter : MonoBehaviour
 {
+    
     [SerializeField] ComputeShader particleFilter;
     [SerializeField] Transform[] trackingBones;
     [SerializeField] Transform[] recordedBones;
@@ -62,7 +63,8 @@ public class ParticleFilter : MonoBehaviour
             particles[i].resampleFlag = 0;
         }
 
-        if (trackedParticles != null)
+        if (trackedParticles != null &&
+            TestConfig.current.debug)
         {
             for (int i = 0; i < particles.Length; i++)
             {
@@ -210,6 +212,8 @@ public class ParticleFilter : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (!TestConfig.current.debug)
+            return;
         foreach(var bone in trackingBones)
         {
             Gizmos.color = Color.red;

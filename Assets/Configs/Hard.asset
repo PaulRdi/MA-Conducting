@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a22f3c7abe51ea24caf1f8170334be56, type: 3}
-  m_Name: Easy
+  m_Name: Hard
   m_EditorClassIdentifier: 
-  _beatBuffer: 0.5
+  _debug: 1
+  _beatBuffer: 0.25
   _startOffet: 1
-  _particleDeathCutoff: 450
+  _particleDeathCutoff: 250
   _numParticles: 8192
-  _maxAccuracyLossPerSecond: 0.2
-  _maxAccuracyGainPerSecond: 0.2
+  _maxAccuracyLossPerSecond: 2
+  _maxAccuracyGainPerSecond: 0.5
   _maxRecordedValues: 1000
   _graphLineWidth: 3
   _correctBeatAccuracyBonus: 0.02
@@ -25,8 +26,10 @@ MonoBehaviour:
   _accelerationThreshold: 0.04
   _beatTime: 0.05
   _beatNumVelocityEntries: 10
+  _beatMinAngleVelocity: 25
   _particleSpeedMod: 1
   _jointGravity: 0.6
   _maxG: 0.1
   _moveAccuracyNumFrames: 60
-  _particleMinMaxDist: {x: 0.06, y: 0.2}
+  _particleMinMaxDist: {x: 0.06, y: 0.15}
+  _minMaxLightStrength: {x: 1.2, y: 3.25}

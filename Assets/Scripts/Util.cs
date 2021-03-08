@@ -30,7 +30,7 @@ public class Util
     }
 
 
-
+    //inspired by https://answers.unity.com/questions/189886/displaying-an-audio-waveform-in-the-editor.html
     public static Texture2D PaintWaveformSpectrum(
        float[] samplesToVisualize,
        float timePerTexture,

@@ -22,10 +22,11 @@ public enum TestState
 }
 public class TestManagerVersion2 : MonoBehaviour
 {
-
+    public static TestManagerVersion2 instance;
     public static event Action dataLoaded;
     public static event Action<double> tick;
-    public static event Action<MarkerGroup, Transform> onCalibrate;
+    public static event Action<MarkerGroup, Transform> recorded_onCalibrate;
+    public static event Action<MarkerGroup, Transform> realtime_onCalibrate;
 
     [SerializeField] TestConfig config;
     [SerializeField] MotionRecording recording1;
@@ -34,9 +35,11 @@ public class TestManagerVersion2 : MonoBehaviour
 
     [SerializeField] Transform recordedSuit_rightHandIKRef, recordedSuit_leftHandIKRef;
     [SerializeField] MarkerGroup recordedSuit_rightHand, recordedSuit_leftHand;
-    [SerializeField] Transform rigHip;
+    [SerializeField] Transform realtimeVis_leftHand, realtimeVis_rightHand;
+    [SerializeField] MarkerGroup realtimeSuit_rightHand, realtimeSuit_leftHand;
+    [SerializeField] Transform recorded_RigHip, realtime_RigHip;
     [SerializeField] Transform rigParent;
-    [SerializeField] MarkerGroup markerHip;
+    [SerializeField] MarkerGroup recordedSuit_markerHip, realtimeSuit_markerHip;
     [SerializeField] Animator rigAnimator;
 
     [SerializeField] Button tryStartTestButton;
@@ -46,7 +49,7 @@ public class TestManagerVersion2 : MonoBehaviour
     [SerializeField] Image accuracyBar;
 
     [SerializeField] AudioSource audioSource;
-
+    [SerializeField] ParticleSystem beatHitParticles;
     [SerializeField] AccuracyTester accuracyTester;
 
     public bool manualTick = false;
@@ -69,13 +72,19 @@ public class TestManagerVersion2 : MonoBehaviour
     Beat lastBeat;
     int beatIndex;
 
-    double currentAccuracy;
+    public double currentAccuracy;
     public List<double> recordedAccuracies;
+
+    private void OnValidate()
+    {
+        TestConfig.current = config;
+    }
 
     void Awake()
     {
         dataState = DataState.NotLoaded;
         testState = TestState.Idle;
+        instance = this;
         recordedAccuracies = new List<double>();
         TestConfig.current = config;
         TryLoadData(TryStartTest);
@@ -160,7 +169,11 @@ public class TestManagerVersion2 : MonoBehaviour
                     if (!currentBeatHit)
                     {
                         currentAccuracy -= TestConfig.current.missedBeatPenalty;
-                        Debug.Log("Missed beat!");
+                    }
+                    else
+                    {
+                        Instantiate(beatHitParticles, realtimeVis_leftHand.position, Quaternion.identity);
+                        Instantiate(beatHitParticles, realtimeVis_rightHand.position, Quaternion.identity);
                     }
                     currentBeatHit = false;
                 }
@@ -182,7 +195,10 @@ public class TestManagerVersion2 : MonoBehaviour
         TryGetMoCapFrame(recording2, out FullMocapFrame frame0_rec2, 0);
         recordedSuit_rightHand.ForceMeasurement(0);
         recordedSuit_leftHand.ForceMeasurement(0);
-        markerHip.ForceMeasurement(0);
+        recordedSuit_markerHip.ForceMeasurement(0);
+        realtimeSuit_leftHand.ForceMeasurement(0);
+        realtimeSuit_rightHand.ForceMeasurement(0);
+        realtimeSuit_markerHip.ForceMeasurement(0);
         rigAnimator.enabled = false;
         Physics.SyncTransforms();
         Util.CalibrateIK(
@@ -191,7 +207,8 @@ public class TestManagerVersion2 : MonoBehaviour
             recordedSuit_rightHand.controllingTransform,
             recordedSuit_leftHand.controllingTransform,
             rigParent);
-        onCalibrate?.Invoke(markerHip, rigHip);
+        recorded_onCalibrate?.Invoke(recordedSuit_markerHip, recorded_RigHip);
+        realtime_onCalibrate?.Invoke(realtimeSuit_markerHip, realtime_RigHip);
         rigAnimator.enabled = true;
         testState = TestState.Running;
         currentBeat = song.beats[0];
@@ -264,7 +281,6 @@ public class TestManagerVersion2 : MonoBehaviour
             !currentBeatHit)
         {
             currentBeatHit = true;
-            Debug.Log("Correct Beat!");
             currentAccuracy += TestConfig.current.correctBeatAccuracyBonus;
         }
     }

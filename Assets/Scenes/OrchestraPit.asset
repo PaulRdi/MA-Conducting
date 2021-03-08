@@ -510,7 +510,7 @@ MonoBehaviour:
   hueVsSat:
     m_OverrideState: 1
     m_Value:
-      <length>k__BackingField: 3
+      <length>k__BackingField: 6
       m_Loop: 1
       m_ZeroValue: 0.5
       m_Range: 1
@@ -520,15 +520,15 @@ MonoBehaviour:
         - serializedVersion: 3
           time: 0.043037973
           value: 0.5026738
-          inSlope: -0.08124162
-          outSlope: -0.08124162
+          inSlope: -0.049637288
+          outSlope: -0.049637288
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
-          time: 0.08101266
-          value: 0.6898396
+          time: 0.11627907
+          value: 0.8451327
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -536,8 +536,35 @@ MonoBehaviour:
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
-          time: 0.13417721
-          value: 0.50802135
+          time: 0.19661734
+          value: 0.49557525
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.422833
+          value: 0.5044248
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.6617336
+          value: 0.34955752
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.89429176
+          value: 0.52212393
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -597,6 +624,12 @@ MonoBehaviour:
   color:
     m_OverrideState: 1
     m_Value: {r: 0.65837497, g: 0.43965724, b: 0.15896086, a: 1}
+    hdr: 1
+    showAlpha: 0
+    showEyeDropper: 1
+  tint:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
     hdr: 1
     showAlpha: 0
     showEyeDropper: 1
@@ -677,16 +710,16 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 3.2
+    m_Value: 1.11
     min: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 0.778
     min: 0
     max: 1
   scatter:
     m_OverrideState: 1
-    m_Value: 0.7
+    m_Value: 0.4
     min: 0
     max: 1
   tint:

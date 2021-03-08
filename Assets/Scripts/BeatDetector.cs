@@ -16,7 +16,7 @@ public class BeatDetector : MonoBehaviour
     Coroutine beatRoutine;
     Func<bool> condition;
     List<float> recordedVelocityDeltas;
-
+    float angle;
     ParticleSystem system;
     private void Awake()
     {
@@ -29,11 +29,16 @@ public class BeatDetector : MonoBehaviour
         lastVel = Vector3.zero;
 
 
-
         condition = () =>
         {
-            return recordedVelocityDeltas.Average() > TestConfig.current.accelerationThreshold;
-        };
+            
+            Debug.Log("angle = " + angle);
+            return angle >= TestConfig.current.beatMinAngleVelocity;
+        }; 
+        //condition = () =>
+        //{
+        //    return recordedVelocityDeltas.Average() > TestConfig.current.accelerationThreshold;
+        //};
         //condition = () =>
         //{
         //    return deltaVel.magnitude > accelerationThreshold;
@@ -56,6 +61,7 @@ public class BeatDetector : MonoBehaviour
         
         vel = transform.position - lastPos;
         deltaVel = vel - lastVel;
+        angle = Vector3.Angle(vel, lastVel);
         recordedVelocityDeltas.Add(deltaVel.magnitude);
         if (recordedVelocityDeltas.Count >= TestConfig.current.beatNumVelocityEntries)
             recordedVelocityDeltas.RemoveAt(0);
@@ -67,10 +73,10 @@ public class BeatDetector : MonoBehaviour
 
     IEnumerator DetectedBeatRoutine()
     {
-        if (system != null)
+        if (system != null &&
+            TestConfig.current.debug)
             system.Emit(1);
         beatDetected?.Invoke(this);
-        Debug.Log("beat");
         //yield return new WaitForSeconds(beatTime);
         yield return null;
         beatRoutine = null;
