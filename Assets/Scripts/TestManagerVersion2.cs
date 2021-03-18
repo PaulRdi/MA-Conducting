@@ -29,6 +29,7 @@ public class TestManagerVersion2 : MonoBehaviour
     public static event Action<MarkerGroup, Transform> realtime_onCalibrate;
 
     [SerializeField] TestConfig config;
+    [SerializeField] string accuraciesFileName = "accuracies.csv";
     [SerializeField] MotionRecording recording1;
     [SerializeField] MotionRecording recording2;
     [SerializeField] Song song;
@@ -74,7 +75,7 @@ public class TestManagerVersion2 : MonoBehaviour
 
     public double currentAccuracy;
     public List<double> recordedAccuracies;
-
+    public List<double> recordedAccuracyRow;
     private void OnValidate()
     {
         TestConfig.current = config;
@@ -86,6 +87,7 @@ public class TestManagerVersion2 : MonoBehaviour
         testState = TestState.Idle;
         instance = this;
         recordedAccuracies = new List<double>();
+        recordedAccuracyRow = new List<double>();
         TestConfig.current = config;
         TryLoadData(TryStartTest);
     }
@@ -96,11 +98,23 @@ public class TestManagerVersion2 : MonoBehaviour
     }
 
     private void Update()
-    {        
+    {
         if (UnityEngine.Input.GetKeyDown(KeyCode.F9))
             tickKeyPressed = true;
+        else if (UnityEngine.Input.GetKeyDown(KeyCode.F5))
+            WriteAccuracies();
         UpdateAccuracy();
     }
+
+    private void WriteAccuracies()
+    {
+        string s = "";
+        foreach (double val in recordedAccuracyRow)
+            s += val.ToString() + "\n";
+
+        File.WriteAllText(Application.streamingAssetsPath + "/" + accuraciesFileName, s);
+    }
+
     private void LateUpdate()
     {
         lastDspTimeMotion = AudioSettings.dspTime;
@@ -159,6 +173,7 @@ public class TestManagerVersion2 : MonoBehaviour
             if (lastDspTimeMotion != AudioSettings.dspTime)
                 tick?.Invoke(AudioSettings.dspTime - lastDspTimeMotion);
             tickKeyPressed = false;
+            recordedAccuracyRow.Add(currentAccuracy);
             if (currentBeat.dspTime - currentDSPTimeSong < TestConfig.current.beatBuffer / 2.0)
             {
                 if (beatIndex + 1 < song.beats.Count)

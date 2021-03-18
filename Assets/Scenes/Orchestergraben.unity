@@ -16087,6 +16087,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: 0a11aaa2d0b46474db26a2d652e73301, type: 2}
+  accuraciesFileName: accuracies.csv
   recording1: {fileID: 11400000, guid: 490c83ea62b4e9947afea2a1589ed5dc, type: 2}
   recording2: {fileID: 11400000, guid: 2881872dd771d3b48adeb0a52e4af3fa, type: 2}
   song: {fileID: 11400000, guid: 4612e2950a9888a40aaa2678eccec27e, type: 2}
@@ -16116,6 +16117,7 @@ MonoBehaviour:
   manualTick: 0
   currentAccuracy: 0
   recordedAccuracies: []
+  recordedAccuracyRow: []
 --- !u!114 &882374241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58746,7 +58748,7 @@ PrefabInstance:
     - target: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: predictionMode
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4585767692789476775, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
@@ -58832,7 +58834,7 @@ PrefabInstance:
     - target: {fileID: 4585767693023433041, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: predictionMode
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4585767693023433041, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
@@ -59033,7 +59035,7 @@ PrefabInstance:
     - target: {fileID: 4585767694331083848, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
       propertyPath: predictionMode
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4585767694331083848, guid: 07ce3fa012abcc34a93151c155953ea2,
         type: 3}
