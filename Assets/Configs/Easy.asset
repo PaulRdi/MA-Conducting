@@ -33,3 +33,4 @@ MonoBehaviour:
   _moveAccuracyNumFrames: 60
   _particleMinMaxDist: {x: 0.06, y: 0.2}
   _minMaxLightStrength: {x: 1.2, y: 3.25}
+  _minFrequency: 800

@@ -68,6 +68,9 @@ public class TestConfig : ScriptableObject
     public Vector2 minMaxLightStrength => _minMaxLightStrength;
     [SerializeField] Vector2 _minMaxLightStrength = new Vector2(1.2f, 4.0f);
 
+    public float minFrequency => _minFrequency;
+    [SerializeField] float _minFrequency = 2000.0f;
+
     public static TestConfig current
     {
         get

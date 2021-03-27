@@ -434,10 +434,13 @@ public class MarkerGroup : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!TestConfig.current.debug)
-            return;
+        //if (!TestConfig.current.debug)
+        //    return;
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(controllingTransform.position, debugSphereSize);
+        Gizmos.color = Color.gray;
+        foreach (var m in markers)
+            Gizmos.DrawSphere(DataRouter.MPos(dataSource, m.id, recording), debugSphereSize/2.0f);
     }
 
     public string StringifyMatrix(Matrix<float> matrix)
